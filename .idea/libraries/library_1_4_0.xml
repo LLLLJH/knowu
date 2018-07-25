@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="library-1.4.0">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.android/build-cache/7c0ffa54733397e5f8db28be44f17cf661295a47/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/7c0ffa54733397e5f8db28be44f17cf661295a47/output/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.inuker.bluetooth/library/1.4.0/d13c7e1a84daa4fa3100e78c9db9e71c31e423a9/library-1.4.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
