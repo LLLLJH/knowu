@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CountDownTimerView">
+        <!-- 倒计时数字大小 -->
+        <attr name="number_text_size" format="dimension"></attr>
+        <!--字符串大小-->
+        <attr name="string_text_size" format="dimension"></attr>
+        <!-- 文本颜色 -->
+        <attr name="text_color" format="color"></attr>
+
+        <!--表盘线条宽度-->
+        <attr name="line_width" format="dimension"></attr>
+        <!--表盘线条长度-->
+        <attr name="line_height" format="dimension"></attr>
+        <!--表盘线条颜色-->
+        <attr name="line_color" format="color"></attr>
+        <!--表盘圆周-->
+        <attr name="line_circle_radius" format="dimension"></attr>
+
+        <!--画圆线宽-->
+        <attr name="circle_stroke_width" format="dimension"></attr>
+        <!--画圆线颜色-->
+        <attr name="circle_stroke_color" format="color"></attr>
+        <!--圆的半径-->
+        <attr name="circle_radius" format="dimension"></attr>
+        
+        <!--指针颜色-->
+        <attr name="finger_color" format="color"></attr>
+    </declare-styleable>
+
+</resources>

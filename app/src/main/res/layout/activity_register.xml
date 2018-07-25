@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="17"
+    ></LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="21">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/logos" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="13"
+        ></LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="33"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        >
+        <EditText
+            android:id="@+id/phone_editText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="123px"
+            android:layout_marginRight="125px"
+             android:hint="请输入手机号码吧"
+            android:gravity="center"
+            android:inputType="phone"
+            android:maxLength="11"
+            android:textSize="@dimen/phoneNumber_size"
+            android:textColor="@color/phoneNumber_color"
+            android:layout_gravity="center"
+
+            android:backgroundTint="@color/dfline_color"
+            android:textCursorDrawable="@color/dfline_color"
+            android:drawableRight="@drawable/delete" />
+        <Button
+            android:id="@+id/next_step"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/next_step"
+            android:text="下一步"
+            android:textColor="@color/textcolor"
+            android:textSize="@dimen/next_step_size"
+
+            android:layout_marginTop="20.5dp"
+            android:layout_gravity="center"
+            android:onClick="sendMessage"
+            />
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="3px"
+        android:src="@drawable/progress"
+        android:scaleType="fitXY"
+        android:layout_marginLeft="80px"
+        android:layout_marginRight="80px"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="16"
+        android:layout_marginLeft="65px"
+        android:layout_marginRight="65px"
+        >
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/wechat_header" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/qq_header"
+            />
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/weibo_header"
+            />
+
+    </LinearLayout>
+</LinearLayout>

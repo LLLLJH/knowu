@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_marginTop="20dp"
+    android:layout_marginBottom="20dp"
+    android:layout_gravity="center"
+    android:layout_width="match_parent"
+    android:gravity="center"
+    android:paddingBottom="12.0dip"
+    android:paddingLeft="4.0dip"
+    android:paddingRight="2.0dip"
+    android:paddingTop="12.0dip"
+    android:layout_height="70dp"
+    android:clickable="false"
+    android:focusable="true">
+    <ImageView
+        android:layout_width="35dp"
+        android:layout_margin="5dp"
+        android:src="@drawable/device_left"
+        android:layout_height="35dp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:id="@+id/tv_deviceName"
+        android:text="KNOW U"
+        android:gravity="bottom"
+        android:textSize="21sp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/deviceName" />
+    <LinearLayout
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:orientation="vertical"
+        android:layout_marginLeft="10dp"
+        android:gravity="left|center_vertical"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/deviceID"
+            android:layout_width="wrap_content"
+            android:text="ID:12456998"
+            android:textSize="15sp"
+            android:textColor="@color/deviceId"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="设备可连接"
+            android:textSize="15sp"
+            android:id="@+id/deviceState"
+            android:textColor="@color/deviceState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <cn.cjwddz.knowu.view.UISwitchButton
+        android:layout_width="55dp"
+        android:layout_gravity="center|right"
+        android:layout_margin="10dp"
+        android:gravity="right"
+        android:checked="false"
+        android:layout_height="35dp"
+        android:id="@+id/sw" />
+</LinearLayout>

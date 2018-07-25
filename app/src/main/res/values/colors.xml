@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="search_deep">#FF5A58</color>
+    <color name="search_light">#F4B787</color>
+    <color name="white">#FFFFFF</color>
+    <color name="none">#00000000</color>
+    <color name="main_deep">#FF5A58</color>
+    <color name="main_light">#F6AA81</color>
+    <color name="textcolor">#FFFFFF</color>
+    <color name="phoneNumber_color">#101010</color>
+    <color name="verification_Code_color">#FC9E8D</color>
+
+
+    <!--设备-->
+    <color name="deviceName">#101010</color>
+    <color name="deviceId">#919191</color>
+    <color name="deviceState">#919191</color>
+
+
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="mode_text_color">#919191</color>
+    <color name="text_color">#fc9e8d</color>
+    <color name="line_color">#fc9e8d</color>
+    <color name="dfline_color">#c7c7c7</color>
+    <color name="circle_color">#c7c7c7</color>
+    <color name="finger_color">#fc9e8d</color>
+
+</resources>

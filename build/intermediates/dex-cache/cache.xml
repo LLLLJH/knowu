@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="C:\Users\Administrator\.android\build-cache\e46167a7d6a9d8897f7e5cd8cb09ed0143fff50f\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="18d31838aa4fcc768a8a0516e22cc13b94655d89">
+        <dex dex="F:\AndroidStudio\knowu\app\build\intermediates\pre-dexed\debug\classes_3aa65c60fbc3b7aeafc2532da815de35621b5141.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Administrator\.android\build-cache\11bc881bfebe7bebd47c4a5a084b7bd73e9d1d77\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="44ee06abb66da30f5855e6bf54574e64cdcd982a">
+        <dex dex="F:\AndroidStudio\knowu\app\build\intermediates\pre-dexed\debug\classes_707748cfbc2c624d7f61b2ea78608ba44c929e66.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Administrator\.gradle\caches\modules-2\files-2.1\com.alibaba\fastjson\1.1.34.android\bef1d1224be099c387794bce1bdf81b38f37c6ce\fastjson-1.1.34.android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="bef1d1224be099c387794bce1bdf81b38f37c6ce">
+        <dex dex="F:\AndroidStudio\knowu\app\build\intermediates\pre-dexed\debug\fastjson-1.1.34.android_6e6e993848ba64ed8dc896050496aaf8ae46c1e6.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Administrator\.android\build-cache\062c01e5a3f6ad213075d8a10b416b4c93b54ad9\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="8df0e365e40beb151bc42dee20817721a6cab7b0">
+        <dex dex="F:\AndroidStudio\knowu\app\build\intermediates\pre-dexed\debug\classes_c7135eb883107d043538614dce740a24ff7c09d6.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\AndroidSDK\extras\android\m2repository\com\android\support\support-annotations\26.0.0-alpha1\support-annotations-26.0.0-alpha1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="023ee503b631f69511e335a061ea008f8da60f40">
+        <dex dex="F:\AndroidStudio\knowu\app\build\intermediates\pre-dexed\debug\support-annotations-26.0.0-alpha1_e7114f4f56351e2fae0f8f295a900a72fa4c978c.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Administrator\.gradle\caches\modules-2\files-2.1\com.squareup.okhttp3\okhttp\3.2.0\f7873a2ebde246a45c2a8d6f3247108b4c88a879\okhttp-3.2.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="f7873a2ebde246a45c2a8d6f3247108b4c88a879">
+        <dex dex="F:\AndroidStudio\knowu\app\build\intermediates\pre-dexed\debug\okhttp-3.2.0_e97c4d684058659f4c78fd063d89ce0d8b400297.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Administrator\.android\build-cache\10a77c11548daeedea6aaa129af8756a0070884a\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="88246166d5afb106f532f6e6deae683c66b42c89">
+        <dex dex="F:\AndroidStudio\knowu\app\build\intermediates\pre-dexed\debug\classes_be482b7d73e8af0e055ba795ecc15729381e3353.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Administrator\.android\build-cache\31847c22e2b5e5bb86c80fbc9c0e5f92d10a7f5a\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="952944218ecedea1554a513dec0c14d570642843">
+        <dex dex="F:\AndroidStudio\knowu\app\build\intermediates\pre-dexed\debug\classes_5c7f08611b2608d96859fde48d5168b2742e94d9.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Administrator\.android\build-cache\ee5f3c7fb90a197a8ea02b42ecc0d9fe9eb7943f\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="47471eb19df288158b00b8d9cfa41bce7373f5cc">
+        <dex dex="F:\AndroidStudio\knowu\app\build\intermediates\pre-dexed\debug\classes_1575ba5f4c8672cb737b93ae70c556314e5bdf28.jar" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="F:\AndroidStudio\knowu\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="27.0.3"
+        sha1="d8a67a3d6853d85ca3d0798d4f20aed1f360e509">
+        <dex dex="F:\AndroidStudio\knowu\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run-bootstrap_5e58e0b31b9ac93e8adf3ba5b6959588bb61b35f\classes.dex" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Administrator\.android\build-cache\0de1f2afa17c93af1da6a9cbba0c6c4777791f10\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="fcd01fd11233459f546c437ec927e9b61bf7caf1">
+        <dex dex="F:\AndroidStudio\knowu\app\build\intermediates\pre-dexed\debug\classes_cc3dcc2d087570cad474912dd34ba4f64dbfda5b.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\AndroidSDK\extras\m2repository\com\android\support\constraint\constraint-layout-solver\1.0.2\constraint-layout-solver-1.0.2.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="b9cd8fc6bd15cb915735d34535db30ece0c44603">
+        <dex dex="F:\AndroidStudio\knowu\app\build\intermediates\pre-dexed\debug\constraint-layout-solver-1.0.2_43f65f2cd4d71d7fea717f39897bd815ada528fa.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Administrator\.gradle\caches\modules-2\files-2.1\com.squareup.okio\okio\1.6.0\98476622f10715998eacf9240d6b479f12c66143\okio-1.6.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="98476622f10715998eacf9240d6b479f12c66143">
+        <dex dex="F:\AndroidStudio\knowu\app\build\intermediates\pre-dexed\debug\okio-1.6.0_c410569bd3ae660f2a7eceb3af69efc833b46b70.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Administrator\.android\build-cache\7df1b3ebfb8374c01d20358236a05ee321dbeec6\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="2e92aa0163544a804a0b34f169ca61801770839a">
+        <dex dex="F:\AndroidStudio\knowu\app\build\intermediates\pre-dexed\debug\classes_2fcaa442d8d3379998ae674c03c4840e33318691.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Administrator\.android\build-cache\587cc31010c6eaec52e16cf512976b7a331dbc60\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="c4f45092eee6cdf1a5dbd597b2b6819be652ce2e">
+        <dex dex="F:\AndroidStudio\knowu\app\build\intermediates\pre-dexed\debug\classes_218c33efcfaf1757496abe9437943540f9414086.jar" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="F:\AndroidStudio\knowu\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="27.0.3"
+        sha1="3be78ebc2706b2e1fe2f12d5726887a92d6c183b">
+        <dex dex="F:\AndroidStudio\knowu\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run_6f337eae7df87fc0388f445713c064e4888e82c8\classes.dex" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Administrator\.android\build-cache\9d249c2484855d40da12b11f93e1482058b379d0\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="F:\AndroidStudio\knowu\app\build\intermediates\pre-dexed\debug\classes_92acc1c21a73247377dc717ba282b1c55b1e6bb6.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Administrator\.android\build-cache\7c0ffa54733397e5f8db28be44f17cf661295a47\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="6261c119bf951afc0e8eaa4bef2345ea79bf8914">
+        <dex dex="F:\AndroidStudio\knowu\app\build\intermediates\pre-dexed\debug\classes_3bfb8ace8b0834b7d4143be32488c0f75b327601.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Administrator\.android\build-cache\6daf51ab8080f1cf0dbdafe41cee421a86549bc2\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="b445f5d808bea6c0a2b48845ea22bb66040486aa">
+        <dex dex="F:\AndroidStudio\knowu\app\build\intermediates\pre-dexed\debug\classes_4f731f5052604a8db24745e625e05b9d95eeb5bb.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Administrator\.android\build-cache\e094bb58578e84bef9f573d4b5f91bff746513d1\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="27.0.3"
+        sha1="9935891f23923f39d002087085d9696568a9f657">
+        <dex dex="F:\AndroidStudio\knowu\app\build\intermediates\pre-dexed\debug\classes_a20e85585bad7c4f527e10dba71b44d0f718c43c.jar" />
+    </item>
+
+</items>
