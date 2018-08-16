@@ -44,8 +44,7 @@ public class StartActivity extends Activity {
             @Override
             public void run() {
                 if(!isstart){
-                    startapp();
-
+                    startApp();
                 }
             }
         },3000);
@@ -53,7 +52,7 @@ public class StartActivity extends Activity {
             @Override
             public void onClick(View view) {
                 isstart = true;
-               startapp();
+               startApp();
             }
         });
     }
@@ -69,7 +68,7 @@ public class StartActivity extends Activity {
         super.onDestroy();
     }
 
-    public void startapp(){
+    public void startApp(){
         if(preferences.getBoolean("firstStart",true)){
             editor.putBoolean("firstStart",false);
             editor.commit();

@@ -15,4 +15,6 @@ public interface UIInterface {
     void setNotify(String status);
     void sendMessage(String status);
     void updateView(int count);
+    void back();
+    void setLastProgress(int progress);
 }

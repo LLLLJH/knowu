@@ -11,25 +11,35 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.FileProvider;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -42,16 +52,18 @@ import cn.cjwddz.knowu.service.ServiceInterface;
 import cn.cjwddz.knowu.service.UIInterface;
 import cn.cjwddz.knowu.view.CountDownTimerView;
 import cn.cjwddz.knowu.common.application.AppManager;
+import cn.cjwddz.knowu.view.MyImageView;
 
 import static cn.cjwddz.knowu.FragmentUI.*;
 
-public class MainActivity extends BaseActivity implements RecyclerView.RecyclerListener,OnFragmentInteractionListener,UIInterface, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+public class MainActivity extends BaseActivity implements RecyclerView.RecyclerListener,OnFragmentInteractionListener,UIInterface, OnClickListener,SeekBar.OnSeekBarChangeListener {
     private CountDownTimerView countDownTimerView;
     private DrawerLayout drawerLayout;
 
     private BluetoothManager bluetoothManager;
     private BluetoothAdapter bluetoothAdapter;
 
+    private MyImageView header;
     private ImageButton fighting;
     private ImageButton keepfit;
     private ImageButton chira;
@@ -64,9 +76,14 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
     private TextView last_tv;
     private SeekBar seekbar;
     private TextView count;
+    private ImageView battery_iv;
     private DisplayMetrics displayMetrics;
     private double width,density;
+    private int firstprogress = 0;
     private int progress = 0;
+    private int lastprogress = 0;
+    private float firstX;
+    private float secondX;
 
     private long exitTime = 0;
     ServiceInterface serviceInterface;
@@ -116,6 +133,7 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
     @Override
     void initView() {
      setContentView(R.layout.slidemune);
+        header = (MyImageView) findViewById(R.id.header);
          fighting = (ImageButton) findViewById(R.id.fighting);
         fighting_tv = (TextView) findViewById(R.id.fighting_tv);
         last = fighting;
@@ -129,14 +147,18 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
         seekbar = (SeekBar) findViewById(R.id.seekbar);
         count = (TextView) findViewById(R.id.count);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout);
+        battery_iv = (ImageView) findViewById(R.id.battery_iv);
+       // battery_iv.setImageResource(R.drawable.battery100);
         fighting.setOnClickListener(this);
         keepfit.setOnClickListener(this);
         chira.setOnClickListener(this);
         relax.setOnClickListener(this);
         seekbar.setOnSeekBarChangeListener(this);
+        //seekbar.setOnTouchListener(this);
         displayMetrics = getResources().getDisplayMetrics();
         width = displayMetrics.widthPixels;
         density = (width - dip2px(this, 51)) / 20;
+        initImageView();
     }
 
     @Override
@@ -156,6 +178,23 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
        count.setText("LV."+progress);
    }
 
+    private void initImageView(){
+        File file = new File(Environment.getExternalStorageDirectory().getPath(),"cutcamera.png");
+        Uri uri0 = Uri.fromFile(file);
+        try {
+            //获取裁剪后的图片，并显示出来
+            Bitmap bitmap = BitmapFactory.decodeStream(
+                    getContentResolver().openInputStream(uri0));
+            //图片还未回收，先强制回收该图片
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) header.getDrawable();
+            if(bitmapDrawable != null && !bitmapDrawable.getBitmap().isRecycled()){
+                bitmapDrawable.getBitmap().recycle();
+            }
+            header.setImageBitmap(bitmap);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
     @Override
     public void onViewRecycled(RecyclerView.ViewHolder holder) {
         // 下拉刷新
@@ -237,6 +276,8 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
             public void run() {
                 undateFragment(3);
                 kUBService.sendMessage(Protocol.getModeSetInstruct(0));
+                kUBService.sendMessage(Protocol.getIntensityReadInstruct());
+                kUBService.sendMessage(Protocol.getElectricGetInstruct());
             }
         };
         timer.schedule(timerTask,1000);
@@ -285,7 +326,51 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
 
     @Override
     public void updateView(int count) {
-        // TODO: 更新电量图标 
+        if(count<=75){
+            count = 75;
+        }else if(count<=50){
+            count = 50;
+        }else if(count<=25){
+            count = 25;
+        }else if(count<10) {
+            count = 5;
+        }
+        // TODO: 更新电量图标
+        switch (count){
+            case 75:
+                battery_iv.setImageResource(R.drawable.battery75);
+                break;
+            case 50:
+                battery_iv.setImageResource(R.drawable.battery50);
+                break;
+            case 25:
+                battery_iv.setImageResource(R.drawable.battery25);
+                break;
+            case 5 :
+                battery_iv.setImageResource(R.drawable.battery0);
+                showToast("电量过低！请为设备充电再使用！！！");
+                break;
+            default:
+                battery_iv.setImageResource(R.drawable.battery100);
+                break;
+        }
+    }
+//连接错误或断开时回调
+    @Override
+    public void back() {
+        undateFragment(0);
+        seekbar.setThumb(getResources().getDrawable(R.drawable.seekbar));
+        progress = 0;
+        seekbar.setProgress(progress);
+        initSeekbarProgress();
+        fighting.setSelected(false);
+        fighting_tv.setTextColor(getResources().getColor(R.color.mode_text_color));
+        count.setBackgroundResource(R.drawable.count);
+    }
+
+    @Override
+    public void setLastProgress(int progress) {
+        seekbar.setProgress(progress);
     }
 
     @Override
@@ -295,13 +380,20 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        initImageView();
+    }
+
+    @Override
     public void onClick(View view) {
-        if(!kUBService.isLink()){
-            showToast("设备未连接！！！");
-            return;
-        }
+
         switch (view.getId()){
             case R.id.fighting:
+                if(!kUBService.isLink()){
+                    showToast("设备未连接！！！");
+                    return;
+                }
                 kUBService.sendMessage(Protocol.getModeSetInstruct(0));
                 fighting.setSelected(true);
                 fighting_tv.setTextColor(getResources().getColor(R.color.text_color));
@@ -313,7 +405,11 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
                 }
                 break;
             case R.id.keepfit:
-                kUBService.sendMessage(Protocol.getModeSetInstruct(1));
+                if(!kUBService.isLink()){
+                    showToast("设备未连接！！！");
+                    return;
+                }
+                kUBService.sendMessage(Protocol.getModeSetInstruct(0));
                 keepfit.setSelected(true);
                 keepfit_tv.setTextColor(getResources().getColor(R.color.text_color));
                 if(last != keepfit){
@@ -324,7 +420,11 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
                 }
                 break;
             case R.id.chira:
-                kUBService.sendMessage(Protocol.getModeSetInstruct(2));
+                if(!kUBService.isLink()){
+                    showToast("设备未连接！！！");
+                    return;
+                }
+                kUBService.sendMessage(Protocol.getModeSetInstruct(0));
                chira.setSelected(true);
                 chira_tv.setTextColor(getResources().getColor(R.color.text_color));
                 if(last != chira){
@@ -335,7 +435,11 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
                 }
                 break;
             case R.id.relax:
-                kUBService.sendMessage(Protocol.getModeSetInstruct(3));
+                if(!kUBService.isLink()){
+                    showToast("设备未连接！！！");
+                    return;
+                }
+                kUBService.sendMessage(Protocol.getModeSetInstruct(0));
                 relax.setSelected(true);
                 relax_tv.setTextColor(getResources().getColor(R.color.text_color));
                 if(last != relax){
@@ -344,6 +448,11 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
                     last = relax;
                     last_tv = relax_tv;
                 }
+                break;
+            case R.id.information:
+                Intent intent = new Intent();
+                intent.setClass(MainActivity.this,InformationActivity.class);
+                startActivity(intent);
                 break;
            default:break;
         }
@@ -354,6 +463,8 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
         if(progress < 15){
             progress = progress +1;
             seekbar.setProgress(progress);
+            lastprogress = progress;
+            kUBService.sendMessage(Protocol.getIntensitySetInstruct(progress));
         }
     }
     public void minusProgress(View view){
@@ -361,20 +472,21 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
         if (progress > 0){
             progress = progress-1;
             seekbar.setProgress(progress);
+            lastprogress = progress;
+            kUBService.sendMessage(Protocol.getIntensitySetInstruct(progress));
         }
     }
+
     @Override
     public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
         // TODO: 滑块力度选择改变回调实现
-
-        if(!kUBService.isLink()){
+       if(!kUBService.isLink()){
             showToast("设备未连接！！！");
             seekBar.setProgress(0);
             return;
         }
         progress = seekBar.getProgress();
         initSeekbarProgress();
-        kUBService.sendMessage(Protocol.getIntensitySetInstruct(seekBar.getProgress()));
     }
 
     @Override
@@ -385,18 +497,23 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
             seekBar.setProgress(0);
             return;
         }
-       // kUBService.sendMessage(Protocol.getIntensitySetInstruct(seekBar.getProgress()));
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         // TODO: 滑块力度选择抬起回调实现
-        if(!kUBService.isLink()){
+       if(!kUBService.isLink()){
             showToast("设备未连接！！！");
             seekBar.setProgress(0);
             return;
         }
-       // kUBService.sendMessage(Protocol.getIntensitySetInstruct(seekBar.getProgress()));
+       if(seekBar.getProgress()==14||seekBar.getProgress()==15){
+           seekBar.setProgress(lastprogress);
+           showToast("力度过大！！！请点击+号增加");
+       }else{
+           lastprogress = seekBar.getProgress();
+           kUBService.sendMessage(Protocol.getIntensitySetInstruct(seekBar.getProgress()));
+       }
     }
 
 
@@ -434,4 +551,33 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
         }
         return super.onKeyDown(keyCode, event);
     }
+
+    public void getInformation(View view){
+        Intent intent = new Intent();
+        intent.setClass(MainActivity.this,InformationActivity.class);
+        startActivity(intent);
+    }
+
+    public void openHeader(View view){
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        File file = new File(Environment.getExternalStorageDirectory().getPath(),"cutcamera.png");
+        Uri uri;
+        if (Build.VERSION.SDK_INT >= 24) {
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            uri = FileProvider.getUriForFile(this,
+                    "com.ljh.knowU.fileProvider",
+                    file);
+        } else {
+           uri = Uri.fromFile(file);
+        }
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        intent.setDataAndType(uri,"image/*");
+        startActivity(intent);
+    }
+
+    public void exit(View view){
+        AppManager.getAppManager().finishAllActivity();
+        System.exit(0);
+    }
+
 }

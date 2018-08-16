@@ -74,12 +74,15 @@ public class CountDownTimerView extends View{
 
 
     private  Timer timer;
+    private boolean firstStart = true;
+    private boolean start = false;
     private Context mcontext;
 
     public interface onTimer{
         void countdownStart(int second);
         void countdownFinished(int status);
         void countdownStop();
+        //void getElectric();
     }
 
     private onTimer ontimer;
@@ -124,27 +127,29 @@ public class CountDownTimerView extends View{
     }
 
    private void updata(){
-
-       second--;
-       if(second > 0){
-           countText =getText(second);
-           if(s<30){
-               ttime = m * 2-1;
+       if(start){
+           if(second > 0){
+               second--;
+               countText =getText(second);
+               if(s<30){
+                       ttime = m * 2-1;
+               }else{
+                   ttime = m * 2;
+               }
+               // angle_pick = second  / 10-second/10;
+               // getPoint(angle_pick);
+               postInvalidate();
            }else{
-               ttime = m * 2;
+               countText ="00:00";
+               ttime = 0;
+               //getPoint(0);
+               postInvalidate();
+               ontimer.countdownFinished(0);
+               start = false;
+               //timer.cancel();
            }
-
-          // angle_pick = second  / 10-second/10;
-          // getPoint(angle_pick);
-           postInvalidate();
-       }else{
-           countText ="00:00";
-           ttime = 0;
-           //getPoint(0);
-           postInvalidate();
-           ontimer.countdownFinished(0);
-           timer.cancel();
        }
+
      }
     //定时刷新View
     private Thread thread = new Thread(){
@@ -159,6 +164,7 @@ public class CountDownTimerView extends View{
                         @Override
                         public void run() {
                             updata();
+                            //ontimer.getElectric();
                         }
                     });
                 }
@@ -387,16 +393,22 @@ public class CountDownTimerView extends View{
     }
 
     public void start(){
+        if(firstStart){
+            thread.start();
+            firstStart = false;
+        }
         if(second !=0){
             ontimer.countdownStart(second);
-            thread.start();
+            start = true;
+            //thread.start();
         }
     }
     public int isZero(){
         return second;
     }
     public void stop(){
-       timer.cancel();
+       //timer.cancel();
+        start = false;
         ontimer.countdownStop();
     }
 }

@@ -8,7 +8,7 @@ public interface ServiceInterface {
     void scan();
     void stopScan();
    // void connecctDivice();
-    void disConnectDevice(MyDevice device);
+    void disConnectDevice();
     void sendMessage(byte[] msg);
 
 }

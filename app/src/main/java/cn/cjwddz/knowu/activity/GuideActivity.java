@@ -10,6 +10,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -43,6 +44,10 @@ public class GuideActivity extends Activity implements ViewPager.OnPageChangeLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //隐藏标题栏
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //隐藏状态栏
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_guide);
         point_iv = findViewById(R.id.pointImageView);
         mListView = new ArrayList<View>();
@@ -178,6 +183,7 @@ public class GuideActivity extends Activity implements ViewPager.OnPageChangeLis
 
     }
 
+    //左拉大于屏幕四分之一进入主页
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
 

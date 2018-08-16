@@ -6,7 +6,11 @@ package cn.cjwddz.knowu.service;
 
 public class Constants {
 
-    public static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
+    /**
+     * 权限申请请求
+     */
+    public static final int CAMERA_REQUEST_CODE = 0x01;
+    public static final int PERMISSION_REQUEST_COARSE_LOCATION = 0x01;
     /**
      * MtDevice 服务UUID
      */

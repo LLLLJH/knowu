@@ -7,5 +7,20 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
-
+    <!--自定义Dialog样式-->
+    <style name="MyDialog" parent="android:style/Theme.Dialog">
+        <!--背景颜色及和透明程度-->
+        <item name="android:background">@android:color/transparent</item>
+        <!--win背景颜色及和透明程度-->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--win title显示-->
+        <item name="android:windowNoTitle">true</item>
+        <!--是否浮现在activity之上-->
+        <item name="android:windowIsFloating">true</item>
+    </style>
+    <!--Datepicker样式-->
+    <style name="MyDatePicker" parent="@android:style/Widget.Holo.DatePicker">
+        <item name="android:textColorPrimary">@color/informationT_color</item>
+        <item name="android:divider">@color/informationT_color</item>
+    </style>
 </resources>

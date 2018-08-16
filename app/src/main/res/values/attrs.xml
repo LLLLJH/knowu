@@ -28,4 +28,14 @@
         <attr name="finger_color" format="color"></attr>
     </declare-styleable>
 
+    <!--MyImageView属性定义-->
+    <attr name="borderRadius" format="dimension"></attr>
+    <attr name="imageType">
+        <enum name="circle" value="0"></enum>
+        <enum name="round" value="1"></enum>
+    </attr>
+    <declare-styleable name="MyImageView">
+        <attr name="borderRadius"></attr>
+        <attr name="imageType"></attr>
+    </declare-styleable>
 </resources>

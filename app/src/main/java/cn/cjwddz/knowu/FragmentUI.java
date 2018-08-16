@@ -163,10 +163,9 @@ public class FragmentUI extends Fragment implements CountDownTimerView.onTimer{
 
     @Override
     public void countdownStart(int second) {
-        //kUBService.sendMessage();
         kUBService.sendMessage(Protocol.getOpenInstruct());
-       st_button.setText("停 止");
-        st_button.setTextSize(20);
+       // st_button.setText("停 止");
+        //st_button.setTextSize(20);
     }
 
     @Override
@@ -179,7 +178,10 @@ public class FragmentUI extends Fragment implements CountDownTimerView.onTimer{
     @Override
     public void countdownStop() {
         kUBService.sendMessage(Protocol.getCloseInstruct());
+       // st_button.setText("开 始");
+        //st_button.setTextSize(20);
     }
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -215,6 +217,13 @@ public class FragmentUI extends Fragment implements CountDownTimerView.onTimer{
                         st_button.setTextSize(20);
                     }
                 }
+            }
+        });
+        st_button.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                kUBService.disConnectDevice();
+                return true;
             }
         });
     }

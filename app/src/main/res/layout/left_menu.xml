@@ -2,10 +2,12 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="start"
     android:clickable="true"
     android:background="#ffffff"
-    >
+    tools:context=".activity.MainActivity">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -25,27 +27,36 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="8.5"></View>
-        <ImageView
-            android:id="@+id/header"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/header"
-            android:layout_gravity="center"
-            />
-        <View
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2.5"></View>
-        <TextView
-            android:id="@+id/username"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="4.0"
-            android:layout_gravity="center"
-            android:text="女有"
-            android:textSize="20sp"
-            android:textColor="@color/text_color"
-            />
+            android:layout_weight="50"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <cn.cjwddz.knowu.view.MyImageView
+                android:id="@+id/header"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:src="@drawable/test"
+                app:borderRadius="20dp"
+                app:imageType="circle"
+                android:scaleType="fitCenter"
+                android:onClick="openHeader">
+
+            </cn.cjwddz.knowu.view.MyImageView>
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="女有"
+                android:textSize="20sp"
+                android:textColor="@color/text_color"
+                />
+        </LinearLayout>
+
         <View
             android:layout_width="wrap_content"
             android:layout_height="0dp"
@@ -56,6 +67,7 @@
             android:layout_weight="43"
             android:orientation="vertical">
             <LinearLayout
+                android:id="@+id/information"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -72,6 +84,7 @@
                     android:layout_height="wrap_content"
                     android:text="个人信息"
                     android:layout_marginLeft="50px"
+                    android:onClick="getInformation"
                     />
             </LinearLayout>
             <LinearLayout
@@ -177,6 +190,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:onClick="exit"
                     >
                     <ImageView
                         android:layout_width="wrap_content"

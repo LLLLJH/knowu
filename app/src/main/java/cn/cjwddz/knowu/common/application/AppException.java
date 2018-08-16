@@ -172,7 +172,7 @@ public class AppException extends Exception implements UncaughtExceptionHandler 
         for (int i = 0; i < elements.length; i++) {
             exceptionStr.append(elements[i].toString() + "\n");
         }
-//		System.out.println(exceptionStr.toString());
+		System.out.println(exceptionStr.toString());
 
 //		final Context context = AppManager.getAppManager().currentActivity();
 //		
