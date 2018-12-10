@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="50"
-        android:background="@color/informationB_color"
+        android:background="@drawable/infobackground"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -20,10 +20,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:src="@drawable/test"
+            android:scaleType="fitCenter"
+            android:src="@drawable/dfheader"
             app:borderRadius="20dp"
             app:imageType="circle"
-            android:scaleType="fitCenter">
+            app:weight="5"
+            >
 
         </cn.cjwddz.knowu.view.MyImageView>
 
@@ -37,33 +39,36 @@
             android:id="@+id/information_lv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@color/divider_color"
-            android:dividerHeight="3px"
+            android:divider="@color/dividerWidth_color"
+            android:dividerHeight="1px"
             android:headerDividersEnabled="false"
-            android:layout_marginLeft="39px"
+            android:footerDividersEnabled="true"
+            android:layout_marginLeft="44px"
             android:layout_marginRight="44px"
-            ></ListView>
+            >
+
+        </ListView>
     </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="3px"
-        android:background="@color/dividerWidth_color"
-        ></View>
+
+<View
+    android:layout_width="match_parent"
+    android:layout_height="1px"
+    android:background="@color/grey"
+    ></View>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="11"
-        android:orientation="vertical"
         android:gravity="center"
-        >
+        android:orientation="vertical">
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/informationB_color"
-            android:text="下一步"
-            android:textColor="@color/textcolor"
             android:layout_gravity="center"
-            android:onClick="submitInformation"
-            />
+            android:background="@drawable/next_step_selector"
+            android:text="提交信息"
+            android:textColor="@color/white"
+            android:onClick="submitInformation" />
     </LinearLayout>
 </LinearLayout>

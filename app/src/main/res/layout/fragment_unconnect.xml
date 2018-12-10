@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="242dp"
     android:orientation="vertical"
     >
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="5.5"></View>
+        android:layout_weight="21.5"></View>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="8"
-        android:orientation="horizontal"
-        android:gravity="center_horizontal"
+        android:layout_weight="23.1"
+        android:orientation="vertical"
+        android:gravity="center"
         >
         <ImageView
             android:layout_width="wrap_content"
@@ -21,6 +21,15 @@
             android:background="@drawable/cry"
             android:layout_gravity="center"
             />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="18.2"
+        android:orientation="vertical"
+        android:gravity="center"
+        >
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -31,32 +40,11 @@
             />
 
     </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3.5"></View>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="55.5"
-        android:gravity="center_horizontal"
-        >
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@drawable/disk"
-            />
-    </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="4.5"></View>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="22.5"
-        android:gravity="center_horizontal"
+        android:layout_weight="29.8"
+        android:gravity="center"
         >
         <Button
             android:id="@+id/connect_bt"
@@ -64,12 +52,16 @@
             android:layout_height="wrap_content"
             android:background="@drawable/connect_bt"
             android:textSize="16sp"
-            android:text="连 接"
+            android:text="连接"
+            android:layout_gravity="center"
             android:textColor="@color/textcolor"
             />
 
     </LinearLayout>
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="7.4"></View>
 
 
 </LinearLayout>

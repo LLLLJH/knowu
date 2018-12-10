@@ -80,6 +80,7 @@
         android:layout_weight="16"
         android:layout_marginLeft="65px"
         android:layout_marginRight="65px"
+        android:onClick="loginWithOther"
         >
 
         <ImageView

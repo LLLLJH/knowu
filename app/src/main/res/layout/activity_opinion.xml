@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="cn.cjwddz.knowu.activity.OpinionActivity">
+    <EditText
+        android:id="@+id/et_opinion"
+        app:layout_heightPercent="40.5%"
+        app:layout_widthPercent="100%"
+        android:layout_marginLeft="@dimen/et_margin_size"
+        android:layout_marginTop="@dimen/et_margin_size"
+        android:layout_marginRight="@dimen/et_margin_size"
+        android:hint="请留下您的意见和建议吧"
+        android:background="@drawable/etbackground"
+        android:textCursorDrawable="@drawable/cursorcolor"
+        android:gravity="start"
+        android:textSize="@dimen/et_opinion_size"
+        />
+    <LinearLayout
+        app:layout_heightPercent="13.6%"
+        app:layout_widthPercent="100%"
+        android:layout_below="@+id/et_opinion"
+        android:gravity="center"
+        >
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_user_opinion"
+            android:background="@drawable/btn_userfeel_selector"
+            android:text="意见反馈"
+            android:textColor="@color/white"
+            android:textSize="@dimen/tv_textSize"
+            />
+
+    </LinearLayout>
+
+</android.support.percent.PercentRelativeLayout>

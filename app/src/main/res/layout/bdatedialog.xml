@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="68">
-        <DatePicker
+        <cn.cjwddz.knowu.view.MyDatePicker
             android:id="@+id/dp_bDate"
             android:theme="@style/MyDatePicker"
             android:layout_width="match_parent"
@@ -45,7 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="#EEEEEE"
+        android:background="@color/divider_color"
         android:layout_marginTop="30dp"
         >
         <Button
@@ -56,6 +56,8 @@
             android:text="取消"
             android:textColor="#717171"
             android:textSize="16sp"
+            android:background="#EEEEEE"
+            android:layout_marginRight="1px"
             />
         <Button
             android:id="@+id/btn_bd_ensure"
@@ -65,6 +67,8 @@
             android:text="确定"
             android:textColor="#717171"
             android:textSize="16sp"
+            android:background="#EEEEEE"
+            android:layout_marginLeft="1px"
             />
     </LinearLayout>
 </LinearLayout>

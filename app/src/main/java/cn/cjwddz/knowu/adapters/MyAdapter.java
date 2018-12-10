@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Administrator on 2018/8/6.
+ * Created by K.B. on 2018/8/6.
  */
 
 public class MyAdapter extends SimpleAdapter {

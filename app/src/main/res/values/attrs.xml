@@ -37,5 +37,27 @@
     <declare-styleable name="MyImageView">
         <attr name="borderRadius"></attr>
         <attr name="imageType"></attr>
+        <attr name="weight" format="integer"></attr>
+    </declare-styleable>
+
+    <!--MyImageView属性定义-->
+    <declare-styleable name="InformationView">
+        <attr name="fill_color" format="color"></attr>
+    </declare-styleable>
+    
+    <declare-styleable name="GradientGraphView">
+        <attr name="lineStrokeWidth" format="dimension"></attr>
+        <attr name="lineColor" format="color"></attr>
+
+        <attr name="textColor" format="color"></attr>
+        <attr name="textStrokeWidth" format="dimension"></attr>
+        <attr name="textSize" format="dimension"></attr>
+
+        <attr name="graphStrokeWidth" format="dimension"></attr>
+        <attr name="graphColor" format="color"></attr>
+        <attr name="graphShadeColor" format="color"></attr>
+
+        <attr name="startDataX" format="string"></attr>
+        <attr name="endDataX" format="string"></attr>
     </declare-styleable>
 </resources>

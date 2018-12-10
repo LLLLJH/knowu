@@ -164,6 +164,9 @@ public class FragmentUI extends Fragment implements CountDownTimerView.onTimer{
     @Override
     public void countdownStart(int second) {
         kUBService.sendMessage(Protocol.getOpenInstruct());
+        if (mListener != null) {
+            mListener.countdownStart();
+        }
        // st_button.setText("停 止");
         //st_button.setTextSize(20);
     }
@@ -171,6 +174,9 @@ public class FragmentUI extends Fragment implements CountDownTimerView.onTimer{
     @Override
     public void countdownFinished(int status) {
         kUBService.sendMessage(Protocol.getCloseInstruct());
+        if (mListener != null) {
+            mListener.countdownFinished();
+        }
         st_button.setText("开 始");
         st_button.setTextSize(20);
     }
@@ -178,6 +184,9 @@ public class FragmentUI extends Fragment implements CountDownTimerView.onTimer{
     @Override
     public void countdownStop() {
         kUBService.sendMessage(Protocol.getCloseInstruct());
+        if (mListener != null) {
+            mListener.countdownStop();
+        }
        // st_button.setText("开 始");
         //st_button.setTextSize(20);
     }
@@ -196,6 +205,9 @@ public class FragmentUI extends Fragment implements CountDownTimerView.onTimer{
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+        void countdownStart();
+        void countdownStop();
+        void countdownFinished();
     }
 
     private void initFragment3(LayoutInflater inflater,ViewGroup container){

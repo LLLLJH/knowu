@@ -8,25 +8,23 @@
     android:clickable="true"
     android:background="#ffffff"
     tools:context=".activity.MainActivity">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
+
         <View
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="6.5"></View>
+
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/logo_string"
             android:layout_gravity="center"
-            />
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="8.5"></View>
+            android:src="@drawable/logo_string" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -39,11 +37,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:src="@drawable/test"
+                android:onClick="openHeader"
+                android:scaleType="fitEnd"
+                android:src="@drawable/dfheader"
                 app:borderRadius="20dp"
                 app:imageType="circle"
-                android:scaleType="fitCenter"
-                android:onClick="openHeader">
+                app:weight="4"
+                >
 
             </cn.cjwddz.knowu.view.MyImageView>
             <TextView
@@ -52,151 +52,157 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="女有"
-                android:textSize="20sp"
                 android:textColor="@color/text_color"
-                />
+                android:textSize="20sp" />
+
         </LinearLayout>
 
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="6"></View>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="43"
+            android:gravity="center_horizontal"
             android:orientation="vertical">
+
             <LinearLayout
-                android:id="@+id/information"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_gravity="center"
-                android:gravity="center"
-                >
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/information"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="个人信息"
-                    android:layout_marginLeft="50px"
-                    android:onClick="getInformation"
-                    />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_marginTop="29px"
-                android:layout_gravity="center"
                 android:gravity="center"
-                >
+                android:onClick="userRecord"
+                android:orientation="horizontal">
+
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/record"
-                    />
+                    android:src="@drawable/record" />
+
                 <TextView
+                    android:id="@+id/textView2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="使用记录"
-                    android:layout_marginLeft="50px"
-                    />
+                    android:layout_marginLeft="28dp"
+                    android:text="使用记录" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="29px"
                 android:layout_gravity="center"
+                android:layout_marginTop="29px"
                 android:gravity="center"
-                >
+                android:onClick="about"
+                android:orientation="horizontal">
+
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/about"
-                    />
+                    android:src="@drawable/about" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="关于女有"
-                    android:layout_marginLeft="50px"
-                    />
+                    android:layout_marginLeft="31dp"
+                    android:text="关于女有" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="29px"
                 android:layout_gravity="center"
+                android:layout_marginTop="29px"
                 android:gravity="center"
-                >
+                android:onClick="startSearch"
+                android:orientation="horizontal">
+
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/guidance"
-                    />
+                    android:src="@drawable/device" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="新手指引"
-                    android:layout_marginLeft="50px"
-                    />
+                    android:layout_marginLeft="31dp"
+                    android:text="设备详情" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="29px"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:onClick="getInformation"
+                >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/guidance" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="31dp"
+                    android:text="新手指引" />
             </LinearLayout>
 
         </LinearLayout>
+
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="3px"
-            android:src="@drawable/progress"
-            android:scaleType="fitXY"
             android:layout_marginLeft="42px"
             android:layout_marginRight="50px"
-            />
+            android:scaleType="fitXY"
+            android:src="@drawable/progress" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="7.5"
             android:orientation="vertical">
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="26.5"></View>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="50"
-                android:orientation="horizontal"
-                >
+                android:orientation="horizontal">
+
                 <View
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="6"></View>
+
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/logo_u"
-                    />
+                    android:src="@drawable/logo_u" />
+
                 <View
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="39"></View>
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:onClick="exit"
-                    >
+                    android:orientation="horizontal">
+
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/exit"
-                        />
+                        android:src="@drawable/exit" />
 
                     <TextView
                         android:id="@+id/textView"
@@ -204,6 +210,7 @@
                         android:layout_height="wrap_content"
                         android:text="退出登录" />
                 </LinearLayout>
+
                 <View
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

@@ -17,7 +17,7 @@
         android:layout_marginTop="5dp"
         android:textColor="#ffffff"
         android:textSize="20dp"
-        android:background="@drawable/start"
+        android:background="@drawable/btn_start_selector"
         android:layout_gravity="center_horizontal"
         />
 

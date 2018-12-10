@@ -72,12 +72,14 @@ public class Protocol {
     public static byte[] getOpenInstruct(){
         byte[] data =new byte[]{start,0x00,0x00,Control.WRITE.value,Type.SWITCH.value,Data.ENABLE.value,end};
         data[1] = (byte)(0x00+data.length);
+        data[6] = (byte) (data[0]+data[1]+data[2]+data[3]+data[4]+data[5]);
         return data;
     }
     // 关闭命令
     public static byte[] getCloseInstruct(){
         byte[] data =new byte[]{start,0x00,0x00,Control.WRITE.value,Type.SWITCH.value,Data.DISABLE.value,end};
         data[1] = (byte)(0x00+data.length);
+        data[6] = (byte) (data[0]+data[1]+data[2]+data[3]+data[4]+data[5]);
         return data;
     }
     // 设置强度指令
@@ -85,30 +87,35 @@ public class Protocol {
         lastIntensity = intensity;
         byte[] data =new byte[]{start,0x00,(byte) (0x00+intensity),Control.WRITE.value,Type.INTENSITY.value,Type.INTENSITY.getIntensity(intensity),end};
         data[1] = (byte)(0x00+data.length);
+        data[6] = (byte) (data[0]+data[1]+data[2]+data[3]+data[4]+data[5]);
         return data;
     }
     // 读取强度指令 todo 待定
     public static byte[] getIntensityReadInstruct(){
         byte[] data =new byte[]{start,0x00,0x00,Control.READ.value,Type.INTENSITY.value,0x00,end};
         data[1] = (byte)(0x00+data.length);
+        data[6] = (byte) (data[0]+data[1]+data[2]+data[3]+data[4]+data[5]);
         return data;
     }
     // 设置模式指令
     public static byte[] getModeSetInstruct(int value){
         byte[] data =new byte[]{start,0x00,(byte) Protocol.Data.MODE.getMode(value),Control.WRITE.value,Type.MODE.value,Protocol.Data.MODE.getMode(value),end};
         data[1] = (byte)(0x00+data.length);
+        data[6] = (byte) (data[0]+data[1]+data[2]+data[3]+data[4]+data[5]);
         return data;
     }
     // 读取模式指令 todo 待定
     public static byte[] getModeGetInstruct(){
         byte[] data =new byte[]{start,0x00,0x00,Control.READ.value,Type.MODE.value,0x00,end};
         data[1] = (byte)(0x00+data.length);
+        data[6] = (byte) (data[0]+data[1]+data[2]+data[3]+data[4]+data[5]);
         return data;
     }
     //读取电量指令
     public static byte[] getElectricGetInstruct(){
         byte[] data = new byte[]{start,0x00,0x00,Control.READ.value,Type.ELECTRIC.value,0x00,end};
         data[1] = (byte)(0x00+data.length);
+        data[6] = (byte) (data[0]+data[1]+data[2]+data[3]+data[4]+data[5]);
         return data;
     }
 }

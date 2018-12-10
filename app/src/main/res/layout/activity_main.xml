@@ -1,29 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
     >
+
     <LinearLayout
         android:layout_width="match_parent"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:orientation="vertical"
         android:layout_height="match_parent"
         android:layout_marginTop="10dp"
-        >
+        android:background="@color/shadeColor"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="60"
+            android:background="#ffffff"
             android:orientation="vertical">
             <!--bar-->
             <LinearLayout
                 android:id="@+id/id_title"
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
-                android:layout_weight="14.5"
                 android:layout_marginTop="10dp"
+                android:layout_weight="7"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -50,24 +52,21 @@
                         android:id="@+id/battery_iv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="17px"
-                        />
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:onClick="startSearch"
-                        android:src="@drawable/device" />
+                        android:layout_gravity="center"
+                        android:layout_marginRight="17px" />
                 </LinearLayout>
             </LinearLayout>
-
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="3px"
+                android:background="@drawable/progress"
+                 />
             <FrameLayout
                 android:id="@+id/fragment_container"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="85.5"
-                android:background="@drawable/background"
-                >
+                android:layout_weight="50.4"
+                android:background="@drawable/background">
 
             </FrameLayout>
 
@@ -77,13 +76,13 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="40"
-            android:orientation="vertical"
-            >
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="5"
+                android:background="@drawable/mainbackground"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -95,113 +94,171 @@
                     <ImageView
                         android:layout_width="10px"
                         android:layout_height="30px"
-                        android:layout_marginLeft="40px"
-                        android:backgroundTint="@color/text_color"
-                        android:background="@color/text_color"
                         android:layout_gravity="center_vertical"
-                        />
+                        android:layout_marginLeft="40px"
+                        android:background="@color/text_color"
+                        android:backgroundTint="@color/text_color" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="力 度"
                         android:layout_marginLeft="5dp"
+                        android:text="力 度"
                         android:textColor="#101010"
                         android:textSize="45px" />
                 </LinearLayout>
-                <LinearLayout
+
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    >
+                    android:layout_height="match_parent">
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="9"
-                        android:gravity="center"
-                        android:onClick="minusProgress"
-                        >
-                        <ImageButton
-                            android:id="@+id/minus"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginLeft="15px"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/minus"
-                            android:background="@color/white"
-                            />
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="9"
+                            android:gravity="right"
+                           >
+
+                            <ImageButton
+                                android:onClick="minusProgress"
+                                android:id="@+id/minus"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center|right"
+                                android:background="@drawable/btn_minus_selector"
+                                android:scaleType="fitCenter"
+                                />
+                        </LinearLayout>
+                        <!--
+                                            <LinearLayout
+                                                android:layout_width="0dp"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerHorizontal="true"
+                                                android:layout_centerVertical="true"
+                                                android:layout_weight="88.8"
+                                                android:gravity="center_vertical"
+                                                android:orientation="vertical">
+
+                                                <TextView
+                                                    android:id="@+id/count"
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:layout_gravity="center_horizontal"
+                                                    android:background="@drawable/count"
+                                                    android:gravity="center_horizontal"
+                                                    android:text="LV.0"
+                                                    android:textColor="@color/white"
+                                                    android:textSize="16sp" />
+
+                                                <SeekBar
+                                                    android:id="@+id/seekbar"
+                                                    android:layout_width="match_parent"
+                                                    android:layout_height="wrap_content"
+                                                    android:layout_gravity="center"
+                                                    android:layout_marginLeft="20px"
+                                                    android:indeterminate="false"
+                                                    android:max="15"
+                                                    android:progress="0"
+                                                    android:progressTint="@color/line_color"
+                                                    android:thumb="@drawable/seekbar" />
+                                            </LinearLayout>
+                                            -->
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="9"
+                            android:gravity="left"
+                           >
+
+                            <ImageButton
+                                android:onClick="addProgress"
+                                android:id="@+id/add"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:background="@drawable/btn_add_selector"
+                                android:scaleType="fitCenter"
+                                />
+                        </LinearLayout>
                     </LinearLayout>
                     <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="88.8"
-                        android:layout_centerHorizontal="true"
-                        android:layout_centerVertical="true"
-                        android:gravity="center_vertical"
-                        android:orientation="vertical"
-                        >
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="horizontal">
 
                         <TextView
-                            android:id="@+id/count"
+                            android:id="@+id/bt_progress"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/count"
-                            android:text="LV.0"
-                            android:textSize="16sp"
+                            android:background="@drawable/circle"
+                            android:gravity="center"
+                            android:text="0"
+                            android:textSize="20sp"
                             android:textColor="@color/white"
-                            android:gravity="center_horizontal"
-                            android:layout_gravity="center_horizontal"
                             />
-                        <SeekBar
-                            android:id="@+id/seekbar"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="20px"
-                            android:indeterminate="false"
-                            android:max="15"
-                            android:progress="0"
-                            android:progressTint="@color/line_color"
-                            android:thumb="@drawable/seekbar"
-                            android:layout_gravity="center"
-                            />
+                        <!--
+                                            <LinearLayout
+                                                android:layout_width="0dp"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerHorizontal="true"
+                                                android:layout_centerVertical="true"
+                                                android:layout_weight="88.8"
+                                                android:gravity="center_vertical"
+                                                android:orientation="vertical">
+
+                                                <TextView
+                                                    android:id="@+id/count"
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:layout_gravity="center_horizontal"
+                                                    android:background="@drawable/count"
+                                                    android:gravity="center_horizontal"
+                                                    android:text="LV.0"
+                                                    android:textColor="@color/white"
+                                                    android:textSize="16sp" />
+
+                                                <SeekBar
+                                                    android:id="@+id/seekbar"
+                                                    android:layout_width="match_parent"
+                                                    android:layout_height="wrap_content"
+                                                    android:layout_gravity="center"
+                                                    android:layout_marginLeft="20px"
+                                                    android:indeterminate="false"
+                                                    android:max="15"
+                                                    android:progress="0"
+                                                    android:progressTint="@color/line_color"
+                                                    android:thumb="@drawable/seekbar" />
+                                            </LinearLayout>
+                                            -->
+
                     </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="9"
-                        android:gravity="center"
-                        android:onClick="addProgress"
-                        >
-                        <ImageButton
-                            android:id="@+id/add"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginRight="15px"
-                            android:src="@drawable/add"
-                            android:scaleType="fitCenter"
-                            android:background="@color/white"
-                            />
-                    </LinearLayout>
-                    </LinearLayout>
+                </FrameLayout>
+
 
             </LinearLayout>
+
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="3px"
-                android:src="@drawable/progress"
-                android:scaleType="fitXY"
                 android:layout_marginLeft="80px"
                 android:layout_marginRight="80px"
-                />
+                android:scaleType="fitXY"
+                android:src="@drawable/progress" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="5.5"
-                android:orientation="vertical"
-                >
+                android:background="#ffffff"
+                android:orientation="vertical">
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -211,144 +268,142 @@
                     <ImageView
                         android:layout_width="10px"
                         android:layout_height="30px"
-                        android:layout_marginLeft="40px"
-                        android:backgroundTint="@color/text_color"
-                        android:background="@color/text_color"
                         android:layout_gravity="center_vertical"
-                        />
+                        android:layout_marginLeft="40px"
+                        android:background="@color/text_color"
+                        android:backgroundTint="@color/text_color" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="模 式"
                         android:layout_marginLeft="5dp"
+                        android:text="模 式"
                         android:textColor="#101010"
                         android:textSize="45px" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginLeft="40px"
+                    android:layout_marginRight="40px"
                     android:dividerPadding="0dp"
                     android:orientation="horizontal"
                     android:showDividers="none"
-                    android:layout_marginLeft="40px"
-                    android:layout_marginRight="40px"
 
                     >
+
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
                         android:layout_gravity="center_horizontal"
-                        >
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
                         <ImageButton
                             android:id="@+id/fighting"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:layout_gravity="center_horizontal"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/fighting_selector"
+                            android:layout_weight="1"
                             android:background="#00ffffff"
-                            />
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/fighting_selector" />
+
                         <TextView
                             android:id="@+id/fighting_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="斗姨妈"
-                            android:textSize="30px"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginBottom="49px"
+                            android:text="斗姨妈"
                             android:textColor="@color/mode_text_color"
-                            />
+                            android:textSize="30px" />
                     </LinearLayout>
+
                     <LinearLayout
 
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
                         android:layout_gravity="center_horizontal"
-                        >
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
                         <ImageButton
                             android:id="@+id/keepfit"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:src="@drawable/keepfit_selector"
-                            android:scaleType="fitCenter"
                             android:layout_gravity="center_horizontal"
+                            android:layout_weight="1"
                             android:background="#00ffffff"
-                            />
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/keepfit_selector" />
+
                         <TextView
                             android:id="@+id/keepfit_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="减肉肉"
-                            android:textSize="30px"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginBottom="49px"
+                            android:text="减肉肉"
                             android:textColor="@color/mode_text_color"
-                            />
+                            android:textSize="30px" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
                         android:layout_gravity="center_horizontal"
-                        >
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
                         <ImageButton
                             android:id="@+id/chira"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:src="@drawable/chira_selector"
-                            android:scaleType="fitCenter"
                             android:layout_gravity="center_horizontal"
+                            android:layout_weight="1"
                             android:background="#00ffffff"
-                            />
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/chira_selector" />
+
                         <TextView
                             android:id="@+id/chira_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="揉一揉"
-                            android:textSize="30px"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginBottom="49px"
+                            android:text="揉一揉"
                             android:textColor="@color/mode_text_color"
-                            />
+                            android:textSize="30px" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
                         android:layout_gravity="center_horizontal"
-                        >
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
                         <ImageButton
                             android:id="@+id/relax"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:src="@drawable/relax_selector"
-                            android:scaleType="fitCenter"
                             android:layout_gravity="center_horizontal"
+                            android:layout_weight="1"
                             android:background="#00ffffff"
-                            />
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/relax_selector" />
+
                         <TextView
                             android:id="@+id/relax_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="放轻松"
-                            android:textSize="30px"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginBottom="49px"
+                            android:text="放轻松"
                             android:textColor="@color/mode_text_color"
-                            />
+                            android:textSize="30px" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

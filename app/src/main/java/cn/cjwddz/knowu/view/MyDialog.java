@@ -17,6 +17,7 @@ import cn.cjwddz.knowu.common.utils.MyUtils;
 public class MyDialog extends Dialog {
     private Context context;
     private int height,width;
+    private double marginBottom;
     private boolean canceltouchout;
     private View view;
 
@@ -25,6 +26,7 @@ public class MyDialog extends Dialog {
         context = builder.context;
         height = builder.height;
         width = builder.width;
+        marginBottom = builder.marginBottom;
         canceltouchout = builder.canceltouchout;
         view = builder.view;
     }
@@ -34,6 +36,7 @@ public class MyDialog extends Dialog {
         context = builder.context;
         height = builder.height;
         width = builder.width;
+        marginBottom = builder.marginBottom;
         canceltouchout = builder.canceltouchout;
         view = builder.view;
     }
@@ -62,6 +65,7 @@ public class MyDialog extends Dialog {
         WindowManager.LayoutParams params = window.getAttributes();
         params.width = width;
         params.height = height;
+        params.y = (int) (height * marginBottom);
         window.setAttributes(params);
     }
 
@@ -70,7 +74,11 @@ public class MyDialog extends Dialog {
     }
     public static final class Builder{
         private Context context;
-        private int height,width;
+        private int height;
+        private int width;
+
+
+        private double marginBottom;
         private boolean canceltouchout;
         private View view;
         private int resStyle = -1;
@@ -78,6 +86,11 @@ public class MyDialog extends Dialog {
         public Builder(Context context){
             this.context = context;
         }
+        public Builder setMarginBottom(double marginBottom) {
+            this.marginBottom = marginBottom;
+            return this;
+        }
+
 
         public Builder setView(int resView){
             view = LayoutInflater.from(context).inflate(resView,null);
@@ -100,11 +113,11 @@ public class MyDialog extends Dialog {
 
         //通过px，dp，dimen资源设置Dialog宽度
         public Builder setWidthpx(int value){
-            width = value;
+            width = value-40;
             return this;
         }
         public Builder setWidthdp(int value){
-            width = MyUtils.dip2px(context,value );
+            width = MyUtils.dip2px(context,value )-20;
             return this;
         }
         public Builder setWidthDimenRes(int dimenRes){

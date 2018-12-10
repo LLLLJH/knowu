@@ -23,7 +23,7 @@ import cn.cjwddz.knowu.R;
 
 
 /**
- * Created by ljh on 2018/7/2.
+ * Created by K.B. on 2018/7/2.
  */
 
 public class CountDownTimerView extends View{

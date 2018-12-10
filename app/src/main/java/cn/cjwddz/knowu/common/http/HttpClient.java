@@ -81,7 +81,7 @@ public class HttpClient {
         return false;
     }
 
-    public static void get(String url, Map<String, String> param, final HttpResponseHandler handler) {
+    public static void get(String url, Map<String,Object> param, final HttpResponseHandler handler) {
         if (!isNetworkAvailable()) {
             Toast.makeText(AppContext.getInstance(), "No network connection found", Toast.LENGTH_SHORT).show();
             return;
@@ -108,7 +108,7 @@ public class HttpClient {
         });
     }
 
-    public static void post(String url, Map<String, String> param, final HttpResponseHandler handler) {
+    public static void post(String url, Map<String, Object> param, final HttpResponseHandler handler) {
         if (!isNetworkAvailable()) {
             Toast.makeText(AppContext.getInstance(), "No network connection found", Toast.LENGTH_SHORT).show();
             return;
@@ -156,16 +156,16 @@ public class HttpClient {
         return TextUtils.isEmpty(responseBody) && (responseBody.startsWith("{") && responseBody.endsWith("}"));
     }
 
-    public static String mapToQueryString(Map<String, String> map) {
+    public static String mapToQueryString(Map<String, Object> map) {
         StringBuilder string = new StringBuilder();
         /*if(map.size() > 0) {
             string.append("?");
         }*/
         try {
-            for(Map.Entry<String, String> entry : map.entrySet()) {
+            for(Map.Entry<String, Object> entry : map.entrySet()) {
                 string.append(entry.getKey());
                 string.append("=");
-                string.append(URLEncoder.encode(entry.getValue(), UTF_8));
+                string.append(URLEncoder.encode((String) entry.getValue(), UTF_8));
                 string.append("&");
             }
         } catch (UnsupportedEncodingException e) {

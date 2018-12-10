@@ -8,6 +8,8 @@ import com.inuker.bluetooth.library.search.SearchResult;
 
 import java.util.Arrays;
 
+import cn.cjwddz.knowu.R;
+
 /**
  * Created by Administrator on 2018/7/18.
  */
@@ -71,7 +73,7 @@ public class MyDevice {
                     break;
                 case 0x09:
                     String band = new String(ad.bytes);
-                    if(band.equals("KNOW U")){
+                    if(band.equals("FREAL-U")){
                         ok=true;
                     }
                     break;

@@ -20,12 +20,18 @@ public class AppContext extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        registerUncaughtExceptionHandler();
+       // registerUncaughtExceptionHandler();
     }
 
     // 注册App异常崩溃处理器
     private void registerUncaughtExceptionHandler() {
-        Thread.setDefaultUncaughtExceptionHandler(AppException.getAppExceptionHandler());
+        //Thread.setDefaultUncaughtExceptionHandler(AppException.getAppExceptionHandler());
+        new Thread(){
+            @Override
+            public void run() {
+                CrashHandler.getInstance().init(getApplicationContext());
+            }
+        }.start();
     }
 
 }

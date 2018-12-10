@@ -15,8 +15,8 @@
         android:layout_weight="17.2"
         android:hint="asd"
         android:textColor="@color/informationT_color"
-        android:textSize="16sp"
-        android:layout_marginRight="30px"
+        android:textSize="14sp"
+        android:layout_marginLeft="30px"
         />
 
     <TextView
@@ -24,11 +24,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/informationT_color"
-        android:textSize="16sp"
+        android:textSize="14sp"
+        android:layout_marginRight="20px"
         />
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/seekbar_clicked"
+        android:src="@drawable/triangle"
         />
 </LinearLayout>

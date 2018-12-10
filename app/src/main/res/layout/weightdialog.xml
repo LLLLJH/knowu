@@ -27,12 +27,12 @@
         android:layout_weight="68"
         android:gravity="center"
         >
-        <NumberPicker
+        <cn.cjwddz.knowu.view.MyPicker
             android:id="@+id/np_weight"
             android:theme="@style/MyDatePicker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:focusable="true"
+
             />
     </LinearLayout>
 
@@ -40,7 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="#EEEEEE"
+        android:background="@color/divider_color"
         android:layout_marginTop="30dp"
         >
         <Button
@@ -51,6 +51,8 @@
             android:text="取消"
             android:textColor="#717171"
             android:textSize="16sp"
+            android:background="#EEEEEE"
+            android:layout_marginRight="1px"
             />
         <Button
             android:id="@+id/btn_w_ensure"
@@ -60,6 +62,8 @@
             android:text="确定"
             android:textColor="#717171"
             android:textSize="16sp"
+            android:background="#EEEEEE"
+            android:layout_marginLeft="1px"
             />
     </LinearLayout>
 </LinearLayout>

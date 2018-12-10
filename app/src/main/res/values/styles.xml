@@ -7,6 +7,54 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+    <style name="MainTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/white</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+    <style name="RecordTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here.<item name="android:windowActionBarOverlay">true</item> -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark_record</item>
+        <!-- 去掉ActionBar与Activity之间的蓝色横线 -->
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:actionBarSize">@dimen/actionbar_height</item><!--设置ActionBar的高度-->
+
+        <!-- 兼容支持库 -->
+        <item name="windowActionBarOverlay">true</item>
+    </style>
+    <style name="opinionTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here.<item name="android:windowActionBarOverlay">true</item> -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark_record</item>
+        <!-- 去掉ActionBar与Activity之间的蓝色横线 -->
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:actionBarSize">@dimen/actionbar_height</item><!--设置ActionBar的高度-->
+
+        <!-- 兼容支持库 actionBar浮动悬空
+        <item name="windowActionBarOverlay">true</item>-->
+    </style>
+
+    <style name="detailsTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here.<item name="android:windowActionBarOverlay">true</item> -->
+        <item name="colorPrimary">@color/detailsColorPrimary</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark_record</item>
+        <!-- 去掉ActionBar与Activity之间的蓝色横线 -->
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:actionBarSize">@dimen/actionbar_height</item><!--设置ActionBar的高度-->
+
+        <!-- 兼容支持库 -->
+        <item name="windowActionBarOverlay">true</item>
+    </style>
+
+
+
+
     <!--自定义Dialog样式-->
     <style name="MyDialog" parent="android:style/Theme.Dialog">
         <!--背景颜色及和透明程度-->

@@ -108,7 +108,7 @@ public class KnowUBleService extends Service implements ServiceInterface{
        //搜寻到本公司设备后自行连接
           // todo 存入数组
           deviceArray.add(fDevice);
-          //uiInterface.scanSuccess(fDevice.getDevice().getAddress());
+          uiInterface.scanSuccess(fDevice.getDevice().getAddress());
           if(deviceArray.size()>=2){
               ble.stopSearch();
           }

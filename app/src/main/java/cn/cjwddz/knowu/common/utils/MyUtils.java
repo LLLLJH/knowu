@@ -1,8 +1,7 @@
 package cn.cjwddz.knowu.common.utils;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Notification;
+
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,25 +11,61 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
+
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
+import android.util.Base64;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.Toast;
+
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.Security;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimeZone;
+
+import javax.crypto.Mac;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import cn.cjwddz.knowu.R;
-import cn.cjwddz.knowu.view.MyDialog;
+import cn.cjwddz.knowu.common.application.AppContext;
+import cn.cjwddz.knowu.common.http.MyHTTPClient;
 
+import cn.cjwddz.knowu.service.Constants;
+import cn.cjwddz.knowu.view.MyDialog;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+import static cn.cjwddz.knowu.common.utils.StringUtils.isEmpty;
 
 
 /**
@@ -55,61 +90,6 @@ public class MyUtils {
         return (int) (dpValue * scale + 0.5f);
     }
 
-    /**
-     * 设置Dialog，可以选择图片或者拍照
-     * */
-    public static void showTypeDialog(final Activity activity){
-        View.OnClickListener listener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                switch(view.getId()){
-                    case R.id.select_photo:
-                        Intent intent = new Intent(Intent.ACTION_GET_CONTENT,null);
-                        intent.setType("image/*");
-                        //dialog.dismiss();
-                        activity.startActivityForResult(intent,1);
-                        break;
-                    case R.id.take_photo:
-                        //创建一个file，用来存储拍照后的照片
-                        File outputfile = new File(activity.getExternalCacheDir(),"knowUHeader.png");
-                        try {
-                            if (outputfile.exists()){
-                                outputfile.delete();//删除
-                            }
-                            outputfile.createNewFile();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        Uri imageuri ;
-                        if (Build.VERSION.SDK_INT >= 24){
-                            imageuri = FileProvider.getUriForFile(activity,
-                                    "com.ljh.knowU.fileProvider", //可以是任意字符串
-                                    outputfile);
-                        }else{
-                            imageuri = Uri.fromFile(outputfile);
-                        }
-                        //启动相机程序
-                        Intent intent1 = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        intent1.putExtra(MediaStore.EXTRA_OUTPUT, imageuri);
-                       // dialog.dismiss();
-                        activity.startActivityForResult(intent1,2);
-                        break;
-                }
-            }
-        };
-        final MyDialog dialog ;
-        MyDialog.Builder builder = new MyDialog.Builder(activity);
-        dialog = builder.setStyle(R.style.MyDialog)
-                .setCancelTouchout(true)
-                .setView(R.layout.dialog_select_photo)
-                .setHeihgtdp(166)
-                .setWidthdp(250)
-                .addViewOnclickListener(R.id.select_photo,listener)
-                .addViewOnclickListener(R.id.take_photo,listener)
-                .build();
-
-        dialog.show();
-    }
 
 
     /**
@@ -119,7 +99,7 @@ public class MyUtils {
      * @return
      */
 
-    public static Intent CutForPhoto(Activity activity,Uri uri,int wh) {
+    public static Intent CutForPhoto(Activity activity,String filename,Uri uri,int wh) {
         try {
             //直接裁剪
             Intent intent = new Intent("com.android.camera.action.CROP");
@@ -128,7 +108,7 @@ public class MyUtils {
                 //intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             }
             //设置裁剪之后的图片路径文件
-            File cutfile = new File(Environment.getExternalStorageDirectory().getPath(),"cutcamera.png"); //随便命名一个
+            File cutfile = new File(Environment.getExternalStorageDirectory().getPath(),filename+".png"); //随便命名一个
            // File cutfile = new File(getResourcesUri(activity,R.drawable.important),"important.png"); //随便命名一个
             if (cutfile.exists()){ //如果已经存在，则先删除,这里应该是上传到服务器，然后再删除本地的，没服务器，只能这样了
                 cutfile.delete();
@@ -181,7 +161,7 @@ public class MyUtils {
 
             //设置裁剪之后的图片路径文件
             File cutfile = new File(Environment.getExternalStorageDirectory().getPath(),
-                    "cutcamera.png"); //随便命名一个
+                    imgname); //随便命名一个
             if (cutfile.exists()){ //如果已经存在，则先删除,这里应该是上传到服务器，然后再删除本地的，没服务器，只能这样了
                 cutfile.delete();
             }
@@ -332,6 +312,226 @@ public class MyUtils {
         return uriPath;
     }
 
+
+    /**
+     * 判断网络是否可用
+     * */
+    public static boolean isNetworkAvailable() {
+        try {
+            ConnectivityManager connectivityManager = (ConnectivityManager) AppContext.getInstance().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+            return networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected();
+        } catch (Exception e) {
+        }
+        return false;
+    }
+
+    /**
+     * 使用post方式访问服务器
+     * 上传崩溃日志
+     * */
+    public static void postSystemLog(String url,String logs){
+        OkHttpClient okHttpClient = MyHTTPClient.getInstance().getOkHttpClient();
+        JSONObject info = new JSONObject();
+        try {
+            info.put("log",logs);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        // SystemLogBody body = new SystemLogBody();
+        Map<String,Object> param = new HashMap<>();
+        param.put("type","addSystemLog");
+        param.put("user","K.B.");
+        param.put("msg","SystemLog");
+        param.put("info",info);
+        param.put("call_stack","/a/b/c.go");
+        param.put("platform","APP");
+       // body.setType("addSystemLog");
+       // body.setUser("K.B.");
+       // body.setMsg("SystemLog");
+       // body.setInfo(info);
+       // body.setCall_stack("/a/b/c.go");
+       // body.setPlatform("APP");
+       // Gson gson = new Gson();
+       // String jsonString = gson.toJson(body);
+        RequestBody requestBody =  FormBody.create(MediaType.parse("application/x-www-form-urlencoded; charset=utf-8"),param.toString());
+        /**RequestBody requestBody = new FormBody.Builder()
+                .add("type","addSystemLog")
+                .add("user","K.B.")
+                .add("msg","SystemLog")
+                .add("info",logs)
+                .add("call_stack","/a/b/c.go")
+                .add("platform","APP")
+                .build();*/
+
+        Request request = new Request.Builder()
+                .url(url)
+                .header(Constants.HEADER_CONTENT_TYPE_KEY,Constants.HEADER_CONTENT_TYPE_VAULE)
+                .post(requestBody)
+                .build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.isSuccessful()){
+                    try {
+                        JSONObject jsonObject = new JSONObject(response.body().string());
+                        if(jsonObject.get("status").equals("ok")){
+                            //连接成功
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
+
+
+    /**
+     * 获取系统时间戳
+     * */
+    public static long getLongTime(){
+        long time=System.currentTimeMillis();//获取系统时间的10位的时间戳（单位毫秒）
+        return time;
+    }
+
+    public static String getStringTime(){
+        long time=System.currentTimeMillis();//获取系统时间的10位的时间戳（单位毫秒）
+        String  str=String.valueOf(time);
+        return str;
+    }
+
+    /**
+     * 日期格式字符串转换成时间戳
+     * @param date_str 字符串日期
+     * @param format 如：yyyy-MM-dd HH:mm:ss
+     * @return
+     */
+    public static long date2TimeStamp(String date_str,String format){
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat(format);
+            return Long.parseLong(String.valueOf(sdf.parse(date_str).getTime()/1000));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public static String second2min(int second){
+        int min = (second%3600)/60;
+        if(min<10){
+            return new String("0"+min);
+        }else{
+            return String.valueOf(min);
+        }
+    }
+
+    public static String second2hour(int second){
+        int min = second/3600;
+        return String.valueOf(min);
+    }
+
+    public static String date2String(String date,int len){
+        date = date.replace("Z", " UTC");
+        System.out.println(date);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS Z");
+        Date d = null;
+        try {
+            d = format.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(d);
+       String start = calendar.get(Calendar.HOUR_OF_DAY)+":"+calendar.get(Calendar.MINUTE);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY)+len/3600;
+        int min = calendar.get(Calendar.MINUTE)+(len%3600)/60;
+        String end = hour+":"+min;
+        return new String(start+"-"+end);
+    }
+
+    @NonNull
+    public static String md5(String string) {
+        if (isEmpty(string)) {
+            return "";
+        }
+        MessageDigest md5 = null;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+            byte[] bytes = md5.digest(string.getBytes());
+            StringBuilder result = new StringBuilder();
+            for (byte b : bytes) {
+                String temp = Integer.toHexString(b & 0xff);
+                if (temp.length() == 1) {
+                    temp = "0" + temp;
+                }
+                result.append(temp);
+            }
+            return result.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public static String hmacSha1(String KEY, String VALUE) {
+        return hmacSha(KEY, VALUE, "HmacSHA1");
+    }
+
+    public static String hmacSha256(String KEY, String VALUE) {
+        return hmacSha(KEY, VALUE, "HmacSHA256");
+    }
+
+    private static String hmacSha(String KEY, String VALUE, String SHA_TYPE) {
+        try {
+            SecretKeySpec signingKey = new SecretKeySpec(KEY.getBytes("UTF-8"), SHA_TYPE);
+            Mac mac = Mac.getInstance(SHA_TYPE);
+            mac.init(signingKey);
+            byte[] rawHmac = mac.doFinal(VALUE.getBytes("UTF-8"));
+
+            byte[] hexArray = {
+                    (byte)'0', (byte)'1', (byte)'2', (byte)'3',
+                    (byte)'4', (byte)'5', (byte)'6', (byte)'7',
+                    (byte)'8', (byte)'9', (byte)'a', (byte)'b',
+                    (byte)'c', (byte)'d', (byte)'e', (byte)'f'
+            };
+            byte[] hexChars = new byte[rawHmac.length * 2];
+            for ( int j = 0; j < rawHmac.length; j++ ) {
+                int v = rawHmac[j] & 0xFF;
+                hexChars[j * 2] = hexArray[v >>> 4];
+                hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+            }
+            return new String(hexChars);
+        }
+        catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    /**
+     * 将日期转换成GMT日期 方法
+     * @param d
+     * @return
+     */
+    public static String getTimeToGMT(Date d){
+        SimpleDateFormat sdf  =  new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        DateFormat gmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        gmt.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String gmtStr=gmt.format(d);//日期 转成 字符串
+        Date gmt_date =null;
+        try {
+            gmt_date = sdf.parse(gmtStr); //字符串 转成 日期
+        } catch (ParseException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        return String.valueOf(gmt_date);
+    }
 
 
 }

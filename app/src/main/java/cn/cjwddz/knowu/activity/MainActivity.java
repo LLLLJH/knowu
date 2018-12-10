@@ -10,6 +10,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -31,6 +32,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -38,27 +40,52 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import cn.cjwddz.knowu.FragmentUI;
 import cn.cjwddz.knowu.R;
+import cn.cjwddz.knowu.common.http.MyHTTPClient;
+import cn.cjwddz.knowu.common.utils.MyUtils;
+import cn.cjwddz.knowu.interfaces.Get_userHeader;
+import cn.cjwddz.knowu.interfaces.Get_userInfo;
 import cn.cjwddz.knowu.service.Constants;
 import cn.cjwddz.knowu.service.KnowUBleService;
+import cn.cjwddz.knowu.service.MyInterface;
 import cn.cjwddz.knowu.service.Protocol;
 import cn.cjwddz.knowu.service.ServiceInterface;
 import cn.cjwddz.knowu.service.UIInterface;
 import cn.cjwddz.knowu.view.CountDownTimerView;
 import cn.cjwddz.knowu.common.application.AppManager;
 import cn.cjwddz.knowu.view.MyImageView;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static cn.cjwddz.knowu.FragmentUI.*;
 
-public class MainActivity extends BaseActivity implements RecyclerView.RecyclerListener,OnFragmentInteractionListener,UIInterface, OnClickListener,SeekBar.OnSeekBarChangeListener {
+public class MainActivity extends BaseActivity implements RecyclerView.RecyclerListener,OnFragmentInteractionListener,UIInterface, OnClickListener,MyInterface,Get_userInfo,Get_userHeader {
     private CountDownTimerView countDownTimerView;
     private DrawerLayout drawerLayout;
+    public static final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
+    private String str;
 
     private BluetoothManager bluetoothManager;
     private BluetoothAdapter bluetoothAdapter;
@@ -69,14 +96,16 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
     private ImageButton chira;
     private ImageButton relax;
     private ImageButton last;
+    private  TextView userName;
     private TextView fighting_tv;
     private TextView keepfit_tv;
     private TextView chira_tv;
     private TextView relax_tv;
     private TextView last_tv;
-    private SeekBar seekbar;
-    private TextView count;
+   // private SeekBar seekbar;
+   // private TextView count;
     private ImageView battery_iv;
+    private TextView bt_progress;
     private DisplayMetrics displayMetrics;
     private double width,density;
     private int firstprogress = 0;
@@ -88,8 +117,32 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
     private long exitTime = 0;
     ServiceInterface serviceInterface;
 
+    SharedPreferences sp;
+    SharedPreferences.Editor editor;
+    private String phoneNumber;
+    private String filename;
+
+
+    private static int STOPSPACE = 60;
+    private static int CHANGESPACE = 10000;
+    private long stopTime = 0;
+    private long startTime = 0;
+    private long endTime = 0;
+    private long startStopTime = 0;
+    private int model = 0;
+    private int intensity = 0;
+    private boolean isStop = false;//判断是否由暂停开始还是在启动时开始
+    private boolean isStart = false;//判断是否由暂停开始还是在启动时开始
 
     private KnowUBleService kUBService;
+    private MyInterface myInterface;
+    private Get_userInfo get_userInfo;
+    private Get_userHeader get_userHeader;
+    public void setGet_userHeader(Get_userHeader get_userHeader){this.get_userHeader = get_userHeader;}
+    public void setGet_userInfo(Get_userInfo get_userInfo){this.get_userInfo = get_userInfo;}
+    public void setMyInterface(MyInterface myInterface){
+        this.myInterface = myInterface;
+    }
     ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -130,9 +183,13 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
         }
     }
 
+
     @Override
     void initView() {
      setContentView(R.layout.slidemune);
+        setGet_userHeader(this);
+        setMyInterface(this);
+        setGet_userInfo(this);
         header = (MyImageView) findViewById(R.id.header);
          fighting = (ImageButton) findViewById(R.id.fighting);
         fighting_tv = (TextView) findViewById(R.id.fighting_tv);
@@ -144,21 +201,35 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
         chira_tv = (TextView) findViewById(R.id.chira_tv);
          relax = (ImageButton) findViewById(R.id.relax);
         relax_tv = (TextView) findViewById(R.id.relax_tv);
-        seekbar = (SeekBar) findViewById(R.id.seekbar);
-        count = (TextView) findViewById(R.id.count);
+        //seekbar = (SeekBar) findViewById(R.id.seekbar);
+       // count = (TextView) findViewById(R.id.count);
+        userName = (TextView) findViewById(R.id.username);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerlayout);
         battery_iv = (ImageView) findViewById(R.id.battery_iv);
-       // battery_iv.setImageResource(R.drawable.battery100);
+        bt_progress = (TextView) findViewById(R.id.bt_progress);
+        // battery_iv.setImageResource(R.drawable.battery100);
         fighting.setOnClickListener(this);
         keepfit.setOnClickListener(this);
         chira.setOnClickListener(this);
         relax.setOnClickListener(this);
-        seekbar.setOnSeekBarChangeListener(this);
+        //seekbar.setOnSeekBarChangeListener(this);
         //seekbar.setOnTouchListener(this);
         displayMetrics = getResources().getDisplayMetrics();
         width = displayMetrics.widthPixels;
         density = (width - dip2px(this, 51)) / 20;
-        initImageView();
+        sp = getSharedPreferences("knowu",MODE_PRIVATE);
+        editor = sp.edit();
+        phoneNumber = sp.getString("phoneNumber",null);
+        filename = MyUtils.hmacSha256("header",phoneNumber);
+
+        if(!sp.getBoolean("isLogin",false)){
+            // TODO: 请求获取信息（头像等并更新sharepreference）
+            getUserInfo(Constants.GET_USER_INFO_URL);
+            getUserHeader(Constants.GETHEADER,filename+".png");
+            editor.putBoolean("isLogin",true);
+            editor.commit();
+        }
+
     }
 
     @Override
@@ -174,33 +245,40 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
        layoutParams.leftMargin = (int)(progress*density);
-       count.setLayoutParams(layoutParams);
-       count.setText("LV."+progress);
+       //count.setLayoutParams(layoutParams);
+       //count.setText("LV."+progress);
    }
 
     private void initImageView(){
-        File file = new File(Environment.getExternalStorageDirectory().getPath(),"cutcamera.png");
-        Uri uri0 = Uri.fromFile(file);
-        try {
-            //获取裁剪后的图片，并显示出来
-            Bitmap bitmap = BitmapFactory.decodeStream(
-                    getContentResolver().openInputStream(uri0));
-            //图片还未回收，先强制回收该图片
-            BitmapDrawable bitmapDrawable = (BitmapDrawable) header.getDrawable();
-            if(bitmapDrawable != null && !bitmapDrawable.getBitmap().isRecycled()){
-                bitmapDrawable.getBitmap().recycle();
+        String nickName = sp.getString("nickName","lll");
+        userName.setText(nickName);
+        File file = new File(Environment.getExternalStorageDirectory().getPath(),filename+".png");
+        if(file.length()!=0){
+            Uri uri0 = Uri.fromFile(file);
+            try {
+                //获取裁剪后的图片，并显示出来
+                Bitmap bitmap = BitmapFactory.decodeStream(
+                        getContentResolver().openInputStream(uri0));
+                //图片还未回收，先强制回收该图片
+                BitmapDrawable bitmapDrawable = (BitmapDrawable) header.getDrawable();
+                if(bitmapDrawable != null && !bitmapDrawable.getBitmap().isRecycled()){
+                    bitmapDrawable.getBitmap().recycle();
+                }
+                header.setImageBitmap(bitmap);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
             }
-            header.setImageBitmap(bitmap);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         }
+
     }
     @Override
     public void onViewRecycled(RecyclerView.ViewHolder holder) {
         // 下拉刷新
     }
     public void startSearch(View v){
-
+        Intent intent = new Intent();
+        intent.setClass(MainActivity.this,DeviceDetailsActivity.class);
+        startActivity(intent);
     }
 
 
@@ -221,6 +299,63 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    /**
+     * 计时开始
+     * */
+    @Override
+    public void countdownStart() {
+        /**if(isStop){
+            stopTime += (int) (getLongTime()-startStopTime);//获得暂停的秒数
+            startStopTime = 0;
+            isStop = false;
+        }else{
+         startTime = getLongTime();
+        }*/
+        startTime = getLongTime();
+        isStop = false;
+        isStart = true;
+    }
+
+    /**
+     * 暂停计时
+     * */
+    @Override
+    public void countdownStop() {
+        //startStopTime = getLongTime();
+        endTime = getLongTime();
+        long len = (endTime - startTime)/1000;
+        postUserRecord(Constants.ADD_USER_RECORD_URL,startTime,len,model,intensity,stopTime);
+        init();
+        isStop = true;
+        isStart = false;
+    }
+
+    /**
+     * 计时结束
+     * */
+    @Override
+    public void countdownFinished() {
+        endTime = getLongTime();
+        long len = (endTime - startTime)/1000;
+        postUserRecord(Constants.ADD_USER_RECORD_URL,startTime,len,model,intensity,stopTime);
+        init();
+        isStart = false;
+    }
+
+    private void init(){
+        startTime = 0;
+        endTime = 0;
+        stopTime = 0;
+       startStopTime = 0;
+    }
+
+    private void initTime(){
+        startTime = getLongTime();
+        endTime = 0;
+        stopTime = 0;
+        startStopTime = 0;
     }
 
     public void connect(){
@@ -266,10 +401,10 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
     @Override
     public void connectSuccess() {
         undateFragment(2);
-        seekbar.setThumb(getResources().getDrawable(R.drawable.seekbar_clicked));
+        //seekbar.setThumb(getResources().getDrawable(R.drawable.seekbar_clicked));
         fighting.setSelected(true);
         fighting_tv.setTextColor(getResources().getColor(R.color.text_color));
-        count.setBackgroundResource(R.drawable.count_clicked);
+        //count.setBackgroundResource(R.drawable.count_clicked);
         Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {
             @Override
@@ -337,9 +472,6 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
         }
         // TODO: 更新电量图标
         switch (count){
-            case 75:
-                battery_iv.setImageResource(R.drawable.battery75);
-                break;
             case 50:
                 battery_iv.setImageResource(R.drawable.battery50);
                 break;
@@ -359,18 +491,20 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
     @Override
     public void back() {
         undateFragment(0);
-        seekbar.setThumb(getResources().getDrawable(R.drawable.seekbar));
+        //seekbar.setThumb(getResources().getDrawable(R.drawable.seekbar));
         progress = 0;
-        seekbar.setProgress(progress);
+        //seekbar.setProgress(progress);
+        bt_progress.setText(String.valueOf(progress));
         initSeekbarProgress();
         fighting.setSelected(false);
         fighting_tv.setTextColor(getResources().getColor(R.color.mode_text_color));
-        count.setBackgroundResource(R.drawable.count);
+        //count.setBackgroundResource(R.drawable.count);
     }
 
     @Override
     public void setLastProgress(int progress) {
-        seekbar.setProgress(progress);
+        bt_progress.setText(String.valueOf(progress));
+        this.progress = progress;
     }
 
     @Override
@@ -402,6 +536,13 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
                     last_tv.setTextColor(getResources().getColor(R.color.mode_text_color));
                     last = fighting;
                     last_tv = fighting_tv;
+                    if(isStart&&endTime - startTime>CHANGESPACE){
+                        endTime = getLongTime();
+                        long len = (endTime - startTime)/1000;
+                        postUserRecord(Constants.ADD_USER_RECORD_URL,startTime,len,model,intensity,stopTime);
+                        initTime();
+                    }
+                    model = 0;
                 }
                 break;
             case R.id.keepfit:
@@ -417,6 +558,13 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
                     last_tv.setTextColor(getResources().getColor(R.color.mode_text_color));
                     last = keepfit;
                     last_tv = keepfit_tv;
+                    if(isStart&&endTime - startTime>CHANGESPACE){
+                        endTime = getLongTime();
+                        long len = (endTime - startTime)/1000;
+                        postUserRecord(Constants.ADD_USER_RECORD_URL,startTime,len,model,intensity,stopTime);
+                        initTime();
+                    }
+                    model = 1;
                 }
                 break;
             case R.id.chira:
@@ -432,6 +580,13 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
                     last_tv.setTextColor(getResources().getColor(R.color.mode_text_color));
                     last = chira;
                     last_tv = chira_tv;
+                    if(isStart&&endTime - startTime>CHANGESPACE){
+                        endTime = getLongTime();
+                        long len = (endTime - startTime)/1000;
+                        postUserRecord(Constants.ADD_USER_RECORD_URL,startTime,len,model,intensity,stopTime);
+                        initTime();
+                    }
+                    model = 2;
                 }
                 break;
             case R.id.relax:
@@ -447,36 +602,66 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
                     last_tv.setTextColor(getResources().getColor(R.color.mode_text_color));
                     last = relax;
                     last_tv = relax_tv;
+                    if(isStart&&endTime - startTime>CHANGESPACE){
+                        endTime = getLongTime();
+                        long len = (endTime - startTime)/1000;
+                        postUserRecord(Constants.ADD_USER_RECORD_URL,startTime,len,model,intensity,stopTime);
+                        initTime();
+                    }
+                    model = 3;
                 }
                 break;
-            case R.id.information:
+            /**case R.id.information:
                 Intent intent = new Intent();
                 intent.setClass(MainActivity.this,InformationActivity.class);
                 startActivity(intent);
-                break;
+                break;*/
            default:break;
         }
     }
 
     public void addProgress(View view){
-        progress = seekbar.getProgress();
+        if(!kUBService.isLink()){
+            showToast("设备未连接！！！");
+            return;
+        }
+
         if(progress < 15){
+            if(isStart&&endTime - startTime>CHANGESPACE){
+                endTime = getLongTime();
+                long len = (endTime - startTime)/1000;
+                postUserRecord(Constants.ADD_USER_RECORD_URL,startTime,len,model,intensity,stopTime);
+                initTime();
+        }
             progress = progress +1;
-            seekbar.setProgress(progress);
+            bt_progress.setText(String.valueOf(progress));
             lastprogress = progress;
             kUBService.sendMessage(Protocol.getIntensitySetInstruct(progress));
+            intensity = progress;
         }
+
     }
     public void minusProgress(View view){
-        progress = seekbar.getProgress();
+        if(!kUBService.isLink()){
+            showToast("设备未连接！！！");
+            return;
+        }
         if (progress > 0){
+            if(isStart&&endTime - startTime>CHANGESPACE){
+                endTime = getLongTime();
+                long len = (endTime - startTime)/1000;
+                postUserRecord(Constants.ADD_USER_RECORD_URL,startTime,len,model,intensity,stopTime);
+                initTime();
+        }
             progress = progress-1;
-            seekbar.setProgress(progress);
+            bt_progress.setText(String.valueOf(progress));
             lastprogress = progress;
             kUBService.sendMessage(Protocol.getIntensitySetInstruct(progress));
+            intensity = progress;
         }
-    }
 
+    }
+/**
     @Override
     public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
         // TODO: 滑块力度选择改变回调实现
@@ -486,6 +671,7 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
             return;
         }
         progress = seekBar.getProgress();
+
         initSeekbarProgress();
     }
 
@@ -515,7 +701,7 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
            kUBService.sendMessage(Protocol.getIntensitySetInstruct(seekBar.getProgress()));
        }
     }
-
+*/
 
     private void showToast(String s){
         Toast.makeText(this,s, Toast.LENGTH_SHORT).show();
@@ -552,15 +738,20 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
         return super.onKeyDown(keyCode, event);
     }
 
+    /**
+     *打开个人信息页
+     */
     public void getInformation(View view){
         Intent intent = new Intent();
         intent.setClass(MainActivity.this,InformationActivity.class);
         startActivity(intent);
     }
-
+  /**
+   * 查看头像
+   * */
     public void openHeader(View view){
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        File file = new File(Environment.getExternalStorageDirectory().getPath(),"cutcamera.png");
+        File file = new File(Environment.getExternalStorageDirectory().getPath(),filename+".png");
         Uri uri;
         if (Build.VERSION.SDK_INT >= 24) {
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -575,9 +766,263 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
         startActivity(intent);
     }
 
+
+
+    /**
+     * 使用post方式访问服务器
+     * 上传用户使用记录
+     *
+     * @param url
+     * @param startTime  计时开始时间
+     * @param len   使用时长
+     * @param model   使用模式
+     * @param intensity  使用力度
+     * @param stopTime  暂停时间
+     * */
+    public  void postUserRecord(String url, final long startTime, long len, Integer model, Integer intensity, long stopTime){
+        OkHttpClient okHttpClient = MyHTTPClient.getInstance().getOkHttpClient();
+        JSONObject info = new JSONObject();
+        JSONArray infoArray = new JSONArray();
+        try {
+            info.put("startTime",startTime);
+            info.put("len",len);
+            info.put("mode",model);
+            info.put("intensity",intensity);
+            info.put("stopTime",stopTime);
+            infoArray.put(info);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestBody requestBody =  FormBody.create(JSON,infoArray.toString());
+        final Request request = new Request.Builder()
+                .url(url)
+                .header(Constants.HEADER_CONTENT_TYPE_KEY,Constants.HEADER_CONTENT_TYPE_VAULE)
+                .post(requestBody)
+                .build();
+        //Toast.makeText(this,"提交用户信息",Toast.LENGTH_SHORT).show();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                myInterface.failure(e);
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                str = response.body().string();
+                boolean status = false;
+                JSONArray msg = new JSONArray();
+                System.out.println(response.code());
+                System.out.println(str);
+                if(!str.isEmpty()){
+                    try {
+                        JSONObject jsonObject = new JSONObject(str);
+                        status = jsonObject.getBoolean("status");
+                        msg = jsonObject.getJSONArray("err");
+                    } catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }else{
+                    myInterface.failed(call, response);
+                }
+                if (status) {
+                    System.out.println(status + msg.toString());
+                    myInterface.successed(call, response);
+                } else {
+                    System.out.println(status + msg.toString());
+                    myInterface.failed(call, response);
+                }
+            }
+
+        });
+    }
+
+    /**
+     * 使用get方式访问服务器
+     * 获取用户信息
+     *
+     * @param url
+     *
+     * */
+    public  void getUserInfo(String url){
+        OkHttpClient okHttpClient = MyHTTPClient.getInstance().getOkHttpClient();
+        final Request request = new Request.Builder()
+                .url(url)
+                .build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                get_userInfo.failureGetuserInfo(e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.isSuccessful()){
+                   get_userInfo.successedGetuserInfo(call,response);
+                }else{
+                  get_userInfo.failedGetuserInfo(call,response);
+                }
+            }
+        });
+    }
+
+    /**
+     * 使用get方式访问服务器
+     * 获取用户信息
+     *
+     * @param url
+     *
+     * */
+    public  void getUserHeader(String url,String filename){
+        OkHttpClient okHttpClient = MyHTTPClient.getInstance().getOkHttpClient();
+        final Request request = new Request.Builder()
+                .url(url+filename)
+                .build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                get_userHeader.failureGetuserHeader(e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.isSuccessful()){
+                    get_userHeader.successedGetuserHeader(call,response);
+                }else{
+                    get_userHeader.successedGetuserHeader(call,response);
+                }
+            }
+        });
+    }
+
+    /**
+     * 获取系统时间戳
+     * */
+    public long getLongTime(){
+        long time=System.currentTimeMillis();//获取系统时间的10位的时间戳（单位毫秒）
+        return time;
+    }
+
+    public String getStringTime(){
+        long time=System.currentTimeMillis();//获取系统时间的10位的时间戳（单位毫秒）
+        String  str=String.valueOf(time);
+        return str;
+    }
+
+    /**
+     * 退出登录
+     * */
     public void exit(View view){
+        editor.putBoolean("isLogin",false);
+        editor.commit();
         AppManager.getAppManager().finishAllActivity();
         System.exit(0);
     }
 
+    /**
+     * 打开用户记录页
+     * */
+    public void userRecord(View view){
+        Intent intent = new Intent();
+        intent.setClass(MainActivity.this,RecordActivity.class);
+        startActivity(intent);
+    }
+
+    /**
+     * 关于女有
+     * */
+    public void about(View view){
+        Intent intent = new Intent();
+        intent.setClass(MainActivity.this,AboutActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void successed(Call call, Response response) throws IOException {
+
+    }
+
+    @Override
+    public void failure(IOException e) {
+        System.out.println("服务器异常！！！");
+    }
+
+    @Override
+    public void failed(Call call, Response response) throws IOException {
+
+    }
+
+    @Override
+    public void register() {
+
+    }
+
+    @Override
+    public void successedGetuserInfo(Call call, Response response) throws IOException {
+        try {
+            JSONObject jsonObject = new JSONObject(response.body().string());
+            System.out.println(jsonObject.toString());
+            if(jsonObject.getBoolean("status")){
+                JSONObject data = jsonObject.getJSONObject("data");
+                editor.putString("nickName",data.getString("nickName"));
+                editor.putString("bDate",data.getString("bDate"));
+                editor.putString("height",data.getString("height"));
+                editor.putString("weight",data.getString("weight"));
+                editor.putString("mDate",data.getString("mDate"));
+                editor.commit();
+            }else{
+
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void failureGetuserInfo(IOException e) {
+        System.out.println("服务器异常");
+    }
+
+    @Override
+    public void failedGetuserInfo(Call call, Response response) throws IOException {
+        System.out.println("服务器异常");
+    }
+
+    @Override
+    public void successedGetuserHeader(Call call, Response response) throws IOException {
+        //将响应数据转化为输入流数据
+        InputStream inputStream=response.body().byteStream();
+        //将输入流数据转化为Bitmap位图数据
+        Bitmap bitmap= BitmapFactory.decodeStream(inputStream);
+        File file = new File(Environment.getExternalStorageDirectory().getPath(),filename+".png");
+        if (file.exists()){
+            file.delete();
+        }
+        file.createNewFile();
+        //创建文件输出流对象用来向文件中写入数据
+        FileOutputStream out=new FileOutputStream(file);
+        //将bitmap存储为jpg格式的图片
+        bitmap.compress(Bitmap.CompressFormat.PNG,100,out);
+        //刷新文件流
+        out.flush();
+        out.close();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                initImageView();
+            }
+        });
+    }
+
+    @Override
+    public void failureGetuserHeader(IOException e) {
+        System.out.println("服务器异常");
+    }
+
+    @Override
+    public void failedGetuserHeader(Call call, Response response) throws IOException {
+        System.out.println("服务器异常");
+    }
 }

@@ -1,7 +1,7 @@
 package cn.cjwddz.knowu.service;
 
 /**
- * Created by Administrator on 2018/7/18.
+ * Created by K.B. on 2018/7/18.
  */
 
 public interface UIInterface {

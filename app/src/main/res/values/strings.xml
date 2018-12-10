@@ -1,6 +1,17 @@
 <resources>
-    <string name="app_name">knowu</string>
-
+    <string name="app_name">FrealU</string>
+    <string name="DeviceDetailsActivity_label">设备详情</string>
+    <string name="AboutActivity_label">关于女有</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--AboutActivity字符串-->
+    <string name="appVersion">应用版本</string>
+    <string name="checkNewVersion">检查更新</string>
+    <string name="giveSomeIdeas">意见反馈</string>
+    <string name="addInformation">信息设置</string>
+    <string name="setOpinion">意见反馈</string>
+    <string name="recordForm">信息记录表</string>
+
+    <string name="deviceName">FREAL-U</string>
 </resources>
