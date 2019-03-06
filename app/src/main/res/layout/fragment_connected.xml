@@ -2,23 +2,44 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:gravity="center"
+    >
+<FrameLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
     <cn.cjwddz.knowu.view.CountDownTimerView
         android:id="@+id/timer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        >
-    </cn.cjwddz.knowu.view.CountDownTimerView>
-    <Button
-        android:id="@+id/startTiming"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="开 始"
-        android:layout_marginTop="5dp"
-        android:textColor="#ffffff"
-        android:textSize="20dp"
-        android:background="@drawable/btn_start_selector"
-        android:layout_gravity="center_horizontal"
-        />
+        ></cn.cjwddz.knowu.view.CountDownTimerView>
+    <ImageButton
+    android:id="@+id/ib_heating"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="end"
+    android:background="@color/white"
+    android:layout_marginTop="20dp"
+    android:layout_marginRight="20dp"
+    android:src="@drawable/heating_selector" />
+</FrameLayout>
+
+
+
+
+           <Button
+               android:id="@+id/startTiming"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="开 始"
+               android:layout_marginTop="5dp"
+               android:textColor="#ffffff"
+               android:textSize="20sp"
+               android:background="@drawable/btn_start_selector"
+               android:layout_gravity="center"
+               />
+
+
+
 
 </LinearLayout>

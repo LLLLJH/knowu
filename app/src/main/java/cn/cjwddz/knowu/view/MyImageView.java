@@ -41,6 +41,7 @@ public class MyImageView extends android.support.v7.widget.AppCompatImageView {
     private static final int WEIGHT = 6;
     private int weights;
     private int borderRadius;
+    private boolean hadFrame = true;
     // 默认圆角宽度
     private static final int BORDER_RADIUS_DEFAULT = 10;
     //直径与半径
@@ -99,6 +100,8 @@ public class MyImageView extends android.support.v7.widget.AppCompatImageView {
                 case R.styleable.MyImageView_weight:
                     weights = array.getInt(R.styleable.MyImageView_weight,WEIGHT);
                     break;
+                case R.styleable.MyImageView_hadFrame:
+                    hadFrame = array.getBoolean(R.styleable.MyImageView_hadFrame,hadFrame);
                 default:break;
             }
         }
@@ -138,7 +141,9 @@ public class MyImageView extends android.support.v7.widget.AppCompatImageView {
             if(type == TYPE_CIRCLE){
                 //在ImageView上无图画圆
                 canvas.drawCircle(point,point,radius,dPaint);
-                canvas.drawCircle(point,point,radius,framePaint);
+                if(hadFrame){
+                    canvas.drawCircle(point,point,radius,framePaint);
+                }
             }else{
                 //在ImageView上无图画圆角矩形
                 canvas.drawRoundRect(rect,borderRadius,borderRadius,dPaint);
@@ -148,7 +153,9 @@ public class MyImageView extends android.support.v7.widget.AppCompatImageView {
             if(type == TYPE_CIRCLE){
                 //在ImageView上以位图渲染画圆
                 canvas.drawCircle(point,point,radius,paint);
-                canvas.drawCircle(point,point,radius,framePaint);
+                if(hadFrame){
+                    canvas.drawCircle(point,point,radius,framePaint);
+                }
             }else{
                 //在ImageView上以位图渲染画圆角矩形
                 canvas.drawRoundRect(rect,borderRadius,borderRadius,paint);
@@ -159,21 +166,19 @@ public class MyImageView extends android.support.v7.widget.AppCompatImageView {
 
     private void setShader(){
         Drawable drawable = getDrawable();
-        Drawable drawable1 = getResources().getDrawable(R.drawable.headframe,null);
         if (drawable == null) {
             return;
         }
         //将drawable转换成bitmap
         Bitmap bitmap = drawable2Bitmap(drawable);
-        Bitmap bitmap1 = drawable2Bitmap(drawable1);
+
         //CLAMP(拉伸)、REPEAT(重复)、MIRROR(镜像)，shader的拉伸方式为拉伸最后一像素
         bitmapShader = new BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-        bitmapShader1 = new BitmapShader(bitmap1, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+
         //图片缩放，若图片仍小于ImageView则拉伸最后一像素，否则不拉伸
         float scale = 1.0f;
         float scale1 ;
-        int bitmapWidth1 = Math.min(bitmap1.getWidth(),bitmap1.getHeight());
-        scale1 = getWidth()*1.0f/bitmapWidth1;
+
         if(type == TYPE_CIRCLE){
             // bitmap.getxxx获取位图的宽高，getxxx获取ImageView的宽高取小值，如果取大值的话，则不能覆盖view
             int bitmapWidth = Math.min(bitmap.getWidth(),getHeight());
@@ -184,9 +189,16 @@ public class MyImageView extends android.support.v7.widget.AppCompatImageView {
         matrix.setScale(scale,scale);
         bitmapShader.setLocalMatrix(matrix);
         paint.setShader(bitmapShader);
-        matrix1.setScale(scale1,scale1);
-        bitmapShader1.setLocalMatrix(matrix1);
-        framePaint.setShader(bitmapShader1);
+        if(hadFrame){
+            Drawable drawable1 = getResources().getDrawable(R.drawable.headframe,null);
+            Bitmap bitmap1 = drawable2Bitmap(drawable1);
+            bitmapShader1 = new BitmapShader(bitmap1, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+            int bitmapWidth1 = Math.min(bitmap1.getWidth(),bitmap1.getHeight());
+            scale1 = getWidth()*1.0f/bitmapWidth1;
+            matrix1.setScale(scale1,scale1);
+            bitmapShader1.setLocalMatrix(matrix1);
+            framePaint.setShader(bitmapShader1);
+        }
     }
 
     /**

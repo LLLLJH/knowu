@@ -47,24 +47,27 @@ public class DownloadPresenter {
                 .build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {}
+            public void onFailure(Call call, IOException e) {downloadView.showMsg();}
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                System.out.println("版本更新检查");
+                //System.out.println("版本更新检查");
                 String url = "";
+                String new_version = "";
                boolean forceUpdate = false;
                 try {
                     JSONObject jsonObject = new JSONObject(response.body().string());
-                    forceUpdate = jsonObject.getBoolean("forceUpdate");
+                    System.out.println(jsonObject.toString());
+                    //forceUpdate = jsonObject.getBoolean("forceUpdate");
                     url = jsonObject.getString("url");
+                    new_version = jsonObject.getString("new_version");
                 } catch(Exception e){
                     e.printStackTrace();
                 }
 
-                if(!forceUpdate){
+                if(new_version.equals(now_version)){
                     downloadView.showMsg();
                 }else{
-                    downloadView.showUpdateDialog(Constants.GETAPK);
+                    downloadView.showUpdateDialog(url);
                 }
             }
             });

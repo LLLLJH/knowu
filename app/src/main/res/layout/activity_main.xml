@@ -241,16 +241,24 @@
                     </LinearLayout>
                 </FrameLayout>
 
-
             </LinearLayout>
 
-            <ImageView
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="3px"
-                android:layout_marginLeft="80px"
-                android:layout_marginRight="80px"
-                android:scaleType="fitXY"
-                android:src="@drawable/progress" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@color/white"
+                >
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="3px"
+                    android:layout_marginRight="50px"
+                    android:layout_marginLeft="50px"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/progress"
+                    />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"

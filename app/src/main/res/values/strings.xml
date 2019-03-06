@@ -14,4 +14,7 @@
     <string name="recordForm">信息记录表</string>
 
     <string name="deviceName">FREAL-U</string>
+
+    <string name="tabDay">日</string>
+    <string name="tabMouth">月</string>
 </resources>

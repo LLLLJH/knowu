@@ -17,4 +17,5 @@ public interface UIInterface {
     void updateView(int count);
     void back();
     void setLastProgress(int progress);
+    void setDeepStatus(boolean deepStatus);
 }

@@ -4,6 +4,7 @@ package cn.cjwddz.knowu.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
@@ -23,6 +24,7 @@ import java.util.List;
 
 import cn.cjwddz.knowu.R;
 import cn.cjwddz.knowu.adapters.ViewPagerAdapter;
+import cn.cjwddz.knowu.common.application.AppManager;
 
 public class GuideActivity extends Activity implements ViewPager.OnPageChangeListener,View.OnTouchListener{
     private ViewPager viewPager;
@@ -39,6 +41,10 @@ public class GuideActivity extends Activity implements ViewPager.OnPageChangeLis
     private  float startX;
     private float endX;
 
+    private Boolean isLogin;
+    //内储存
+    SharedPreferences preferences;
+
      Animation arrowdown;
     Animation a;
     @Override
@@ -49,6 +55,8 @@ public class GuideActivity extends Activity implements ViewPager.OnPageChangeLis
         //隐藏状态栏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_guide);
+        preferences = getSharedPreferences("knowu",MODE_PRIVATE);
+        isLogin = preferences.getBoolean("isLogin",false);
         point_iv = findViewById(R.id.pointImageView);
         mListView = new ArrayList<View>();
         LayoutInflater layoutInflater =getLayoutInflater();
@@ -195,12 +203,14 @@ public class GuideActivity extends Activity implements ViewPager.OnPageChangeLis
                 endX = motionEvent.getX();
                 WindowManager w = (WindowManager)getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
                int width = w.getDefaultDisplay().getWidth();
-                if(currentItem ==4&&(startX-endX)>=(width/4)){
+                if(currentItem ==4 && (startX-endX)>=(width/4) && !isLogin){
                     Intent intent = new Intent();
-                    intent.setClass(this,MainActivity.class);
+                    intent.setClass(this,InformationActivity.class);
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
-                    finish();
+                    AppManager.getAppManager().finishActivity(GuideActivity.class);
+                }else if(currentItem ==4 && (startX-endX)>=(width/4)){
+                    AppManager.getAppManager().finishActivity(GuideActivity.class);
                 }
                 break;
         }
@@ -210,7 +220,11 @@ public class GuideActivity extends Activity implements ViewPager.OnPageChangeLis
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode == event.KEYCODE_BACK&&event.getAction() ==KeyEvent.ACTION_DOWN){
-            return true;
+            if(!isLogin){
+               return true;
+            }else {
+               finish();
+            }
         }
         return super.onKeyDown(keyCode, event);
     }

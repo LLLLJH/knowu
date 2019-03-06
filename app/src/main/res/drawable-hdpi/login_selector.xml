@@ -2,11 +2,11 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:state_pressed="true"
-        android:drawable="@drawable/login_clicked_long"
+        android:drawable="@drawable/login_clicked"
         />
     <item
         android:state_pressed="false"
-        android:drawable="@drawable/login_clicked"
+        android:drawable="@drawable/login_clickable"
         />
 
 

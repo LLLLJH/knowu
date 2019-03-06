@@ -60,9 +60,17 @@ public class Constants {
     //获取头像
     public static final String GETHEADER= " http://source.cjwddz.cn/userHeader/";
 
-    //获取头像
+    //获取APP
     public static final String GETAPK= " http://source.cjwddz.cn/APK/FrealU.apk";
 
+    //获取当年十二个月份数据
+    public static final String GET_YEAR_OF_MONTH = "https://cjwddz.cn/frealu/user/record/getStatisticsReport";
+    //获取当年其中一个月数据
+    public static final String GET_MONTH = "https://cjwddz.cn/frealu/user/record/getAnalysisReport";
+    //获取某个月每一天数据
+    public static final String GET_MONTH_OF_DAY = "https://cjwddz.cn/frealu/user/record/getStatisticsReport";
+    //获取某一天数据
+    public static final String GET_DAY = "https://cjwddz.cn/frealu/user/record/getAnalysisReport";
 
     public static final String HEADER_CONTENT_TYPE_KEY = "Content-Type";
     public static final String HEADER_CONTENT_TYPE_VAULE = "application/x-www-form-urlencoded";

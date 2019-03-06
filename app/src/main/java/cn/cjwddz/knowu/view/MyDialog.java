@@ -13,7 +13,7 @@ import cn.cjwddz.knowu.common.utils.MyUtils;
 /**
  * Created by Administrator on 2018/8/6.
  */
-// TODO: 2018/8/7 完善/封装自定义Dialog
+//  2018/8/7 完善/封装自定义Dialog
 public class MyDialog extends Dialog {
     private Context context;
     private int height,width;

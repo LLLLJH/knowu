@@ -449,10 +449,31 @@ public class MyUtils {
         }
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(d);
-       String start = calendar.get(Calendar.HOUR_OF_DAY)+":"+calendar.get(Calendar.MINUTE);
+        String min_start = calendar.get(Calendar.MINUTE)>=10?String.valueOf(calendar.get(Calendar.MINUTE)):"0"+calendar.get(Calendar.MINUTE);
+       String start = calendar.get(Calendar.HOUR_OF_DAY)+":"+min_start;
         int hour = calendar.get(Calendar.HOUR_OF_DAY)+len/3600;
         int min = calendar.get(Calendar.MINUTE)+(len%3600)/60;
-        String end = hour+":"+min;
+        if(min>=60){
+            min = min%60;
+            hour = hour + min/60;
+        }
+        if(hour>=24){
+            hour = hour%24;
+        }
+        String end = null;
+        if(min<10){
+            end = hour+":"+"0"+min;
+            return new String(start+"-"+end);
+        }
+        if(hour<10){
+            end = "0"+hour+":"+min;
+            return new String(start+"-"+end);
+        }
+        if (hour<10&&min<10){
+            end = "0"+hour+":"+"0"+min;
+            return new String(start+"-"+end);
+        }
+        end = +hour+":"+min;
         return new String(start+"-"+end);
     }
 
@@ -533,5 +554,41 @@ public class MyUtils {
         return String.valueOf(gmt_date);
     }
 
+    /**
+     * 字节数组拆分
+     *
+     * @param paramArrayOfByte 原始数组
+     * @param paramInt1        起始下标
+     * @param paramInt2        要截取的长度
+     * @return 处理后的数组
+     */
+    public static byte[] SubArray(byte[] paramArrayOfByte, int paramInt1, int paramInt2) {
+        byte[] arrayOfByte = new byte[paramInt2];
+        int i = 0;
+        while (true) {
+            if (i >= paramInt2)
+                return arrayOfByte;
+            arrayOfByte[i] = paramArrayOfByte[(i + paramInt1)];
+            i += 1;
+        }
+    }
+
+    /**
+     * byte数组装String
+     * */
+    public static String byte2hex(byte [] buffer){
+        String h = "";
+
+        for(int i = 0; i < buffer.length; i++){
+            String temp = Integer.toHexString(buffer[i] & 0xFF);
+            if(temp.length() == 1){
+                temp = "0" + temp;
+            }
+            h = h + " "+ temp;
+        }
+
+        return h;
+
+    }
 
 }

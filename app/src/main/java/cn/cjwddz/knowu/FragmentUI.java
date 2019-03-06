@@ -13,9 +13,11 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import cn.cjwddz.knowu.activity.MainActivity;
+import cn.cjwddz.knowu.service.FragmentUIInterface;
 import cn.cjwddz.knowu.service.KnowUBleService;
 import cn.cjwddz.knowu.service.Protocol;
 import cn.cjwddz.knowu.service.ServiceInterface;
@@ -30,7 +32,7 @@ import cn.cjwddz.knowu.view.CountDownTimerView;
  * Use the {@link FragmentUI#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FragmentUI extends Fragment implements CountDownTimerView.onTimer{
+public class FragmentUI extends Fragment implements CountDownTimerView.onTimer,FragmentUIInterface{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -52,15 +54,21 @@ public class FragmentUI extends Fragment implements CountDownTimerView.onTimer{
     private boolean timerStatus = true;
     private int times;
     private Button st_button;
+    private ImageButton ib_heating;
+    private boolean heating_status = false;
 
     ServiceInterface serviceInterface;
    private KnowUBleService kUBService;
+    MainActivity activity;
 
     public FragmentUI() {
         // Required empty public constructor
     }
     public void setBleService(KnowUBleService service){
         kUBService=service;
+        if(kUBService!=null){
+            kUBService.setFragmentUIInterface(FragmentUI.this);
+        }
     }
 
     /**
@@ -88,8 +96,8 @@ public class FragmentUI extends Fragment implements CountDownTimerView.onTimer{
             //mParam1 = getArguments().getString(ARG_PARAM1);
            // mParam2 = getArguments().getString(ARG_PARAM2);
             id = getArguments().getInt(FRAGMENT_ID);
-
         }
+        activity = (MainActivity) getActivity();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -130,7 +138,6 @@ public class FragmentUI extends Fragment implements CountDownTimerView.onTimer{
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity activity = (MainActivity) getActivity();
                 activity.connect();
             }
         });
@@ -167,8 +174,7 @@ public class FragmentUI extends Fragment implements CountDownTimerView.onTimer{
         if (mListener != null) {
             mListener.countdownStart();
         }
-       // st_button.setText("停 止");
-        //st_button.setTextSize(20);
+        st_button.setText("停 止");
     }
 
     @Override
@@ -178,7 +184,6 @@ public class FragmentUI extends Fragment implements CountDownTimerView.onTimer{
             mListener.countdownFinished();
         }
         st_button.setText("开 始");
-        st_button.setTextSize(20);
     }
 
     @Override
@@ -187,8 +192,25 @@ public class FragmentUI extends Fragment implements CountDownTimerView.onTimer{
         if (mListener != null) {
             mListener.countdownStop();
         }
-       // st_button.setText("开 始");
-        //st_button.setTextSize(20);
+        st_button.setText("开 始");
+    }
+
+    @Override
+    public void openSuccess() {
+        heating_status = !heating_status;
+        ib_heating.setSelected(heating_status);
+    }
+
+    @Override
+    public void openFail() {
+        ib_heating.setSelected(heating_status);
+        activity.Toast("请连接电源才可加热哦");
+    }
+
+    @Override
+    public void closeSuccess() {
+        heating_status = !heating_status;
+        ib_heating.setSelected(heating_status);
     }
 
 
@@ -215,18 +237,29 @@ public class FragmentUI extends Fragment implements CountDownTimerView.onTimer{
         countDownTimerView =  fragmentView.findViewById(R.id.timer);
         countDownTimerView.setTimer(this);
         st_button = fragmentView.findViewById(R.id.startTiming);
+        ib_heating = fragmentView.findViewById(R.id.ib_heating);
+
+        ib_heating.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!heating_status){
+                    kUBService.sendMessage(Protocol.getOpenHeating());
+                }else{
+                    kUBService.sendMessage(Protocol.getCloseHeating());
+                }
+            }
+        });
+
         st_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(countDownTimerView.isZero() != 0){
                     if(!st_button.getText().toString().equals("开 始")){
                         countDownTimerView.stop();
-                        st_button.setText("开 始");
-                        st_button.setTextSize(20);
+
                     }else{
                         countDownTimerView.start();
-                        st_button.setText("停 止");
-                        st_button.setTextSize(20);
+
                     }
                 }
             }
@@ -234,7 +267,9 @@ public class FragmentUI extends Fragment implements CountDownTimerView.onTimer{
         st_button.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                kUBService.disConnectDevice();
+                if(kUBService != null){
+                    kUBService.disConnectDevice();
+                }
                 return true;
             }
         });

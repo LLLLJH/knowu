@@ -37,12 +37,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:onClick="openHeader"
+                android:onClick="getInformation"
                 android:scaleType="fitEnd"
                 android:src="@drawable/dfheader"
                 app:borderRadius="20dp"
                 app:imageType="circle"
                 app:weight="4"
+                app:hadFrame="false"
                 >
 
             </cn.cjwddz.knowu.view.MyImageView>
@@ -136,7 +137,7 @@
                 android:layout_marginTop="29px"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:onClick="getInformation"
+                android:onClick="startGuide"
                 >
 
                 <ImageView

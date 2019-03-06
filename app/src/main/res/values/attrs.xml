@@ -38,6 +38,7 @@
         <attr name="borderRadius"></attr>
         <attr name="imageType"></attr>
         <attr name="weight" format="integer"></attr>
+        <attr name="hadFrame" format="boolean"></attr>
     </declare-styleable>
 
     <!--MyImageView属性定义-->

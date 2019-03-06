@@ -2,7 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:orientation="vertical"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -44,7 +46,16 @@
                 android:textSize="@dimen/text_size"
                 android:layout_marginLeft="164px"
                 />
+            <TextView
+                android:id="@+id/tv_countDownTimer"
+                android:layout_width="wrap_content"
+                android:layout_height="70px"
+                android:textSize="@dimen/text_size"
+                android:layout_marginLeft="60dp"
+                />
+
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -53,63 +64,76 @@
             android:layout_marginLeft="164px"
             android:layout_marginRight="164px"
             >
-            <EditText
-                android:id="@+id/et1"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textSize="@dimen/verification_Code_size"
-                android:textColor="@color/verification_Code_color"
-                android:maxLength="1"
-                android:inputType="number"
-                android:backgroundTint="@color/text_color"
-                android:textCursorDrawable="@color/dfline_color"
-                android:enabled="true"
-                />
-            <EditText
-                android:id="@+id/et2"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textSize="@dimen/verification_Code_size"
-                android:textColor="@color/verification_Code_color"
-                android:maxLength="1"
-                android:inputType="number"
-                android:backgroundTint="@color/text_color"
-                android:textCursorDrawable="@color/dfline_color"
-                android:enabled="false"
-                />
-            <EditText
-                android:id="@+id/et3"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textSize="@dimen/verification_Code_size"
-                android:textColor="@color/verification_Code_color"
-                android:maxLength="1"
-                android:inputType="number"
-                android:backgroundTint="@color/text_color"
-                android:textCursorDrawable="@color/dfline_color"
-                android:enabled="false"
-                />
-            <EditText
-                android:id="@+id/et4"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textSize="@dimen/verification_Code_size"
-                android:textColor="@color/verification_Code_color"
-                android:maxLength="1"
-                android:inputType="number"
-                android:backgroundTint="@color/text_color"
-                android:textCursorDrawable="@color/dfline_color"
-                android:enabled="false"
-                />
+            <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    >
+                    <EditText
+                        android:id="@+id/et1"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textSize="@dimen/verification_Code_size"
+                        android:textColor="@color/verification_Code_color"
+                        android:maxLength="1"
+                        android:inputType="number"
+                        android:backgroundTint="@color/text_color"
+                        android:textCursorDrawable="@color/dfline_color"
+                        android:enabled="true"
+                        />
+                    <EditText
+                        android:id="@+id/et2"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textSize="@dimen/verification_Code_size"
+                        android:textColor="@color/verification_Code_color"
+                        android:maxLength="1"
+                        android:inputType="number"
+                        android:backgroundTint="@color/text_color"
+                        android:textCursorDrawable="@color/dfline_color"
+                        android:enabled="false"
+                        />
+                    <EditText
+                        android:id="@+id/et3"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textSize="@dimen/verification_Code_size"
+                        android:textColor="@color/verification_Code_color"
+                        android:maxLength="1"
+                        android:inputType="number"
+                        android:backgroundTint="@color/text_color"
+                        android:textCursorDrawable="@color/dfline_color"
+                        android:enabled="false"
+                        />
+                    <EditText
+                        android:id="@+id/et4"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textSize="@dimen/verification_Code_size"
+                        android:textColor="@color/verification_Code_color"
+                        android:maxLength="1"
+                        android:inputType="number"
+                        android:backgroundTint="@color/text_color"
+                        android:textCursorDrawable="@color/dfline_color"
+                        android:enabled="false"
+                        />
+                </LinearLayout>
+
+        </FrameLayout>
+
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"

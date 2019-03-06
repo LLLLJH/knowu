@@ -91,16 +91,28 @@ public class OpinionActivity extends AppCompatActivity {
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                System.out.println("提交用户信息shibai");
+                //System.out.println("提交用户信息shibai");
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if(response.isSuccessful()){
-                    System.out.println("提交用户信息success"+response.body()+"&"+response.message()+"&"+response.code()+"&"+response.request());
+                    //System.out.println("提交用户信息success"+response.body()+"&"+response.message()+"&"+response.code()+"&"+response.request());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(OpinionActivity.this,"建议成功提交！！！",Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
                 }else{
-                    System.out.println("提交用户信息shibai3"+response.toString());
+                    //System.out.println("提交用户信息shibai3"+response.toString());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(OpinionActivity.this,"建议提交失败！！！",Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         });
@@ -112,11 +124,13 @@ public class OpinionActivity extends AppCompatActivity {
             switch (v.getId()){
                 case R.id.btn_user_opinion:
                     opinionString = et_opinion.getText().toString();
-                    long time = MyUtils.getLongTime();
-                    postUserOpinion(Constants.ADD_USER_FEEL_URL,time,opinionString);
+                    if(opinionString.isEmpty()){
+                        long time = MyUtils.getLongTime();
+                        postUserOpinion(Constants.ADD_USER_FEEL_URL,time,opinionString);
+                    }
                     break;
                 case R.id.turnBack:
-                    finish();
+                    AppManager.getAppManager().finishActivity();
                     break;
                 default:
                     break;

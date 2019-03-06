@@ -1,10 +1,13 @@
 package cn.cjwddz.knowu.service;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
@@ -29,7 +32,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
+import cn.cjwddz.knowu.R;
 import cn.cjwddz.knowu.activity.MainActivity;
+import cn.cjwddz.knowu.common.application.AppManager;
 import cn.cjwddz.knowu.view.CountDownTimerView;
 
 import static com.inuker.bluetooth.library.Constants.REQUEST_SUCCESS;
@@ -44,12 +49,18 @@ public class KnowUBleService extends Service implements ServiceInterface{
     private MyBinder myBinder = new MyBinder();
     private boolean isScanning = false;
     private String mac;
+    int status = -1;
     BluetoothClient ble;
     MyDevice linkingDevice;
     MyDevice lastDevice;
     private List<MyDevice> deviceArray = new ArrayList<>();
     private int rssi = -1000;
+    public boolean err = false;
 
+    private FragmentUIInterface fragmentUIInterface;
+    public void setFragmentUIInterface(FragmentUIInterface fragmentUIInterface){
+        this.fragmentUIInterface = fragmentUIInterface;
+    }
     private UIInterface uiInterface;
     public void setUiInterface(UIInterface uiInterface){
         this.uiInterface = uiInterface;
@@ -61,6 +72,7 @@ public class KnowUBleService extends Service implements ServiceInterface{
             return KnowUBleService.this;
         }
     }
+
     @Override
     public IBinder onBind(Intent intent) {
         return myBinder;
@@ -79,11 +91,34 @@ public class KnowUBleService extends Service implements ServiceInterface{
     }
 
     /**
+     * 是否不在Mainactivity退出蓝牙连接
+     * @return
+     */
+    public boolean isErr(){
+        return err;
+    }
+
+    /**
+     * 是否不在Mainactivity退出蓝牙连接
+     * @return
+     */
+    public void setErr(boolean err){
+        this.err = err;
+    }
+    /**
      * 是否连接着设备
      * @return
      */
     public boolean isLink(){
         return linkingDevice!=null;
+    }
+
+    /**
+     * 是否连接着设备
+     * @return
+     */
+    public MyDevice getMDevice(){
+        return linkingDevice;
     }
 
     @Override
@@ -96,19 +131,19 @@ public class KnowUBleService extends Service implements ServiceInterface{
       @Override
       public void onSearchStarted() {
        isScanning = true;
-       uiInterface.scanning();
+       //uiInterface.scanning();
       }
 
       @Override
       public void onDeviceFounded(SearchResult device) {
-          uiInterface.hscanDevice();
+          //uiInterface.hscanDevice();
           MyDevice fDevice = new MyDevice(device);
        if(!fDevice.ok)
         return;
        //搜寻到本公司设备后自行连接
-          // todo 存入数组
+          //  存入数组
           deviceArray.add(fDevice);
-          uiInterface.scanSuccess(fDevice.getDevice().getAddress());
+          //uiInterface.scanSuccess(fDevice.getDevice().getAddress());
           if(deviceArray.size()>=2){
               ble.stopSearch();
           }
@@ -118,14 +153,14 @@ public class KnowUBleService extends Service implements ServiceInterface{
       public void onSearchStopped() {
           isScanning = false;
           uiInterface.back();
-          System.out.print("onSearchStopped");
+          //System.out.print("onSearchStopped");
       }
 
       @Override
       public void onSearchCanceled() {
           isScanning = false;
           connecctDevice();
-          System.out.print("onSearchCanceled");
+         // System.out.print("onSearchCanceled");
       }
      };
 
@@ -140,34 +175,48 @@ public class KnowUBleService extends Service implements ServiceInterface{
 
     @Override
     public void disConnectDevice() {
-     ble.disconnect(linkingDevice.getDevice().getAddress());
+        if(ble != null && linkingDevice != null){
+            ble.disconnect(linkingDevice.getDevice().getAddress());
+        }
+        if(linkingDevice!=null){
+            mac=linkingDevice.getDevice().getAddress();
+            status = ble.getConnectStatus(mac);
+        }
+        if(status== BluetoothProfile.STATE_CONNECTED && linkingDevice !=null)
+            ble.disconnect(mac);
+        uiInterface.back();
+        linkingDevice =null;
+        mac = null;
     }
 
     @Override
     public void sendMessage(final byte[] msg) {
-        final String mac = linkingDevice.getDevice().getAddress();
-     /**   if(ble.getConnectStatus(mac) == STATUS_DISCONNECTED||ble.getConnectStatus(mac)==STATUS_DEVICE_DISCONNECTED){
-            linkingDevice = null;
-            uiInterface.back();
-            return;
-        }*/
-        ble.write(mac, UUID.fromString(Constants.SERVICE_UUID), UUID.fromString(Constants.CHARACTER_UUID), msg, new BleWriteResponse() {
-            @Override
-            public void onResponse(int code) {
-                if (code != com.inuker.bluetooth.library.Constants.REQUEST_SUCCESS) {
-                    // TODO: 信息发送失败处理
-                  uiInterface.sendMessage("信息发送失败！！！");
-                    return;
+        if(linkingDevice!=null){
+            final String mac = linkingDevice.getDevice().getAddress();
+            /**   if(ble.getConnectStatus(mac) == STATUS_DISCONNECTED||ble.getConnectStatus(mac)==STATUS_DEVICE_DISCONNECTED){
+             linkingDevice = null;
+             uiInterface.back();
+             return;
+             }*/
+            ble.write(mac, UUID.fromString(Constants.SERVICE_UUID), UUID.fromString(Constants.CHARACTER_UUID), msg, new BleWriteResponse() {
+                @Override
+                public void onResponse(int code) {
+                    if (code != com.inuker.bluetooth.library.Constants.REQUEST_SUCCESS) {
+                        //  信息发送失败处理
+                        //uiInterface.sendMessage("信息发送失败！！！");
+                        return;
+                    }
+                    //uiInterface.sendMessage("信息发送成功！！！");
                 }
-                uiInterface.sendMessage("信息发送成功！！！");
-            }
-        });
+            });
+        }
+
     }
 
  private void connecctDevice() {
 
      mac = null;
-     int status = -1;
+
      if(linkingDevice!=null){
          mac=linkingDevice.getDevice().getAddress();
          status = ble.getConnectStatus(mac);
@@ -175,92 +224,140 @@ public class KnowUBleService extends Service implements ServiceInterface{
      if(status== BluetoothProfile.STATE_CONNECTED && linkingDevice !=null)
          ble.disconnect(mac);
      linkingDevice =null;
+     lastDevice = null;
+     mac = null;
      for( MyDevice a:deviceArray){
+         lastDevice = deviceArray.get(0);
          // uiInterface.scanSuccess("取得rssi:"+a.getDevice().rssi);
          lastDevice = a.getDevice().rssi>rssi?a:lastDevice;
-         rssi = a.getDevice().rssi>rssi?a.getDevice().rssi:rssi;
+         rssi = lastDevice.getDevice().rssi;
      }
-     mac=lastDevice.getDevice().getAddress();
-     final String finalMac = mac;
-     //设置连接应答
-     BleConnectResponse reponse = new BleConnectResponse() {
-         @Override
-         public void onResponse(int code, BleGattProfile data) {
-             if(code== com.inuker.bluetooth.library.Constants.REQUEST_SUCCESS)
-             {
-                 linkingDevice=lastDevice;
-             }else{
-                 uiInterface.back();
-                 return;
-             }
-             // 连接成功通知notify监听器
-             // if(code!= com.inuker.bluetooth.library.Constants.REQUEST_SUCCESS)
+     if(lastDevice!=null){
+         mac=lastDevice.getDevice().getAddress();
+     }
+     if(mac !=null){
 
-             ble.notify(finalMac, UUID.fromString(Constants.SERVICE_UUID), UUID.fromString(Constants.CHARACTER_UUID), new BleNotifyResponse() {
-                 @Override
-                 public void onNotify(UUID service, UUID character, byte[] value) {
-                     switch (value[3]){
-                         // TODO: 读应答响应
-                         case 0x03:
-                             switch (value[4]){
-                                 // TODO: 读取力度值
-                                 case (byte) 0xc2:
-                                     uiInterface.setLastProgress(value[5]);
-                                     break;
-                                 // TODO: 读取电量值
-                                 case (byte) 0xc5:
-                                    // uiInterface.setNotify("收到Notify");
-                                     uiInterface.updateView(value[5]);
-                                     break;
-                                 default:break;
-                             }
-                             break;
-                         // TODO: 写应答响应
-                         case 0x04:
-                          /**   //写应答是否成功
-                             switch (value[5]){
-                                 case 0x01:
-                                    // uiInterface.sendMessage("信息发送成功！！！");
-                                     break;
-                                 case 0x00:
-                                    // uiInterface.sendMessage("信息发送失败！！！");
-                                     break;
-                             }*/
-                             break;
-                         default:break;
+         final String finalMac = mac;
+         //设置连接应答
+         BleConnectResponse reponse = new BleConnectResponse() {
+             @Override
+             public void onResponse(int code, BleGattProfile data) {
+                 if(code== com.inuker.bluetooth.library.Constants.REQUEST_SUCCESS)
+                 {
+                     linkingDevice=lastDevice;
+                 }else{
+                     uiInterface.back();
+                     return;
+                 }
+                 // 连接成功通知notify监听器
+                 // if(code!= com.inuker.bluetooth.library.Constants.REQUEST_SUCCESS)
 
+                 ble.notify(finalMac, UUID.fromString(Constants.SERVICE_UUID), UUID.fromString(Constants.CHARACTER_UUID), new BleNotifyResponse() {
+                     @Override
+                     public void onNotify(UUID service, UUID character, byte[] value) {
+                        // System.out.println(value.toString());
+                         switch (value[3]){
+                             case 0x03:
+                                 switch (value[4]){
+                                     //  读取力度值
+                                     case (byte) 0xc2:
+                                         uiInterface.setLastProgress(value[5]);
+                                         break;
+                                     //  读取电量值
+                                     case (byte) 0xc5:
+                                         // uiInterface.setNotify("收到Notify");
+                                         uiInterface.updateView(value[5]);
+                                         break;
+                                     case (byte)0xc6:
+                                         switch (value[5]){
+                                             case (byte) 0x00:
+                                                 uiInterface.setDeepStatus(false);
+                                                 //System.out.println("deep状态："+false);
+                                                 break;
+                                             case (byte) 0x01:
+                                                 uiInterface.setDeepStatus(true);
+                                                 //System.out.println("deep状态："+true);
+                                                 break;
+                                         }
+                                         break;
+                                     default:break;
+                                 }
+                                 break;
+                             //  写应答响应
+                             case 0x04:
+                                 //写应答是否成功
+                                 switch (value[4]){
+                                     //写加热状态
+                                     case (byte) 0xc7:
+                                         switch (value[5]){
+                                             case (byte) 0x00:
+                                                 fragmentUIInterface.openSuccess();
+                                                 break;
+                                             case (byte) 0x01:
+                                                 fragmentUIInterface.openFail();
+                                                 break;
+                                             case (byte) 0x02:
+                                                 fragmentUIInterface.closeSuccess();
+                                                 break;
+                                             case (byte) 0x03:
+                                                 fragmentUIInterface.closeSuccess();
+                                                 break;
+                                             default:break;
+                                         }
+                                         // uiInterface.sendMessage("信息发送成功！！！");
+                                         break;
+                                     //写提示音状态
+                                     case (byte) 0x06:
+                                         // uiInterface.sendMessage("信息发送失败！！！");
+                                         break;
+                                     default:break;
+                                 }
+                                 break;
+                             default:break;
+
+                         }
                      }
-                 }
-                 @Override
-                 public void onResponse(int code) {
-                     if (code == com.inuker.bluetooth.library.Constants.REQUEST_SUCCESS) {
-                         uiInterface.setNotify("添加notify成功！");
-                     }else{
-                         // todo 添加notify失败！！
-                         uiInterface.setNotify("添加notify失败！");
+                     @Override
+                     public void onResponse(int code) {
+                         if (code == com.inuker.bluetooth.library.Constants.REQUEST_SUCCESS) {
+                             //uiInterface.setNotify("添加notify成功！");
+                         }else{
+                             //  添加notify失败！！
+                            // uiInterface.setNotify("添加notify失败！");
+                             //ble.disconnect(linkingDevice.getDevice().getAddress());
+                         }
                      }
+                 });
+                 if(code == REQUEST_SUCCESS){
+                     //蓝牙连接成功
+                     // thread.start();
+                     // linkingDevice = lastDevice;
+                     uiInterface.connectSuccess();
+                     ble.stopSearch();
+                     stopScan();
+                     thread.start();
+                     /**if(linkingDevice != null){
+                         System.out.println("linking"+"ID:"+linkingDevice.getDeviceID()+"version:"
+                                 +linkingDevice.getDeviceVersion()+"model:"+linkingDevice.getDeviceModel()
+                                 +"len:"+linkingDevice.getLen());
+                     }else if(lastDevice !=  null){
+                         System.out.println("last"+lastDevice.getDeviceInfo()+"len:"+lastDevice.getLen());
+                     }*/
                  }
-             });
-             if(code == REQUEST_SUCCESS){
-                 //蓝牙连接成功
-                // thread.start();
-                // linkingDevice = lastDevice;
-                 uiInterface.connectSuccess();
-                 ble.stopSearch();
-                 stopScan();
              }
-         }
-     };
-     //设置连接错误处理
-     BleConnectOptions optionns = new BleConnectOptions.Builder()
-             .setConnectRetry(2)
-             .setConnectTimeout(5000)
-             .setServiceDiscoverRetry(3)
-             .setServiceDiscoverTimeout(5000)
-             .build();
-     uiInterface.connectting();
-     ble.registerConnectStatusListener(mac,bleConnectStatusListener);
-     ble.connect(mac,optionns,reponse);
+         };
+         //设置连接错误处理
+         BleConnectOptions optionns = new BleConnectOptions.Builder()
+                 .setConnectRetry(2)
+                 .setConnectTimeout(5000)
+                 .setServiceDiscoverRetry(3)
+                 .setServiceDiscoverTimeout(5000)
+                 .build();
+         //uiInterface.connectting();
+         ble.registerConnectStatusListener(mac,bleConnectStatusListener);
+         ble.connect(mac,optionns,reponse);
+     }
+
 
  }
 
@@ -269,16 +366,20 @@ public class KnowUBleService extends Service implements ServiceInterface{
      @Override
      public void onConnectStatusChanged(String mac, int status) {
          if(status == STATUS_CONNECTED){
-
+             setErr(false);
          }else if(status == STATUS_DISCONNECTED||status == STATUS_DEVICE_DISCONNECTED){
              linkingDevice = null;
-             uiInterface.back();
+             ble.disconnect(mac);
+             ble.unregisterConnectStatusListener(mac,bleConnectStatusListener);
+             if(!err){
+                 uiInterface.back();
+                 }
          }
      }
 
 };
 
-/**
+
  //每一秒扫描设备连接状态并且发送读电量信息
  private Thread thread = new Thread(){
      @Override
@@ -290,16 +391,14 @@ public class KnowUBleService extends Service implements ServiceInterface{
                  int status = ble.getConnectStatus(mac);
                  if(status == STATUS_CONNECTED||status == STATUS_DEVICE_CONNECTED||status == STATUS_DEVICE_CONNECTING)
                  {
-                    // sendMessage(Protocol.getElectricGetInstruct());
+                     sendMessage(Protocol.getElectricGetInstruct());
                      return;
                  }
-
-                 // linkingDevice = null;
-                 //uiInterface.back();
                  timer.cancel();
              }
          };
-         timer.schedule(task,0,1000);
+         timer.schedule(task,0,3*60*1000);
      }
- };*/
+ };
+
 }

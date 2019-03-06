@@ -17,7 +17,7 @@ public class Protocol {
     };
     /*类型*/
     public enum Type{
-        SWITCH((byte) 0xc0),MODE((byte) 0xc1),INTENSITY((byte) 0xc2),CHECK((byte) 0xc3),LINK((byte) 0xc4),ELECTRIC((byte)0xc5);
+        SWITCH((byte) 0xc0),MODE((byte) 0xc1),INTENSITY((byte) 0xc2),CHECK((byte) 0xc3),LINK((byte) 0xc4),ELECTRIC((byte)0xc5),DEEP((byte)0xc6),HEATING((byte)0xc7);
         byte value;
         Type(byte value){
             this.value=value;
@@ -72,14 +72,14 @@ public class Protocol {
     public static byte[] getOpenInstruct(){
         byte[] data =new byte[]{start,0x00,0x00,Control.WRITE.value,Type.SWITCH.value,Data.ENABLE.value,end};
         data[1] = (byte)(0x00+data.length);
-        data[6] = (byte) (data[0]+data[1]+data[2]+data[3]+data[4]+data[5]);
+        data[6] = (byte) ((data[0]+data[1]+data[2]+data[3]+data[4]+data[5])&0xff);
         return data;
     }
     // 关闭命令
     public static byte[] getCloseInstruct(){
         byte[] data =new byte[]{start,0x00,0x00,Control.WRITE.value,Type.SWITCH.value,Data.DISABLE.value,end};
         data[1] = (byte)(0x00+data.length);
-        data[6] = (byte) (data[0]+data[1]+data[2]+data[3]+data[4]+data[5]);
+        data[6] = (byte) ((data[0]+data[1]+data[2]+data[3]+data[4]+data[5])&0xff);
         return data;
     }
     // 设置强度指令
@@ -87,35 +87,73 @@ public class Protocol {
         lastIntensity = intensity;
         byte[] data =new byte[]{start,0x00,(byte) (0x00+intensity),Control.WRITE.value,Type.INTENSITY.value,Type.INTENSITY.getIntensity(intensity),end};
         data[1] = (byte)(0x00+data.length);
-        data[6] = (byte) (data[0]+data[1]+data[2]+data[3]+data[4]+data[5]);
+        data[6] = (byte) ((data[0]+data[1]+data[2]+data[3]+data[4]+data[5])&0xff);
         return data;
     }
     // 读取强度指令 todo 待定
     public static byte[] getIntensityReadInstruct(){
         byte[] data =new byte[]{start,0x00,0x00,Control.READ.value,Type.INTENSITY.value,0x00,end};
         data[1] = (byte)(0x00+data.length);
-        data[6] = (byte) (data[0]+data[1]+data[2]+data[3]+data[4]+data[5]);
+        data[6] = (byte) ((data[0]+data[1]+data[2]+data[3]+data[4]+data[5])&0xff);
         return data;
     }
     // 设置模式指令
     public static byte[] getModeSetInstruct(int value){
         byte[] data =new byte[]{start,0x00,(byte) Protocol.Data.MODE.getMode(value),Control.WRITE.value,Type.MODE.value,Protocol.Data.MODE.getMode(value),end};
         data[1] = (byte)(0x00+data.length);
-        data[6] = (byte) (data[0]+data[1]+data[2]+data[3]+data[4]+data[5]);
+        data[6] = (byte) ((data[0]+data[1]+data[2]+data[3]+data[4]+data[5])&0xff);
         return data;
     }
     // 读取模式指令 todo 待定
     public static byte[] getModeGetInstruct(){
         byte[] data =new byte[]{start,0x00,0x00,Control.READ.value,Type.MODE.value,0x00,end};
         data[1] = (byte)(0x00+data.length);
-        data[6] = (byte) (data[0]+data[1]+data[2]+data[3]+data[4]+data[5]);
+        data[6] = (byte) ((data[0]+data[1]+data[2]+data[3]+data[4]+data[5])&0xff);
         return data;
     }
     //读取电量指令
     public static byte[] getElectricGetInstruct(){
         byte[] data = new byte[]{start,0x00,0x00,Control.READ.value,Type.ELECTRIC.value,0x00,end};
         data[1] = (byte)(0x00+data.length);
-        data[6] = (byte) (data[0]+data[1]+data[2]+data[3]+data[4]+data[5]);
+        data[6] = (byte) ((data[0]+data[1]+data[2]+data[3]+data[4]+data[5])&0xff);
+        return data;
+    }
+
+    // 打开加热命令
+    public static byte[] getOpenHeating(){
+        byte[] data =new byte[]{start,0x00,0x00,Control.WRITE.value,Type.HEATING.value,Data.ENABLE.value,end};
+        data[1] = (byte)(0x00+data.length);
+        data[6] = (byte) ((data[0]+data[1]+data[2]+data[3]+data[4]+data[5])&0xff);
+        return data;
+    }
+    // 关闭加热命令
+    public static byte[] getCloseHeating(){
+        byte[] data =new byte[]{start,0x00,0x00,Control.WRITE.value,Type.HEATING.value,Data.DISABLE.value,end};
+        data[1] = (byte)(0x00+data.length);
+        data[6] = (byte) ((data[0]+data[1]+data[2]+data[3]+data[4]+data[5])&0xff);
+        return data;
+    }
+
+    // 打开提示音命令
+    public static byte[] getOpenDeep(){
+        byte[] data =new byte[]{start,0x00,0x00,Control.WRITE.value,Type.DEEP.value,Data.ENABLE.value,end};
+        data[1] = (byte)(0x00+data.length);
+        data[6] = (byte) ((data[0]+data[1]+data[2]+data[3]+data[4]+data[5])&0xff);
+        return data;
+    }
+    // 关闭提示音命令
+    public static byte[] getCloseDeep(){
+        byte[] data =new byte[]{start,0x00,0x00,Control.WRITE.value,Type.DEEP.value,Data.DISABLE.value,end};
+        data[1] = (byte)(0x00+data.length);
+        data[6] = (byte) ((data[0]+data[1]+data[2]+data[3]+data[4]+data[5])&0xff);
+        return data;
+    }
+
+    // 关闭提示音命令
+    public static byte[] getDeepStatus(){
+        byte[] data =new byte[]{start,0x00,0x00,Control.READ.value,Type.DEEP.value,Data.DISABLE.value,end};
+        data[1] = (byte)(0x00+data.length);
+        data[6] = (byte) ((data[0]+data[1]+data[2]+data[3]+data[4]+data[5])&0xff);
         return data;
     }
 }

@@ -29,25 +29,40 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
     }
 
 
-    private List<String> mdata;
+    private List<String> mdata ;
+    private int position;
     private List<Boolean> isClicks;//控件是否被点击,默认为false，如果被点击，改变值，控件根据值改变自身颜色
 
-    public DataAdapter(List<String> data) {
+    public DataAdapter(List<String> data,int position) {
         this.mdata = data;
+        this.position = position;
         isClicks = new ArrayList<>();
-        for(int i = 0;i<mdata.size();i++){
-            if(i==0){
-                isClicks.add(true);
-            }else{
-                isClicks.add(false);
+        if(mdata.size()==0){
+           for(int i=0;i<30;i++){
+               if(i==this.position){
+                   isClicks.add(true);
+               }else{
+                   isClicks.add(false);
+               }
+           }
+        }else{
+            for(int i = 0;i<mdata.size();i++){
+                if(i==this.position){
+                    isClicks.add(true);
+                }else{
+                    isClicks.add(false);
+                }
             }
         }
+
     }
 
-    public void setMData(List<String> data){
+    public void setMData(List<String> data,int position){
         this.mdata = data;
+        this.position = position;
+        isClicks.clear();
         for(int i = 0;i<mdata.size();i++){
-            if(i==0){
+            if(i==this.position){
                 isClicks.add(true);
             }else{
                 isClicks.add(false);

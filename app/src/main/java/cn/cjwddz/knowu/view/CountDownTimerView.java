@@ -31,7 +31,7 @@ public class CountDownTimerView extends View{
     private  int ntextsize =100;
     private int stextsixe = 24;
     private int textcolor = R.color.text_color;
-    private String countText ="00:00";
+    private String countText ="30:00";
 
     private int linewidth = 7;
     private  int lineheight =30 ;
@@ -58,10 +58,10 @@ public class CountDownTimerView extends View{
     private int slcount = 120;
     private int m;
     private int s;
-    private int ttime = 0 ;
+    private int ttime = 60 ;
     private int angle = 0;
     private float angle_pick = 0;
-    private int second = 0;
+    private int second = 30*60;
     private float x_center;
     private float y_center;
     private float x_pick ;

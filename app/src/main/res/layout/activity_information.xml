@@ -63,11 +63,12 @@
         android:orientation="vertical">
 
         <Button
+            android:id="@+id/submitInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:background="@drawable/next_step_selector"
-            android:text="提交信息"
+            android:text="下一步"
             android:textColor="@color/white"
             android:onClick="submitInformation" />
     </LinearLayout>

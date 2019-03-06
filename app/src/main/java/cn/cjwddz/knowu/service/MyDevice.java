@@ -6,9 +6,11 @@ import com.inuker.bluetooth.library.beacon.Beacon;
 import com.inuker.bluetooth.library.beacon.BeaconItem;
 import com.inuker.bluetooth.library.search.SearchResult;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 import cn.cjwddz.knowu.R;
+import cn.cjwddz.knowu.common.utils.MyUtils;
 
 /**
  * Created by Administrator on 2018/7/18.
@@ -21,6 +23,31 @@ public class MyDevice {
     private byte call;
     boolean ok=false;
 
+
+
+    private byte[] deviceInfo;
+    private String deviceID;
+    private String deviceVersion;
+    private String deviceModel;
+
+    public String getDeviceID() {
+        return deviceID;
+    }
+
+    public String getDeviceVersion() {
+        return deviceVersion;
+    }
+
+    public String getDeviceModel() {
+        return deviceModel;
+    }
+
+    public int getLen() {
+        return len;
+    }
+
+    private int len;
+
     public SearchResult getDevice(){
         return device;
     }
@@ -28,6 +55,15 @@ public class MyDevice {
     public boolean isOk() {
         return ok;
     }
+
+    /**
+     * 获取设备信息
+     * @return
+     */
+    public byte[] getDeviceInfo() {
+        return deviceInfo;
+    }
+
 
     /**
      * 获取状态
@@ -76,6 +112,22 @@ public class MyDevice {
                     if(band.equals("FREAL-U")){
                         ok=true;
                     }
+                    break;
+                case 0xff:
+                    len = ad.len;
+                    this.deviceID = MyUtils.byte2hex(MyUtils.SubArray(ad.bytes,0,6));
+                    this.deviceVersion = new String(MyUtils.SubArray(ad.bytes,6,8));
+                    this.deviceModel = new String(MyUtils.SubArray(ad.bytes,14,7));
+                    /**
+                    for(int i=0;i<ad.len;i++){
+                        if(i<6){
+                          deviceID[i]=ad.bytes[i];
+                        }else if(i<14){
+                          deviceVersion[i-6]=ad.bytes[i];
+                        }else{
+                            deviceModel[i-14]=ad.bytes[i];
+                        }
+                    }*/
                     break;
             }
         }

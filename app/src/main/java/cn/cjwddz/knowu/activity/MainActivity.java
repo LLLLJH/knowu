@@ -2,6 +2,8 @@ package cn.cjwddz.knowu.activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
@@ -59,6 +61,8 @@ import cn.cjwddz.knowu.FragmentUI;
 import cn.cjwddz.knowu.R;
 import cn.cjwddz.knowu.common.http.MyHTTPClient;
 import cn.cjwddz.knowu.common.utils.MyUtils;
+import cn.cjwddz.knowu.interfaces.Activity_interface;
+import cn.cjwddz.knowu.interfaces.DeepStatusListenerManager;
 import cn.cjwddz.knowu.interfaces.Get_userHeader;
 import cn.cjwddz.knowu.interfaces.Get_userInfo;
 import cn.cjwddz.knowu.service.Constants;
@@ -81,7 +85,7 @@ import okhttp3.Response;
 
 import static cn.cjwddz.knowu.FragmentUI.*;
 
-public class MainActivity extends BaseActivity implements RecyclerView.RecyclerListener,OnFragmentInteractionListener,UIInterface, OnClickListener,MyInterface,Get_userInfo,Get_userHeader {
+public class MainActivity extends BaseActivity implements RecyclerView.RecyclerListener,OnFragmentInteractionListener,UIInterface, OnClickListener,MyInterface,Get_userInfo,Get_userHeader,Activity_interface {
     private CountDownTimerView countDownTimerView;
     private DrawerLayout drawerLayout;
     public static final MediaType JSON=MediaType.parse("application/json; charset=utf-8");
@@ -156,7 +160,7 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
         }
     };
 
-    public KnowUBleService getkUBService(){
+    public  KnowUBleService getkUBService(){
         return kUBService;
     }
 
@@ -212,6 +216,7 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
         keepfit.setOnClickListener(this);
         chira.setOnClickListener(this);
         relax.setOnClickListener(this);
+        DeepStatusListenerManager.getInstance().setConnectionStateListener(this);
         //seekbar.setOnSeekBarChangeListener(this);
         //seekbar.setOnTouchListener(this);
         displayMetrics = getResources().getDisplayMetrics();
@@ -223,7 +228,6 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
         filename = MyUtils.hmacSha256("header",phoneNumber);
 
         if(!sp.getBoolean("isLogin",false)){
-            // TODO: 请求获取信息（头像等并更新sharepreference）
             getUserInfo(Constants.GET_USER_INFO_URL);
             getUserHeader(Constants.GETHEADER,filename+".png");
             editor.putBoolean("isLogin",true);
@@ -250,7 +254,7 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
    }
 
     private void initImageView(){
-        String nickName = sp.getString("nickName","lll");
+        String nickName = sp.getString("nickName","女有");
         userName.setText(nickName);
         File file = new File(Environment.getExternalStorageDirectory().getPath(),filename+".png");
         if(file.length()!=0){
@@ -359,7 +363,8 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
     }
 
     public void connect(){
-        if(bluetoothAdapter.isEnabled()){
+        openBluetooth();
+        if(bluetoothAdapter.isEnabled()&& kUBService != null){
             undateFragment(1);
             kUBService.scan();
            //serviceInterface.scan();
@@ -405,6 +410,10 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
         fighting.setSelected(true);
         fighting_tv.setTextColor(getResources().getColor(R.color.text_color));
         //count.setBackgroundResource(R.drawable.count_clicked);
+        editor.putString("deviceID", kUBService.getMDevice().getDeviceID());
+        editor.putString("deviceVersion", kUBService.getMDevice().getDeviceVersion());
+        editor.putString("deviceModel",kUBService.getMDevice().getDeviceModel());
+        editor.commit();
         Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {
             @Override
@@ -413,6 +422,7 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
                 kUBService.sendMessage(Protocol.getModeSetInstruct(0));
                 kUBService.sendMessage(Protocol.getIntensityReadInstruct());
                 kUBService.sendMessage(Protocol.getElectricGetInstruct());
+                kUBService.sendMessage(Protocol.getDeepStatus());
             }
         };
         timer.schedule(timerTask,1000);
@@ -420,57 +430,58 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
 
     @Override
     public void scanning() {
-       showToast("正在扫描设备...");
+       Toast("正在扫描设备...");
     }
 
     @Override
     public void stopScan() {
-       showToast("停止扫描设备...");
+       Toast("停止扫描设备...");
     }
 
     @Override
     public void hscanDevice() {
-        showToast("发现设备");
+        Toast("发现设备");
     }
 
     @Override
     public void scanSuccess(String name) {
-       showToast("已扫描到公司设备："+name);
+       Toast("已扫描到公司设备："+name);
     }
 
 
     @Override
     public void startService() {
-        showToast("Service已启动");
+        Toast("Service已启动");
     }
 
     @Override
     public void connectting() {
-        showToast("连接中...");
+        Toast("连接中...");
     }
 
     @Override
     public void setNotify(String status) {
-        showToast(status);
+        Toast(status);
     }
 
     @Override
     public void sendMessage(String status) {
-        showToast(status);
+        Toast(status);
     }
 
     @Override
     public void updateView(int count) {
-        if(count<=75){
+        //battery_iv.setImageAlpha(1);
+        //System.out.println("电量值："+count);
+        if(count>=75){
             count = 75;
-        }else if(count<=50){
+        }else if(count>=50){
             count = 50;
-        }else if(count<=25){
+        }else if(count>=25){
             count = 25;
-        }else if(count<10) {
+        }else{
             count = 5;
         }
-        // TODO: 更新电量图标
         switch (count){
             case 50:
                 battery_iv.setImageResource(R.drawable.battery50);
@@ -486,19 +497,22 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
                 battery_iv.setImageResource(R.drawable.battery100);
                 break;
         }
+        //battery_iv.setImageAlpha(1);
     }
 //连接错误或断开时回调
     @Override
     public void back() {
-        undateFragment(0);
-        //seekbar.setThumb(getResources().getDrawable(R.drawable.seekbar));
-        progress = 0;
-        //seekbar.setProgress(progress);
-        bt_progress.setText(String.valueOf(progress));
-        initSeekbarProgress();
-        fighting.setSelected(false);
-        fighting_tv.setTextColor(getResources().getColor(R.color.mode_text_color));
-        //count.setBackgroundResource(R.drawable.count);
+            undateFragment(0);
+            progress = 0;
+            bt_progress.setText(String.valueOf(progress));
+            initSeekbarProgress();
+            fighting.setSelected(false);
+            fighting_tv.setTextColor(getResources().getColor(R.color.mode_text_color));
+            endTime = getLongTime();
+            if(isStart&&endTime - startTime>CHANGESPACE){
+                long len = (endTime - startTime)/1000;
+                postUserRecord(Constants.ADD_USER_RECORD_URL,startTime,len,model,intensity,stopTime);
+            }
     }
 
     @Override
@@ -508,15 +522,50 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
     }
 
     @Override
+    public void setDeepStatus(boolean deepStatus) {
+        editor.putBoolean("deep",deepStatus);
+        editor.commit();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         unbindService(serviceConnection);
+        endTime = getLongTime();
+        if(isStart&&endTime - startTime>CHANGESPACE){
+            long len = (endTime - startTime)/1000;
+            postUserRecord(Constants.ADD_USER_RECORD_URL,startTime,len,model,intensity,stopTime);
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        if(kUBService!=null){
+            if(kUBService.isErr() && !kUBService.isLink()){
+                undateFragment(0);
+                progress = 0;
+                bt_progress.setText(String.valueOf(progress));
+                initSeekbarProgress();
+                fighting.setSelected(false);
+                fighting_tv.setTextColor(getResources().getColor(R.color.mode_text_color));
+                endTime = getLongTime();
+                if(isStart&&endTime - startTime>CHANGESPACE){
+                    long len = (endTime - startTime)/1000;
+                    postUserRecord(Constants.ADD_USER_RECORD_URL,startTime,len,model,intensity,stopTime);
+                }
+            }
+            kUBService.setErr(false);
+        }
         initImageView();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(kUBService != null){
+            kUBService.setErr(true);
+        }
     }
 
     @Override
@@ -536,8 +585,8 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
                     last_tv.setTextColor(getResources().getColor(R.color.mode_text_color));
                     last = fighting;
                     last_tv = fighting_tv;
+                    endTime = getLongTime();
                     if(isStart&&endTime - startTime>CHANGESPACE){
-                        endTime = getLongTime();
                         long len = (endTime - startTime)/1000;
                         postUserRecord(Constants.ADD_USER_RECORD_URL,startTime,len,model,intensity,stopTime);
                         initTime();
@@ -558,8 +607,8 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
                     last_tv.setTextColor(getResources().getColor(R.color.mode_text_color));
                     last = keepfit;
                     last_tv = keepfit_tv;
+                    endTime = getLongTime();
                     if(isStart&&endTime - startTime>CHANGESPACE){
-                        endTime = getLongTime();
                         long len = (endTime - startTime)/1000;
                         postUserRecord(Constants.ADD_USER_RECORD_URL,startTime,len,model,intensity,stopTime);
                         initTime();
@@ -580,8 +629,8 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
                     last_tv.setTextColor(getResources().getColor(R.color.mode_text_color));
                     last = chira;
                     last_tv = chira_tv;
+                    endTime = getLongTime();
                     if(isStart&&endTime - startTime>CHANGESPACE){
-                        endTime = getLongTime();
                         long len = (endTime - startTime)/1000;
                         postUserRecord(Constants.ADD_USER_RECORD_URL,startTime,len,model,intensity,stopTime);
                         initTime();
@@ -602,8 +651,8 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
                     last_tv.setTextColor(getResources().getColor(R.color.mode_text_color));
                     last = relax;
                     last_tv = relax_tv;
+                    endTime = getLongTime();
                     if(isStart&&endTime - startTime>CHANGESPACE){
-                        endTime = getLongTime();
                         long len = (endTime - startTime)/1000;
                         postUserRecord(Constants.ADD_USER_RECORD_URL,startTime,len,model,intensity,stopTime);
                         initTime();
@@ -625,10 +674,9 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
             showToast("设备未连接！！！");
             return;
         }
-
         if(progress < 15){
+            endTime = getLongTime();
             if(isStart&&endTime - startTime>CHANGESPACE){
-                endTime = getLongTime();
                 long len = (endTime - startTime)/1000;
                 postUserRecord(Constants.ADD_USER_RECORD_URL,startTime,len,model,intensity,stopTime);
                 initTime();
@@ -647,8 +695,8 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
             return;
         }
         if (progress > 0){
+            endTime = getLongTime();
             if(isStart&&endTime - startTime>CHANGESPACE){
-                endTime = getLongTime();
                 long len = (endTime - startTime)/1000;
                 postUserRecord(Constants.ADD_USER_RECORD_URL,startTime,len,model,intensity,stopTime);
                 initTime();
@@ -661,50 +709,16 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
         }
 
     }
-/**
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-        // TODO: 滑块力度选择改变回调实现
-       if(!kUBService.isLink()){
-            showToast("设备未连接！！！");
-            seekBar.setProgress(0);
-            return;
-        }
-        progress = seekBar.getProgress();
 
-        initSeekbarProgress();
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-        // TODO: 滑块力度选择触碰回调实现
-        if(!kUBService.isLink()){
-            showToast("设备未连接！！！");
-            seekBar.setProgress(0);
-            return;
-        }
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-        // TODO: 滑块力度选择抬起回调实现
-       if(!kUBService.isLink()){
-            showToast("设备未连接！！！");
-            seekBar.setProgress(0);
-            return;
-        }
-       if(seekBar.getProgress()==14||seekBar.getProgress()==15){
-           seekBar.setProgress(lastprogress);
-           showToast("力度过大！！！请点击+号增加");
-       }else{
-           lastprogress = seekBar.getProgress();
-           kUBService.sendMessage(Protocol.getIntensitySetInstruct(seekBar.getProgress()));
-       }
-    }
-*/
 
     private void showToast(String s){
         Toast.makeText(this,s, Toast.LENGTH_SHORT).show();
+        //System.out.println(s);
+    }
+
+    public void Toast(String s){
+        Toast.makeText(this,s, Toast.LENGTH_SHORT).show();
+       // System.out.println(s);
     }
     /**
      * 根据手机分辨率从 px(像素) 单位 转成 dp
@@ -813,13 +827,13 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
                 str = response.body().string();
                 boolean status = false;
                 JSONArray msg = new JSONArray();
-                System.out.println(response.code());
-                System.out.println(str);
+                //System.out.println(response.code());
+                //System.out.println(str);
                 if(!str.isEmpty()){
                     try {
                         JSONObject jsonObject = new JSONObject(str);
                         status = jsonObject.getBoolean("status");
-                        msg = jsonObject.getJSONArray("err");
+                        //msg = jsonObject.getJSONArray("errQueue");
                     } catch(Exception e){
                         e.printStackTrace();
                     }
@@ -827,10 +841,10 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
                     myInterface.failed(call, response);
                 }
                 if (status) {
-                    System.out.println(status + msg.toString());
+                    //System.out.println(status + msg.toString());
                     myInterface.successed(call, response);
                 } else {
-                    System.out.println(status + msg.toString());
+                    //System.out.println(status + msg.toString());
                     myInterface.failed(call, response);
                 }
             }
@@ -890,7 +904,7 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
                 if(response.isSuccessful()){
                     get_userHeader.successedGetuserHeader(call,response);
                 }else{
-                    get_userHeader.successedGetuserHeader(call,response);
+                    get_userHeader.failedGetuserHeader(call,response);
                 }
             }
         });
@@ -914,10 +928,16 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
      * 退出登录
      * */
     public void exit(View view){
+        if(kUBService.isLink()){
+            kUBService.disConnectDevice();
+        }
         editor.putBoolean("isLogin",false);
         editor.commit();
         AppManager.getAppManager().finishAllActivity();
-        System.exit(0);
+        Intent intent = new Intent();
+        intent = intent.setClass(MainActivity.this, RegisterActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
     }
 
     /**
@@ -930,13 +950,24 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
     }
 
     /**
-     * 关于女有
+     * 打开关于女有
      * */
     public void about(View view){
         Intent intent = new Intent();
         intent.setClass(MainActivity.this,AboutActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * 打开新手指引页
+     * */
+    public void startGuide(View view){
+        Intent intent = new Intent();
+        intent.setClass(MainActivity.this,GuideActivity.class);
+        startActivity(intent);
+    }
+
+
 
     @Override
     public void successed(Call call, Response response) throws IOException {
@@ -945,7 +976,7 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
 
     @Override
     public void failure(IOException e) {
-        System.out.println("服务器异常！！！");
+        //System.out.println("服务器异常！！！");
     }
 
     @Override
@@ -962,14 +993,14 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
     public void successedGetuserInfo(Call call, Response response) throws IOException {
         try {
             JSONObject jsonObject = new JSONObject(response.body().string());
-            System.out.println(jsonObject.toString());
+            //System.out.println(jsonObject.toString());
             if(jsonObject.getBoolean("status")){
                 JSONObject data = jsonObject.getJSONObject("data");
-                editor.putString("nickName",data.getString("nickName"));
-                editor.putString("bDate",data.getString("bDate"));
-                editor.putString("height",data.getString("height"));
-                editor.putString("weight",data.getString("weight"));
-                editor.putString("mDate",data.getString("mDate"));
+                editor.putString("nickName",data.optString("nickName","女有"));
+                editor.putString("bDate",data.optString("bDate","1976-1-1"));
+                editor.putString("height",data.optString("height","150cm"));
+                editor.putString("weight",data.optString("weight","40kg"));
+                editor.putString("mDate",data.optString("mDate","10号"));
                 editor.commit();
             }else{
 
@@ -982,47 +1013,78 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
 
     @Override
     public void failureGetuserInfo(IOException e) {
-        System.out.println("服务器异常");
+        Toast("服务器异常，获取个人信息失败");
     }
 
     @Override
     public void failedGetuserInfo(Call call, Response response) throws IOException {
-        System.out.println("服务器异常");
+        Toast("服务器异常，获取个人信息失败");
     }
 
     @Override
     public void successedGetuserHeader(Call call, Response response) throws IOException {
         //将响应数据转化为输入流数据
         InputStream inputStream=response.body().byteStream();
-        //将输入流数据转化为Bitmap位图数据
-        Bitmap bitmap= BitmapFactory.decodeStream(inputStream);
-        File file = new File(Environment.getExternalStorageDirectory().getPath(),filename+".png");
-        if (file.exists()){
-            file.delete();
-        }
-        file.createNewFile();
-        //创建文件输出流对象用来向文件中写入数据
-        FileOutputStream out=new FileOutputStream(file);
-        //将bitmap存储为jpg格式的图片
-        bitmap.compress(Bitmap.CompressFormat.PNG,100,out);
-        //刷新文件流
-        out.flush();
-        out.close();
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                initImageView();
+        if(inputStream != null){
+            //将输入流数据转化为Bitmap位图数据
+            Bitmap bitmap= BitmapFactory.decodeStream(inputStream);
+            File file = new File(Environment.getExternalStorageDirectory().getPath(),filename+".png");
+            if (file.exists()){
+                file.delete();
             }
-        });
+            file.createNewFile();
+            //创建文件输出流对象用来向文件中写入数据
+            FileOutputStream out=new FileOutputStream(file);
+            //将bitmap存储为jpg格式的图片
+            bitmap.compress(Bitmap.CompressFormat.PNG,100,out);
+            //刷新文件流
+            out.flush();
+            out.close();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    initImageView();
+                }
+            });
+        }
+
     }
 
     @Override
     public void failureGetuserHeader(IOException e) {
-        System.out.println("服务器异常");
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast("服务器异常,获取头像失败");
+            }
+        });
+
     }
 
     @Override
     public void failedGetuserHeader(Call call, Response response) throws IOException {
-        System.out.println("服务器异常");
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast("服务器异常,获取头像失败");
+            }
+        });
+
+    }
+
+    @Override
+    public void openDeep() {
+        if(!kUBService.isLink())
+            return;
+        kUBService.sendMessage(Protocol.getOpenDeep());
+        //showToast("OPENDEEP");
+    }
+
+    @Override
+    public void closeDeep() {
+        if(!kUBService.isLink())
+            return;
+        kUBService.sendMessage(Protocol.getCloseDeep());
+        //showToast("CLOSEDEEP");
     }
 }

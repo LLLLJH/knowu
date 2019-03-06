@@ -98,15 +98,15 @@ public class AboutActivity extends AppCompatActivity implements DownloadView{
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
             }, Constants.PERMISSION_REQUEST_COARSE_LOCATION);
         }
-        //downloadPresenter.updateAPK(Constants.UPDATE,now_version);
-        downloadApp(Constants.GETAPK);
+        downloadPresenter.updateAPK(Constants.UPDATE,now_version);
+        //downloadApp(Constants.GETAPK);
     }
 
     /**
      * 返回
      * */
     public void turnBack(View view){
-       finish();
+        AppManager.getAppManager().finishActivity();
     }
 
     /**

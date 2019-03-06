@@ -132,7 +132,7 @@ public class RegisterActivity extends BaseActivity implements RecyclerView.Recyc
     }
 
     public void loginWithOther(View v){
-        Toast.makeText(this,"完善中，敬请期待...",Toast.LENGTH_SHORT);
+        Toast.makeText(this,"完善中，敬请期待...",Toast.LENGTH_SHORT).show();
     }
 
     public void sendMessage(View view){
@@ -159,10 +159,11 @@ public class RegisterActivity extends BaseActivity implements RecyclerView.Recyc
                 .header(Constants.HEADER_CONTENT_TYPE_KEY,Constants.HEADER_CONTENT_TYPE_VAULE)
                 .post(formBody.build())
                 .build();
-        System.out.println("获取验证码:"+phoneNumber);
+        //System.out.println("获取验证码:"+phoneNumber);
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+
                 myInterface.failure(e);
             }
 
@@ -171,8 +172,8 @@ public class RegisterActivity extends BaseActivity implements RecyclerView.Recyc
                 str = response.body().string();
                 boolean status = false;
                 String msg = null;
-                System.out.println(response.code());
-                System.out.println(str);
+               // System.out.println(response.code());
+                //System.out.println(str);
                 if(!str.isEmpty()){
                     try {
                         JSONObject jsonObject = new JSONObject(str);
@@ -185,10 +186,10 @@ public class RegisterActivity extends BaseActivity implements RecyclerView.Recyc
                     myInterface.failed(call, response);
                 }
                 if (status) {
-                    System.out.println(status + msg);
+                    //System.out.println(status + msg);
                     myInterface.successed(call, response);
                 } else {
-                    System.out.println(status + msg);
+                    //System.out.println(status + msg);
                     myInterface.failed(call, response);
                 }
             }
@@ -223,20 +224,36 @@ public class RegisterActivity extends BaseActivity implements RecyclerView.Recyc
 
     @Override
     public void failure(IOException e) {
-        Toast.makeText(this,"服务器异常",Toast.LENGTH_LONG).show();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(RegisterActivity.this,"服务器异常,获取验证码失败！！！",Toast.LENGTH_LONG).show();
+            }
+        });
+
     }
 
     @Override
-    public void failed(Call call, Response response) throws IOException {
-        if(response.code() ==504){
-            Toast.makeText(this,"服务器异常",Toast.LENGTH_LONG).show();
-            //System.out.println("服务器异常");
-        }
+    public void failed(Call call, final Response response) throws IOException {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(response.code() ==504){
+                    Toast.makeText(RegisterActivity.this,"服务器异常,获取验证码失败！！！",Toast.LENGTH_LONG).show();
+                    //System.out.println("服务器异常");
+                }else if(response.code() == 502){
+                    Toast.makeText(RegisterActivity.this,"手机号日频率限制",Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
     }
 
     @Override
     public void register() {
 
     }
+
+
 
 }

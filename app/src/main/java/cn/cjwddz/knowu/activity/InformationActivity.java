@@ -33,6 +33,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -129,6 +130,7 @@ public class InformationActivity extends AppCompatActivity implements AdapterVie
     android.support.v7.app.ActionBar actionBar;
 
     private ImageButton ibtn_turnBack;
+    private Button submitInfo;
 
     private void initImageView(){
        // String path = sp.getString("imagePath",null);
@@ -216,14 +218,14 @@ public class InformationActivity extends AppCompatActivity implements AdapterVie
     private UpCompleteListener completeListener = new UpCompleteListener() {
         @Override
         public void onComplete(boolean b, String s) {
-            System.out.println(b+s);
+           // System.out.println(b+s);
         }
     };
     //进度条回调
     private UpProgressListener progressListener = new UpProgressListener() {
         @Override
         public void onRequestProgress(long l, long l1) {
-            System.out.println(l+l1);
+            //System.out.println(l+l1);
         }
     };
 
@@ -234,19 +236,10 @@ public class InformationActivity extends AppCompatActivity implements AdapterVie
         setContentView(R.layout.activity_information);
         AppManager.getAppManager().addActivity(this);
         setGet_s_callback(this);
-        //标题栏返回按键
-        actionBar = getSupportActionBar();
-        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
-        //google的actionbar是分为上下两栏显示的，上面的代码只能设置顶部actionbar的背景色，为了让下面的背景色一致，还需要添加一行代码：
-        actionBar.setSplitBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
-        ActionBar.LayoutParams lp =new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT, Gravity.CENTER);
-        View actionBarView = View.inflate(this,R.layout.actionbar_information,null);
-        if(actionBar != null){
-            actionBar.setCustomView(actionBarView,lp);
-            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        }
-        ibtn_turnBack = actionBarView.findViewById(R.id.turnBack);
-        ibtn_turnBack.setOnClickListener(listener);
+
+        submitInfo = (Button) findViewById(R.id.submitInfo);
+        submitInfo = (Button) findViewById(R.id.submitInfo);
+
         //动态申请权限
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(
                 Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -263,6 +256,26 @@ public class InformationActivity extends AppCompatActivity implements AdapterVie
         //获取内存储中的用户信息
         sp = getSharedPreferences("knowu",MODE_PRIVATE);
         editor = sp.edit();
+        if(sp.getBoolean("firstStart",true)){
+            editor.putBoolean("firstStart",false);
+            editor.commit();
+        }else{
+            submitInfo.setClickable(false);
+            submitInfo.setVisibility(View.INVISIBLE);
+            //标题栏返回按键
+            actionBar = getSupportActionBar();
+            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
+            //google的actionbar是分为上下两栏显示的，上面的代码只能设置顶部actionbar的背景色，为了让下面的背景色一致，还需要添加一行代码：
+            actionBar.setSplitBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
+            ActionBar.LayoutParams lp =new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT, Gravity.CENTER);
+            View actionBarView = View.inflate(this,R.layout.actionbar_information,null);
+            if(actionBar != null){
+                actionBar.setCustomView(actionBarView,lp);
+                actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+            }
+            ibtn_turnBack = actionBarView.findViewById(R.id.turnBack);
+            ibtn_turnBack.setOnClickListener(listener);
+        }
         phoneNumber = sp.getString("phoneNumber",null);
         filename = MyUtils.hmacSha256("header",phoneNumber);
         info[0] = sp.getString("nickName","女有");
@@ -478,7 +491,7 @@ public class InformationActivity extends AppCompatActivity implements AdapterVie
                     dialog.dismiss();
                     break;
                 case R.id.turnBack:
-                    finish();
+                    AppManager.getAppManager().finishActivity();
                     break;
                 case R.id.select_photo:
                     Intent intent = new Intent(Intent.ACTION_GET_CONTENT,null);
@@ -536,6 +549,11 @@ public class InformationActivity extends AppCompatActivity implements AdapterVie
         editor.putString("mDate",info[4]);
         editor.commit();
         postUserInformation(this,ADD_USER_INFO_URL,info);
+        Intent intent = new Intent();
+        intent.setClass(this,MainActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+        finish();
     }
 
     @Override
@@ -580,17 +598,33 @@ public class InformationActivity extends AppCompatActivity implements AdapterVie
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                Toast.makeText(context,"提交用户信息失败1",Toast.LENGTH_SHORT).show();
-                System.out.println("提交用户信息shibai");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context,"提交失败，服务异常！！！",Toast.LENGTH_SHORT).show();
+                    }
+                });
+                //System.out.println("提交用户信息shibai");
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if(response.isSuccessful()){
-                    System.out.println("提交用户信息success"+response.body()+"&"+response.message()+"&"+response.code()+"&"+response.request());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(context,"提交成功",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    //System.out.println("提交用户信息success"+response.body()+"&"+response.message()+"&"+response.code()+"&"+response.request());
                 }else{
-                    Toast.makeText(context,"提交用户信息失败3",Toast.LENGTH_SHORT).show();
-                    System.out.println("提交用户信息shibai3");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(context,"提交失败",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    //System.out.println("提交用户信息shibai3");
                 }
             }
         });
@@ -707,9 +741,9 @@ public class InformationActivity extends AppCompatActivity implements AdapterVie
                 params.put("expiration",EXPIRATION);
                 params.put("bucket",BUCKET);
                 policy = UpYunUtils.getPolicy(params);
-                System.out.println(policy);
-                System.out.println(signature);
-                System.out.println(OPERATER);
+                //System.out.println(policy);
+                //System.out.println(signature);
+                //System.out.println(OPERATER);
                 UploadEngine.getInstance().formUpload(file,policy,OPERATER, signature, completeListener, progressListener);
             }else{
 
@@ -721,13 +755,13 @@ public class InformationActivity extends AppCompatActivity implements AdapterVie
 
     @Override
     public void failureGetS(IOException e) {
-        System.out.println("服务器异常");
+        //System.out.println("服务器异常");
     }
 
     @Override
     public void failedGetS(Call call, Response response) throws IOException {
-        System.out.println("提交用户信息shibai3");
-        System.out.println(response.body()+"&"+response.message()+"&"+response.code()+"&"+response.request());
+        //System.out.println("提交用户信息shibai3");
+        //System.out.println(response.body()+"&"+response.message()+"&"+response.code()+"&"+response.request());
     }
 
     public void postHeader(){
@@ -738,7 +772,7 @@ public class InformationActivity extends AppCompatActivity implements AdapterVie
         params.put("expiration",EXPIRATION);
         params.put("bucket",BUCKET);
         //params.put("date",MyUtils.getTimeToGMT(date));
-        System.out.println(MyUtils.getTimeToGMT(date));
+        //System.out.println(MyUtils.getTimeToGMT(date));
         params.put("content-md5",UpYunUtils.md5Hex(file));
         //policy = UpYunUtils.getPolicy(params);
 

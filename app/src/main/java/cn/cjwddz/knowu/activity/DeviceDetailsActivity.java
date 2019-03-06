@@ -1,6 +1,7 @@
 package cn.cjwddz.knowu.activity;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.Image;
@@ -12,6 +13,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Switch;
@@ -21,6 +23,9 @@ import org.w3c.dom.Text;
 
 import cn.cjwddz.knowu.R;
 import cn.cjwddz.knowu.common.application.AppManager;
+import cn.cjwddz.knowu.interfaces.Activity_interface;
+import cn.cjwddz.knowu.interfaces.DeepStatusListenerManager;
+import cn.cjwddz.knowu.service.KnowUBleService;
 
 public class DeviceDetailsActivity extends AppCompatActivity {
     public TextView tv_deviceName;
@@ -28,16 +33,25 @@ public class DeviceDetailsActivity extends AppCompatActivity {
     public TextView tv_deviceId;
     public TextView tv_firmwareVersion;
     private Switch switch_hint;
+    private Activity_interface anInterface;
+
 
     android.support.v7.app.ActionBar actionBar;
 
     private ImageButton ibtn_turnBack;
 
+    private KnowUBleService kUBService;
+    SharedPreferences sp;
+    SharedPreferences.Editor editor;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_details);
+
         AppManager.getAppManager().addActivity(this);
+        sp = getSharedPreferences("knowu",MODE_PRIVATE);
+        editor = sp.edit();
         //标题栏返回按键
         actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
@@ -54,8 +68,32 @@ public class DeviceDetailsActivity extends AppCompatActivity {
         tv_deviceId = (TextView) findViewById(R.id.tv_deviceId);
         tv_firmwareVersion = (TextView) findViewById(R.id.tv_firmwareVersion);
         switch_hint = (Switch) findViewById(R.id.switch_hint);
+        switch_hint.setChecked(sp.getBoolean("deep",true));
+        switch_hint.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                DeepStatusListenerManager deepStatusListenerManager = DeepStatusListenerManager.getInstance();
+                if(isChecked){
+                    deepStatusListenerManager.openDeep();
+                }else{
+                    deepStatusListenerManager.closeDeep();
+                }
+                editor.putBoolean("deep",isChecked);
+                editor.commit();
+            }
+        });
         ibtn_turnBack = actionBarView.findViewById(R.id.turnBack);
         ibtn_turnBack.setOnClickListener(listener);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        tv_deviceName.setText("REEAL-U");
+        tv_deviceId.setText(sp.getString("deviceID", ""));
+        tv_firmwareVersion.setText( sp.getString("deviceVersion", "01.12.01"));
+       tv_model.setText( sp.getString("deviceModel","FU-DY01"));
+
     }
 
     View.OnClickListener listener = new View.OnClickListener() {
@@ -63,7 +101,7 @@ public class DeviceDetailsActivity extends AppCompatActivity {
         public void onClick(View v) {
             switch (v.getId()){
                 case R.id.turnBack:
-                    finish();
+                    AppManager.getAppManager().finishActivity();
                     break;
                 default:
                     break;
