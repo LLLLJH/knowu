@@ -107,9 +107,9 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
         holder.iv_data.setIHeight(Integer.parseInt(data));
         if(!isClicks.isEmpty()){
             if(isClicks.get(position)){
-                setSelected(holder,true,position);
+                setSelected(holder,true,position,true);
             }else{
-                setSelected(holder,false,position);
+                setSelected(holder,false,position,true);
             }
         }
        // holder.tv_date.setText(date);
@@ -120,8 +120,10 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
         return mdata.size();
     }
 
-    public void setSelected(ViewHolder holder,Boolean selected,int position) {
-        holder.iv_data.setSelected(selected);
+    public void setSelected(ViewHolder holder,Boolean selected,int position,Boolean visible) {
+        if(visible){
+            holder.iv_data.setSelected(selected);
+        }
         isClicks.set(position,selected);
     }
 }

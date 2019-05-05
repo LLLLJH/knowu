@@ -9,14 +9,17 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        >
 
         <ImageButton
             android:id="@+id/turnBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@drawable/back" />
+            android:background="@drawable/back"
+            android:onClick="turnBackR"
+            />
 
         <TextView
             android:layout_width="wrap_content"
@@ -37,9 +40,8 @@
            android:id="@+id/tv_date_year_month"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
-           android:text="2018-12"
            android:textColor="@color/white"
-           android:textSize="20sp"
+           android:textSize="18sp"
            android:layout_gravity="center"
            />
        <ImageButton
@@ -49,6 +51,7 @@
            android:layout_marginLeft="5dp"
            android:background="@drawable/time"
            android:layout_gravity="center"
+           android:onClick="setDate"
            />
    </LinearLayout>
 

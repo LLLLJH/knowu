@@ -53,10 +53,11 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="女有"
-                android:textColor="@color/text_color"
-                android:textSize="20sp" />
+                android:textSize="18sp" />
 
         </LinearLayout>
+
+
 
 
         <LinearLayout
@@ -69,7 +70,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:layout_marginTop="29px"
                 android:gravity="center"
                 android:onClick="userRecord"
@@ -78,41 +78,22 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/record" />
-
-                <TextView
-                    android:id="@+id/textView2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="28dp"
-                    android:text="使用记录" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="29px"
-                android:gravity="center"
-                android:onClick="about"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/about" />
+                    android:layout_gravity="center"
+                    android:src="@drawable/record"
+                    android:layout_marginLeft="1dp"
+                    />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="31dp"
-                    android:text="关于女有" />
+                    android:text="使用记录" />
             </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:layout_marginTop="29px"
                 android:gravity="center"
                 android:onClick="startSearch"
@@ -121,7 +102,10 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/device" />
+                    android:layout_gravity="center"
+                    android:src="@drawable/device"
+                    android:layout_marginLeft="1dp"
+                    />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -133,16 +117,39 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:layout_marginTop="29px"
                 android:gravity="center"
-                android:orientation="horizontal"
-                android:onClick="startGuide"
-                >
+                android:onClick="about"
+                android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/about"
+                    android:layout_marginLeft="1dp"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="31dp"
+                    android:text="关于妃悠" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="29px"
+                android:gravity="center"
+                android:onClick="startGuide"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="1dp"
                     android:src="@drawable/guidance" />
 
                 <TextView
@@ -153,7 +160,6 @@
             </LinearLayout>
 
         </LinearLayout>
-
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="3px"
@@ -166,6 +172,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="7.5"
+            android:gravity="center_vertical"
             android:orientation="vertical">
 
             <View
@@ -177,7 +184,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="50"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                >
 
                 <View
                     android:layout_width="0dp"
@@ -187,6 +196,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:src="@drawable/logo_u" />
 
                 <View
@@ -198,11 +208,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="exit"
+                    android:layout_gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:visibility="invisible"
                         android:src="@drawable/exit" />
 
                     <TextView

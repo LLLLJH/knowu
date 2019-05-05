@@ -24,6 +24,8 @@
             android:layout_height="wrap_content"
             android:src="@drawable/hand"
             android:layout_gravity="center"
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="30dp"
             />
         <View
             android:layout_width="0dp"

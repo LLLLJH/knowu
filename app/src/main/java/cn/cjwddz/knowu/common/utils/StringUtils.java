@@ -430,4 +430,11 @@ public class StringUtils {
         return sb.toString();
     }
 
+    /**
+     * 删除指定字符
+     * */
+    public static String deleteStr(String str,String s){
+        return str.replace(s,"");
+    }
+
 }

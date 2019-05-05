@@ -13,15 +13,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         ></cn.cjwddz.knowu.view.CountDownTimerView>
-    <ImageButton
-    android:id="@+id/ib_heating"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="end"
-    android:background="@color/white"
-    android:layout_marginTop="20dp"
-    android:layout_marginRight="20dp"
-    android:src="@drawable/heating_selector" />
+       <ImageButton
+        android:id="@+id/ib_heating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:background="@color/white"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        android:visibility="invisible"
+        android:clickable="false"
+        android:src="@drawable/heating_selector" />
 </FrameLayout>
 
 

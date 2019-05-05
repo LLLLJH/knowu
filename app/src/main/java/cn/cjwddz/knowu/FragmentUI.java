@@ -17,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import cn.cjwddz.knowu.activity.MainActivity;
+import cn.cjwddz.knowu.service.BatteryInterface;
 import cn.cjwddz.knowu.service.FragmentUIInterface;
 import cn.cjwddz.knowu.service.KnowUBleService;
 import cn.cjwddz.knowu.service.Protocol;
@@ -32,7 +33,7 @@ import cn.cjwddz.knowu.view.CountDownTimerView;
  * Use the {@link FragmentUI#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FragmentUI extends Fragment implements CountDownTimerView.onTimer,FragmentUIInterface{
+public class FragmentUI extends Fragment implements CountDownTimerView.onTimer,FragmentUIInterface, BatteryInterface {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -68,6 +69,7 @@ public class FragmentUI extends Fragment implements CountDownTimerView.onTimer,F
         kUBService=service;
         if(kUBService!=null){
             kUBService.setFragmentUIInterface(FragmentUI.this);
+            kUBService.setBatteryInterface(FragmentUI.this);
         }
     }
 
@@ -213,6 +215,13 @@ public class FragmentUI extends Fragment implements CountDownTimerView.onTimer,F
         ib_heating.setSelected(heating_status);
     }
 
+    @Override
+    public void setBattery(int battery) {
+        if(countDownTimerView!=null){
+            countDownTimerView.updateBattery(battery);
+        }
+    }
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -238,7 +247,6 @@ public class FragmentUI extends Fragment implements CountDownTimerView.onTimer,F
         countDownTimerView.setTimer(this);
         st_button = fragmentView.findViewById(R.id.startTiming);
         ib_heating = fragmentView.findViewById(R.id.ib_heating);
-
         ib_heating.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

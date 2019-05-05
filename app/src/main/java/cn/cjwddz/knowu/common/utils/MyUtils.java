@@ -18,9 +18,11 @@ import android.os.Build;
 
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
+import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.view.View;
 import android.widget.ImageView;
@@ -34,6 +36,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.NetworkInterface;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
@@ -41,8 +44,10 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -564,13 +569,11 @@ public class MyUtils {
      */
     public static byte[] SubArray(byte[] paramArrayOfByte, int paramInt1, int paramInt2) {
         byte[] arrayOfByte = new byte[paramInt2];
-        int i = 0;
-        while (true) {
-            if (i >= paramInt2)
-                return arrayOfByte;
+
+        for( int i = 0; i < paramInt2; i++){
             arrayOfByte[i] = paramArrayOfByte[(i + paramInt1)];
-            i += 1;
         }
+        return arrayOfByte;
     }
 
     /**
@@ -589,6 +592,50 @@ public class MyUtils {
 
         return h;
 
+    }
+
+
+    /**
+     * 获取手机MAC
+     * */
+    public static String getLocalMacAddress(Context context){
+       String macAdress = Settings.Secure.getString(context.getContentResolver(),"bluetooth_address");
+        if(!macAdress.isEmpty()){
+            return macAdress;
+        }else{
+            return null;
+        }
+    }
+
+
+    /**
+     * 通过网络接口获取手机MAC
+     * */
+    public static String getNetMacAddress(){
+       try{
+           List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
+           for(NetworkInterface nif:all){
+               if(nif.getName().equalsIgnoreCase("wlan0")) continue;
+                byte[] macByte = nif.getHardwareAddress();
+               if(macByte == null){
+                   return null;
+               }
+
+               StringBuilder stringBuilder = new StringBuilder();
+               for(byte b:macByte){
+                   stringBuilder.append(String.format("%02X:",b));
+               }
+
+               if(stringBuilder.length() >0){
+                   stringBuilder.deleteCharAt(stringBuilder.length()-1);
+               }
+
+               return stringBuilder.toString();
+           }
+       }catch (Exception ex){
+           ex.printStackTrace();
+       }
+       return null;
     }
 
 }

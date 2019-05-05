@@ -89,7 +89,7 @@ public class StartActivity extends Activity implements MyInterface,DownloadView{
         }
         preferences = getSharedPreferences("knowu",MODE_PRIVATE);
         isLogin = preferences.getBoolean("isLogin",false);
-        phoneNumber = preferences.getString("phoneNumber",null);
+        phoneNumber = preferences.getString("phoneNumber","default");
         downloadPresenter = new DownloadPresenter(this,this);
         try {
             PackageManager packageManager = this.getPackageManager();
@@ -102,20 +102,35 @@ public class StartActivity extends Activity implements MyInterface,DownloadView{
         ImageView imageView = findViewById(R.id.iv_Gif);
         anim = (AnimationDrawable) imageView.getBackground();
         anim.start();
-        Timer timer = new Timer();
+        final Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if(!isstart){
-                    downloadPresenter.updateAPK(Constants.UPDATE,now_version);
+                if(phoneNumber.equals("default")){
+                    startApp();
+                }else{
+                    if( !isstart){
+                        isstart = true;
+                        getLogin(Constants.LOGIN,phoneNumber);
+                        //downloadPresenter.updateAPK(Constants.UPDATE,now_version);
+                    }
                 }
+
             }
-        },3000);
+        },2000);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                isstart = true;
-               startApp();
+                if(phoneNumber.equals("default")){
+                    startApp();
+                }else{
+                    if( !isstart){
+                        isstart = true;
+                        getLogin(Constants.LOGIN,phoneNumber);
+                    }
+                }
+                //downloadPresenter.updateAPK(Constants.UPDATE,now_version);
+                //timer.cancel();
             }
         });
     }
@@ -132,8 +147,11 @@ public class StartActivity extends Activity implements MyInterface,DownloadView{
     }
 
     public void startApp(){
-
-
+        Intent intent = new Intent();
+        intent = intent.setClass(StartActivity.this, RegisterActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+        finish();
     }
 
     /**
@@ -167,6 +185,7 @@ public class StartActivity extends Activity implements MyInterface,DownloadView{
                     JSONObject jsonObject = new JSONObject(response.body().string());
                     status = jsonObject.getString("status");
                     msg = jsonObject.getString("msg");
+                    System.out.println(status+msg);
                 } catch(Exception e){
                     e.printStackTrace();
                 }
@@ -175,6 +194,8 @@ public class StartActivity extends Activity implements MyInterface,DownloadView{
                     myInterface.successed(call, response);
                 } else {
                     if(msg.equals("用户不存在")){
+                        myInterface.register();
+                    }else if(msg.equals("用户名参数错误")){
                         myInterface.register();
                     }else{
                         //System.out.println(status + msg);
@@ -196,17 +217,29 @@ public class StartActivity extends Activity implements MyInterface,DownloadView{
 
     @Override
     public void failure(IOException e) {
-        Intent intent = new Intent();
-        intent = intent.setClass(StartActivity.this, RegisterActivity.class);
-        startActivity(intent);
-        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
-        finish();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(StartActivity.this,"服务器异常",Toast.LENGTH_LONG).show();
+            }
+        });
+        //Intent intent = new Intent();
+        //intent = intent.setClass(StartActivity.this, RegisterActivity.class);
+        //startActivity(intent);
+       // overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+       // finish();
     }
 
     @Override
     public void failed(Call call, Response response) throws IOException {
         if(response.code() ==504){
-            Toast.makeText(this,"服务器异常",Toast.LENGTH_LONG).show();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(StartActivity.this,"Res服务器异常",Toast.LENGTH_LONG).show();
+                }
+            });
+
             //System.out.println("服务器异常");
         }
     }
@@ -307,6 +340,7 @@ public class StartActivity extends Activity implements MyInterface,DownloadView{
     @Override
     public void showMsg() {
         if(!isLogin){
+            System.out.println(isLogin);
             Intent intent = new Intent();
             intent = intent.setClass(StartActivity.this, RegisterActivity.class);
             startActivity(intent);

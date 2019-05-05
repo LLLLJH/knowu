@@ -32,6 +32,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
+import cn.cjwddz.knowu.FragmentUI;
 import cn.cjwddz.knowu.R;
 import cn.cjwddz.knowu.activity.MainActivity;
 import cn.cjwddz.knowu.common.application.AppManager;
@@ -64,6 +65,11 @@ public class KnowUBleService extends Service implements ServiceInterface{
     private UIInterface uiInterface;
     public void setUiInterface(UIInterface uiInterface){
         this.uiInterface = uiInterface;
+    }
+
+    private BatteryInterface batteryInterface;
+    public void setBatteryInterface(BatteryInterface batteryInterface){
+        this.batteryInterface = batteryInterface;
     }
 
     public class MyBinder extends Binder
@@ -176,17 +182,18 @@ public class KnowUBleService extends Service implements ServiceInterface{
     @Override
     public void disConnectDevice() {
         if(ble != null && linkingDevice != null){
-            ble.disconnect(linkingDevice.getDevice().getAddress());
-        }
-        if(linkingDevice!=null){
-            mac=linkingDevice.getDevice().getAddress();
+           // ble.disconnect(linkingDevice.getDevice().getAddress());
             status = ble.getConnectStatus(mac);
         }
+       // if(linkingDevice!=null){
+        //    mac=linkingDevice.getDevice().getAddress();
+        //    status = ble.getConnectStatus(mac);
+       // }
         if(status== BluetoothProfile.STATE_CONNECTED && linkingDevice !=null)
             ble.disconnect(mac);
-        uiInterface.back();
         linkingDevice =null;
         mac = null;
+        uiInterface.back();
     }
 
     @Override
@@ -265,8 +272,10 @@ public class KnowUBleService extends Service implements ServiceInterface{
                                          break;
                                      //  读取电量值
                                      case (byte) 0xc5:
-                                         // uiInterface.setNotify("收到Notify");
-                                         uiInterface.updateView(value[5]);
+                                         if(value[5]<=10){
+                                             uiInterface.updateView(value[5]);
+                                         }
+                                         batteryInterface.setBattery(value[5]);
                                          break;
                                      case (byte)0xc6:
                                          switch (value[5]){
@@ -279,6 +288,9 @@ public class KnowUBleService extends Service implements ServiceInterface{
                                                  //System.out.println("deep状态："+true);
                                                  break;
                                          }
+                                         break;
+                                     case (byte)0xc8:
+                                         uiInterface.getDefIntensity(value[5]);
                                          break;
                                      default:break;
                                  }
@@ -335,7 +347,6 @@ public class KnowUBleService extends Service implements ServiceInterface{
                      uiInterface.connectSuccess();
                      ble.stopSearch();
                      stopScan();
-                     thread.start();
                      /**if(linkingDevice != null){
                          System.out.println("linking"+"ID:"+linkingDevice.getDeviceID()+"version:"
                                  +linkingDevice.getDeviceVersion()+"model:"+linkingDevice.getDeviceModel()
@@ -369,7 +380,8 @@ public class KnowUBleService extends Service implements ServiceInterface{
              setErr(false);
          }else if(status == STATUS_DISCONNECTED||status == STATUS_DEVICE_DISCONNECTED){
              linkingDevice = null;
-             ble.disconnect(mac);
+             mac = null;
+             //ble.disconnect(mac);
              ble.unregisterConnectStatusListener(mac,bleConnectStatusListener);
              if(!err){
                  uiInterface.back();
@@ -379,26 +391,5 @@ public class KnowUBleService extends Service implements ServiceInterface{
 
 };
 
-
- //每一秒扫描设备连接状态并且发送读电量信息
- private Thread thread = new Thread(){
-     @Override
-     public void run() {
-         final Timer timer = new Timer();
-         TimerTask task = new TimerTask() {
-             @Override
-             public void run() {
-                 int status = ble.getConnectStatus(mac);
-                 if(status == STATUS_CONNECTED||status == STATUS_DEVICE_CONNECTED||status == STATUS_DEVICE_CONNECTING)
-                 {
-                     sendMessage(Protocol.getElectricGetInstruct());
-                     return;
-                 }
-                 timer.cancel();
-             }
-         };
-         timer.schedule(task,0,3*60*1000);
-     }
- };
 
 }

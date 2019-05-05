@@ -1,16 +1,15 @@
 package cn.cjwddz.knowu;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTabHost;
-import android.support.v7.app.ActionBar;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
@@ -21,6 +20,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,9 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cn.cjwddz.knowu.activity.OpinionActivity;
 import cn.cjwddz.knowu.activity.RecordActivity;
-import cn.cjwddz.knowu.activity.RegisterActivity;
 import cn.cjwddz.knowu.adapters.DataAdapter;
 import cn.cjwddz.knowu.adapters.DateAdapter;
 import cn.cjwddz.knowu.common.http.MyHTTPClient;
@@ -51,6 +49,7 @@ import cn.cjwddz.knowu.service.Constants;
 import cn.cjwddz.knowu.view.GradientGraphView;
 import cn.cjwddz.knowu.view.MyDatePicker;
 import cn.cjwddz.knowu.view.MyDialog;
+import cn.cjwddz.knowu.view.MyScrollViewNew;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -60,7 +59,6 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.content.Context.MODE_PRIVATE;
-import static cn.cjwddz.knowu.R.id.rv_data;
 import static cn.cjwddz.knowu.activity.MainActivity.JSON;
 
 /**
@@ -75,6 +73,7 @@ public class DayTabFragment extends Fragment implements Get_M_callback, Get_D_ca
     private static String FORMAT = "yyyy-MM-dd";
     private List<String> mdata = new ArrayList<>();
     private List<String> mdate = new ArrayList<>();
+    private MyScrollViewNew scrollView;
     private RecyclerView recyclerView_Data;
     private RecyclerView recyclerView_Date;
     private TextView tv_sum_hour;
@@ -133,6 +132,7 @@ public class DayTabFragment extends Fragment implements Get_M_callback, Get_D_ca
     public void setGet_m_callback(Get_M_callback get_m_callback){this.get_m_callback = get_m_callback;}
     public void setGet_d_callback(Get_D_callback get_d_callback){this.get_d_callback = get_d_callback;}
 
+
     private View fragmentView;
     @Nullable
 
@@ -151,6 +151,13 @@ public class DayTabFragment extends Fragment implements Get_M_callback, Get_D_ca
         return fragmentView;
     }
 
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
     /**
      * 请求当月1号的使用数据
      * */
@@ -167,8 +174,11 @@ public class DayTabFragment extends Fragment implements Get_M_callback, Get_D_ca
         //tv_date_year_month.setText(getStringDateShort());
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
     private void findView(View v){
-        recyclerView_Data =  v.findViewById(rv_data);
+        scrollView = v.findViewById(R.id.mScrollView);
+        View view = v.findViewById(R.id.view1);
+        recyclerView_Data =  v.findViewById(R.id.rv_data);
         recyclerView_Date =  v.findViewById(R.id.rv_date);
         tv_sum_hour =  v.findViewById(R.id.tv_sum_hour);
         tv_sum_min =  v.findViewById(R.id.tv_sum_min);
@@ -233,17 +243,18 @@ public class DayTabFragment extends Fragment implements Get_M_callback, Get_D_ca
             @Override
             public void onItemClick(View view) {
                 int position = recyclerView_Data.getChildAdapterPosition(view);
+
                 DataAdapter.ViewHolder viewHolder = (DataAdapter.ViewHolder) recyclerView_Data.findViewHolderForAdapterPosition(position);
                 if(position!=lastposition){
                     //网络请求
                     getUserRecordOfDay(Constants.GET_DAY,putMap(position));
                     lastHolder = (DataAdapter.ViewHolder) recyclerView_Data.findViewHolderForAdapterPosition(lastposition);
-                    madapter.setSelected(lastHolder,false,lastposition);
+                    madapter.setSelected(lastHolder,false,lastposition,isVisibleItem(lastposition));
                 }else{
                     DataAdapter.ViewHolder mViewHolder = (DataAdapter.ViewHolder) recyclerView_Data.findViewHolderForAdapterPosition(0);
-                    madapter.setSelected(mViewHolder,false,0);
+                    madapter.setSelected(mViewHolder,false,0,isVisibleItem(0));
                 }
-                madapter.setSelected(viewHolder,true,position);
+                madapter.setSelected(viewHolder,true,position,true);
                 lastHolder = viewHolder;
                 lastposition = position;
             }
@@ -258,12 +269,12 @@ public class DayTabFragment extends Fragment implements Get_M_callback, Get_D_ca
                     //网络请求
                     getUserRecordOfDay(Constants.GET_DAY,putMap(position));
                     lastHolder = (DataAdapter.ViewHolder) recyclerView_Data.findViewHolderForAdapterPosition(lastposition);
-                    madapter.setSelected(lastHolder,false,lastposition);
+                    madapter.setSelected(lastHolder,false,lastposition,isVisibleItem(lastposition));
                 }else{
                     DataAdapter.ViewHolder mViewHolder = (DataAdapter.ViewHolder) recyclerView_Data.findViewHolderForAdapterPosition(0);
-                    madapter.setSelected(mViewHolder,false,0);
+                    madapter.setSelected(mViewHolder,false,0,isVisibleItem(0));
                 }
-                madapter.setSelected(viewHolder,true,position);
+                madapter.setSelected(viewHolder,true,position,true);
                 lastHolder = viewHolder;
                 lastposition = position;
                 // adapter.notifyItemChanged(position);
@@ -271,8 +282,9 @@ public class DayTabFragment extends Fragment implements Get_M_callback, Get_D_ca
         });
         recyclerView_Data.setAdapter(madapter);
         recyclerView_Date.setAdapter(adapter1);
+
         //实现两个RecycleView联动
-        recyclerView_Data.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        recyclerView_Data.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if(recyclerView_Data.getScrollState() != RecyclerView.SCROLL_STATE_IDLE){
@@ -280,7 +292,7 @@ public class DayTabFragment extends Fragment implements Get_M_callback, Get_D_ca
                 }
             }
         });
-        recyclerView_Date.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        recyclerView_Date.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if(recyclerView_Date.getScrollState() != RecyclerView.SCROLL_STATE_IDLE){
@@ -289,6 +301,8 @@ public class DayTabFragment extends Fragment implements Get_M_callback, Get_D_ca
             }
         });
     }
+
+
     /**
      * 使用get方式访问服务器
      * 获取用户使用记录
@@ -530,28 +544,28 @@ View.OnClickListener listener1 = new View.OnClickListener() {
                 break;
             //获取评价
             case R.id.ib_user_feel_nothing:
-                String day = date+"-"+lastposition+1;
+                String day = date+(lastposition+1)+"日";
                 long time = MyUtils.date2TimeStamp(day,FORMAT);
                 //System.out.println(String.valueOf(time));
                 postUserFeel(Constants.ADD_USER_FEEL_URL,time,FEEL_NOTHING);
                 dialog.dismiss();
                 break;
             case R.id.ib_user_feel_little:
-                String day_l = date+"-"+lastposition+1;
+                String day_l = date+(lastposition+1)+"日";
                 long time_l = MyUtils.date2TimeStamp(day_l,FORMAT);
                 //System.out.println(String.valueOf(time_l));
                 postUserFeel(Constants.ADD_USER_FEEL_URL,time_l,FEEL_LITLE);
                 dialog.dismiss();
                 break;
             case R.id.ib_user_feel_good:
-                String day_g = date+"-"+lastposition+1;
+                String day_g = date+(lastposition+1)+"日";
                 long time_g = MyUtils.date2TimeStamp(day_g,FORMAT);
                 //System.out.println(String.valueOf(time_g));
                 postUserFeel(Constants.ADD_USER_FEEL_URL,time_g,FEEL_GOOD);
                 dialog.dismiss();
                 break;
             case R.id.ib_user_feel_best:
-                String day_b = date+"-"+lastposition+1;
+                String day_b = date+(lastposition+1)+"日";
                 long time_b = MyUtils.date2TimeStamp(day_b,FORMAT);
                 //System.out.println(String.valueOf(time_b));
                 postUserFeel(Constants.ADD_USER_FEEL_URL,time_b,FEEL_BEST);
@@ -680,5 +694,29 @@ View.OnClickListener listener1 = new View.OnClickListener() {
             }
         });
     }
+
+    /**
+     *确定item是否可见
+     **/
+    public Boolean isVisibleItem(int position){
+        int firstItemPosition = 0;
+        int lastItemPosition = 12;
+        RecyclerView.LayoutManager layoutManager =  recyclerView_Data.getLayoutManager();
+        if(layoutManager instanceof LinearLayoutManager){
+            LinearLayoutManager linearLayoutManager = (LinearLayoutManager) layoutManager;
+            //获取第一个可见Item的position
+            firstItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
+            //获取最后一个Item的position
+            lastItemPosition = linearLayoutManager.findLastVisibleItemPosition();
+
+        }
+        if(firstItemPosition <= position && position <= lastItemPosition){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
 
 }

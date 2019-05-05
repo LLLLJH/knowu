@@ -25,12 +25,15 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -69,6 +72,7 @@ import cn.cjwddz.knowu.adapters.MyAdapter;
 import cn.cjwddz.knowu.common.application.AppManager;
 import cn.cjwddz.knowu.common.http.MyHTTPClient;
 import cn.cjwddz.knowu.common.utils.MyUtils;
+import cn.cjwddz.knowu.common.utils.StringUtils;
 import cn.cjwddz.knowu.interfaces.Get_D_callback;
 import cn.cjwddz.knowu.interfaces.Get_M_callback;
 import cn.cjwddz.knowu.interfaces.Get_signature_callback;
@@ -103,11 +107,12 @@ public class InformationActivity extends AppCompatActivity implements AdapterVie
     private MyPicker np;
     private int year=2000,month= 0,day=01;
     private int wh;
-    //private String nickName,bDate,height,weight,mDate;
     private  String phoneNumber;
     private String filename;
+    private List<Map<String,String>> list;
     private String[] array = {"昵称","出生日期","身高","体重","经期"};
     private String[] info=new String[]{"女有","1976-1-1","160cm","40kg","15号"};
+    private boolean changeFlag = false;
 
     //内存储
     SharedPreferences sp;
@@ -238,7 +243,7 @@ public class InformationActivity extends AppCompatActivity implements AdapterVie
         setGet_s_callback(this);
 
         submitInfo = (Button) findViewById(R.id.submitInfo);
-        submitInfo = (Button) findViewById(R.id.submitInfo);
+       // submitInfo = (Button) findViewById(R.id.submitInfo);
 
         //动态申请权限
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(
@@ -247,7 +252,8 @@ public class InformationActivity extends AppCompatActivity implements AdapterVie
                     Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.MOUNT_UNMOUNT_FILESYSTEMS,
-                    Manifest.permission.CAMERA
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.ACCESS_FINE_LOCATION
             }, Constants.PERMISSION_REQUEST_COARSE_LOCATION);
         }
         myImageView = (MyImageView) findViewById(R.id.myImageView);
@@ -259,6 +265,11 @@ public class InformationActivity extends AppCompatActivity implements AdapterVie
         if(sp.getBoolean("firstStart",true)){
             editor.putBoolean("firstStart",false);
             editor.commit();
+            //标题栏返回按键
+            actionBar = getSupportActionBar();
+            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
+            //google的actionbar是分为上下两栏显示的，上面的代码只能设置顶部actionbar的背景色，为了让下面的背景色一致，还需要添加一行代码：
+            actionBar.setSplitBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
         }else{
             submitInfo.setClickable(false);
             submitInfo.setVisibility(View.INVISIBLE);
@@ -278,8 +289,8 @@ public class InformationActivity extends AppCompatActivity implements AdapterVie
         }
         phoneNumber = sp.getString("phoneNumber",null);
         filename = MyUtils.hmacSha256("header",phoneNumber);
-        info[0] = sp.getString("nickName","女有");
-        info[1] = sp.getString("bDate","1976-1-1");
+        info[0] = sp.getString("nickName", StringUtils.deleteStr(MyUtils.getNetMacAddress(),":"));
+        info[1] = sp.getString("bDate","1960-1-1");
         info[2] = sp.getString("height","150cm");
         info[3] = sp.getString("weight","40kg");
         info[4] = sp.getString("mDate","10号");
@@ -295,19 +306,24 @@ public class InformationActivity extends AppCompatActivity implements AdapterVie
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         listitemHeight = (dm.heightPixels-statusBarHeight1-10)/50*4;
         information_lv = (ListView) findViewById(R.id.information_lv);
-        List<Map<String,String>> list = new ArrayList<Map<String,String>>();
-        for(int i=0;i<array.length;i++){
-            Map<String,String> item = new HashMap<String,String>();
-            item.put("name",array[i]);
-            item.put("value",info[i]);
-            list.add(item);
-        }
-        adapter = new MyAdapter(this,list,R.layout.array_item,new String[]{"name","value"},new int[]{R.id.tv_information,R.id.tv_value});
+        list = new ArrayList<>();
+        getUpdateList();
+        adapter = new MyAdapter(this,list,R.layout.array_item);
         adapter.setHeight(listitemHeight);
         information_lv.setAdapter(adapter);
         information_lv.setOnItemClickListener(this);
         initImageView();
        // Toast.makeText(this,""+statusBarHeight1,Toast.LENGTH_LONG).show();
+    }
+
+    private void getUpdateList(){
+        for(int i=0;i<array.length;i++){
+            Map<String,String> item = new HashMap<>();
+            item.put("name",array[i]);
+            item.put("value",info[i]);
+            list.add(item);
+        }
+        setMDate();
     }
 
     @Override
@@ -456,41 +472,55 @@ public class InformationActivity extends AppCompatActivity implements AdapterVie
                     break;
                 case R.id.btn_nn_ensure:
                     EditText et = dialogView.findViewById(R.id.et_nickname);
-                    info[0]=et.getText().toString();
-                    View view1 = information_lv.getChildAt(0);
-                    TextView tv1 = view1.findViewById(R.id.tv_value);
-                    tv1.setText(info[0]);
+                    if(et.getText().toString().isEmpty()){
+                        Toast.makeText(InformationActivity.this,"昵称不能为空",Toast.LENGTH_SHORT).show();
+                    }else{
+                        info[0]= String.valueOf(et.getText());
+                        adapter.setMData(0,info[0]);
+                        changeFlag = true;
+                    }
                     dialog.dismiss();
                     break;
                 case R.id.btn_bd_ensure:
                     info[1] =dp.getYear()+"-"+(dp.getMonth()+1)+"-"+dp.getDayOfMonth();
+                    adapter.setMData(1,info[1]);
                     View view2 = information_lv.getChildAt(1);
                     TextView tv2 = view2.findViewById(R.id.tv_value);
                     tv2.setText(info[1]);
+                    changeFlag = true;
                     dialog.dismiss();
                     break;
                 case R.id.btn_h_ensure:
                     info[2] = String.valueOf(np.getValue())+"cm" ;
+                    adapter.setMData(2,info[2]);
                     View view3 = information_lv.getChildAt(2);
                     TextView tv3 = view3.findViewById(R.id.tv_value);
                     tv3.setText(info[2]);
                     dialog.dismiss();
+                    changeFlag = true;
                     break;
                 case R.id.btn_w_ensure:
                     info[3] = String.valueOf(np.getValue())+"kg" ;
+                    adapter.setMData(3,info[3]);
                     View view4 = information_lv.getChildAt(3);
                     TextView tv4 = view4.findViewById(R.id.tv_value);
                     tv4.setText(info[3]);
                     dialog.dismiss();
+                    changeFlag = true;
                     break;
                 case R.id.btn_md_ensure:
                     info[4] = String.valueOf(np.getValue())+"号" ;
+                    adapter.setMData(4,info[4]);
                     View view5 = information_lv.getChildAt(4);
                     TextView tv5 = view5.findViewById(R.id.tv_value);
                     tv5.setText(info[4]);
                     dialog.dismiss();
+                    changeFlag = true;
                     break;
                 case R.id.turnBack:
+                    if(changeFlag){
+                        submitInfo();
+                    }
                     AppManager.getAppManager().finishActivity();
                     break;
                 case R.id.select_photo:
@@ -540,8 +570,13 @@ public class InformationActivity extends AppCompatActivity implements AdapterVie
             }
         }
     };
+
     //提交用户填写的数据
     public void submitInformation(View view){
+        submitInfo();
+    }
+
+    private void submitInfo(){
         editor.putString("nickName",info[0]);
         editor.putString("bDate",info[1]);
         editor.putString("height",info[2]);
@@ -770,6 +805,8 @@ public class InformationActivity extends AppCompatActivity implements AdapterVie
         Map<String,Object> params = new HashMap<>();
         params.put("save-key","/userHeader/{filename}{.suffix}");
         params.put("expiration",EXPIRATION);
+
+
         params.put("bucket",BUCKET);
         //params.put("date",MyUtils.getTimeToGMT(date));
         //System.out.println(MyUtils.getTimeToGMT(date));
@@ -777,5 +814,13 @@ public class InformationActivity extends AppCompatActivity implements AdapterVie
         //policy = UpYunUtils.getPolicy(params);
 
         UploadEngine.getInstance().formUpload(file,params,OPERATER, UpYunUtils.md5(PASSWORD), completeListener, progressListener);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(changeFlag){
+            submitInfo();
+        }
     }
 }

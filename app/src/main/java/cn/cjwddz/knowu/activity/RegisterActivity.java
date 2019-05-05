@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cn.cjwddz.knowu.R;
+import cn.cjwddz.knowu.common.application.AppManager;
 import cn.cjwddz.knowu.common.http.MyHTTPClient;
 import cn.cjwddz.knowu.service.Constants;
 import cn.cjwddz.knowu.service.MyInterface;
@@ -59,6 +60,7 @@ public class RegisterActivity extends BaseActivity implements RecyclerView.Recyc
     @Override
     void initView() {
         setContentView(R.layout.activity_register);
+        AppManager.getAppManager().addActivity(this);
         setMyInterface(this);
         phone_editText = (EditText) findViewById(R.id.phone_editText);
         next_step = (Button) findViewById(R.id.next_step);
@@ -206,7 +208,7 @@ public class RegisterActivity extends BaseActivity implements RecyclerView.Recyc
                 Toast.makeText(this,"再按一次退出程序",Toast.LENGTH_SHORT).show();
                 exitTime = System.currentTimeMillis();
             }else{
-                finish();
+                AppManager.getAppManager().finishActivity(this);
                 System.exit(0);
             }
             return true;

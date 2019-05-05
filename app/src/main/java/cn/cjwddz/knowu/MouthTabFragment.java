@@ -247,12 +247,12 @@ public class MouthTabFragment extends Fragment implements Get_M_callback, Get_D_
                     //网络请求
                     getUserRecordOfDay(Constants.GET_MONTH, putMap(position));
                     lastHolder = (DataAdapter_mouth.ViewHolder) recyclerView_Data.findViewHolderForAdapterPosition(lastposition);
-                    madapter.setSelected(lastHolder, false, lastposition);
+                    madapter.setSelected(lastHolder, false, lastposition,isVisibleItem(lastposition));
                 } else {
                     DataAdapter_mouth.ViewHolder mViewHolder = (DataAdapter_mouth.ViewHolder) recyclerView_Data.findViewHolderForAdapterPosition(0);
-                    madapter.setSelected(mViewHolder, false, 0);
+                    madapter.setSelected(mViewHolder, false, 0,isVisibleItem(0));
                 }
-                madapter.setSelected(viewHolder, true, position);
+                madapter.setSelected(viewHolder, true, position,true);
                 lastHolder = viewHolder;
                 lastposition = position;
             }
@@ -267,12 +267,12 @@ public class MouthTabFragment extends Fragment implements Get_M_callback, Get_D_
                     //网络请求
                     getUserRecordOfDay(Constants.GET_MONTH, putMap(position));
                     lastHolder = (DataAdapter_mouth.ViewHolder) recyclerView_Data.findViewHolderForAdapterPosition(lastposition);
-                    madapter.setSelected(lastHolder, false, lastposition);
+                    madapter.setSelected(lastHolder, false, lastposition,isVisibleItem(lastposition));
                 } else {
                     DataAdapter_mouth.ViewHolder mViewHolder = (DataAdapter_mouth.ViewHolder) recyclerView_Data.findViewHolderForAdapterPosition(0);
-                    madapter.setSelected(mViewHolder, false, 0);
+                    madapter.setSelected(mViewHolder, false, 0,isVisibleItem(0));
                 }
-                madapter.setSelected(viewHolder, true, position);
+                madapter.setSelected(viewHolder, true, position,true);
                 lastHolder = viewHolder;
                 lastposition = position;
                 // adapter.notifyItemChanged(position);
@@ -691,5 +691,28 @@ public class MouthTabFragment extends Fragment implements Get_M_callback, Get_D_
             public void onResponse(Call call, Response response) throws IOException {
             }
         });
+    }
+
+    /**
+     *确定item是否可见
+     **/
+    public Boolean isVisibleItem(int position){
+        int firstItemPosition = 0;
+        int lastItemPosition = 12;
+        RecyclerView.LayoutManager layoutManager =  recyclerView_Data.getLayoutManager();
+        if(layoutManager instanceof LinearLayoutManager){
+            LinearLayoutManager linearLayoutManager = (LinearLayoutManager) layoutManager;
+            //获取第一个可见Item的position
+            firstItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
+            //获取最后一个Item的position
+            lastItemPosition = linearLayoutManager.findLastVisibleItemPosition();
+
+        }
+        if(firstItemPosition <= position && position <= lastItemPosition){
+            return true;
+        }else{
+            return false;
+        }
+
     }
 }

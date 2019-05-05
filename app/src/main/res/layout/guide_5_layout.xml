@@ -1,15 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
 
         <ImageView
             android:id="@+id/guide_iv5"
-            android:layout_width="match_parent"
-           android:layout_height="match_parent"
-            android:src="@drawable/guide_5"
-            ></ImageView>
+            android:layout_width="wrap_content"
+            android:layout_height="631dp"
+            android:src="@drawable/guide_5"></ImageView>
+        <Button
+            android:layout_width="80dp"
+            android:layout_height="30dp"
+            android:background="@drawable/start_clicked"
+            android:text="我知道了"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="20dp"
+            android:layout_marginRight="15dp"
+            android:onClick="exitGuide"
+            />
 
 
-</LinearLayout>
+</FrameLayout>

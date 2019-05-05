@@ -8,181 +8,227 @@
     android:background="@color/white"
     tools:context="cn.cjwddz.knowu.activity.DeviceDetailsActivity">
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="30"
-        android:background="@drawable/background_device"
-        />
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="7"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        >
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginLeft="25px"
-            android:text="设备名称"
-            android:textSize="@dimen/deviceDetails_tv"
-            android:textColor="@color/deviceDetails_tv_color"
-            />
-        <TextView
-            android:id="@+id/tv_deviceName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="25px"
-            android:text="女有痛经治疗仪"
-            android:textSize="@dimen/deviceDetails_value_tv"
-            android:textColor="@color/deviceDetails_tv_value_color"
-            />
-    </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2px"
-        android:background="@drawable/progress"
-        android:layout_marginLeft="25px"
-        android:layout_marginRight="25px"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="7"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        >
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginLeft="25px"
-            android:text="提示音"
-            android:textSize="@dimen/deviceDetails_tv"
-            android:textColor="@color/deviceDetails_tv_color"
-            />
-        <Switch
-            android:id="@+id/switch_hint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="25px"
-            />
-    </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="10px"
-        android:background="@drawable/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/background_device"
+        android:scaleType="fitXY"
         />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="7"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        >
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginLeft="25px"
-            android:text="型号"
-            android:textSize="@dimen/deviceDetails_tv"
-            android:textColor="@color/deviceDetails_tv_color"
-            />
-        <TextView
-            android:id="@+id/tv_model"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="25px"
-            android:text="女有痛经治疗仪"
-            android:textSize="@dimen/deviceDetails_value_tv"
-            android:textColor="@color/deviceDetails_tv_value_color"
-            />
-    </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2px"
-        android:background="@drawable/progress"
-        android:layout_marginLeft="25px"
-        android:layout_marginRight="25px"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="7"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        >
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="7"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25px"
+                android:layout_weight="1"
+                android:text="设备名称"
+                android:textColor="@color/deviceDetails_tv_color"
+                android:textSize="@dimen/deviceDetails_tv" />
+
+            <TextView
+                android:id="@+id/tv_deviceName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="25px"
+                android:text="无设备信息"
+                android:textColor="@color/deviceDetails_tv_value_color"
+                android:textSize="@dimen/deviceDetails_value_tv" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
             android:layout_marginLeft="25px"
-            android:text="ID"
-            android:textSize="@dimen/deviceDetails_tv"
-            android:textColor="@color/deviceDetails_tv_color"
-            />
-        <TextView
-            android:id="@+id/tv_deviceId"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginRight="25px"
-            android:text="女有痛经治疗仪"
-            android:textSize="@dimen/deviceDetails_value_tv"
-            android:textColor="@color/deviceDetails_tv_value_color"
-            />
-    </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2px"
-        android:background="@drawable/progress"
-        android:layout_marginLeft="25px"
-        android:layout_marginRight="25px"/>
+            android:background="@drawable/progress" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="7"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        >
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+        <LinearLayout
+            android:id="@+id/ll_deep"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="7"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25px"
+                android:layout_weight="1"
+                android:text="提示音"
+                android:textColor="@color/deviceDetails_tv_color"
+                android:textSize="@dimen/deviceDetails_tv" />
+
+            <Switch
+                android:id="@+id/switch_hint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="25px" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
             android:layout_marginLeft="25px"
-            android:text="固件版本"
-            android:textSize="@dimen/deviceDetails_tv"
-            android:textColor="@color/deviceDetails_tv_color"
-            />
-        <TextView
-            android:id="@+id/tv_firmwareVersion"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginRight="25px"
-            android:text="女有痛经治疗仪"
-            android:textSize="@dimen/deviceDetails_value_tv"
-            android:textColor="@color/deviceDetails_tv_value_color"
-            />
+            android:background="@drawable/progress" />
+
+        <LinearLayout
+            android:id="@+id/ll_defIntensity"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="7"
+            android:gravity="center_vertical"
+            android:onClick="setIntensity"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25px"
+                android:layout_weight="1"
+                android:text="默认力度"
+                android:textColor="@color/deviceDetails_tv_color"
+                android:textSize="@dimen/deviceDetails_tv" />
+
+            <TextView
+                android:id="@+id/tv_defIntensity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="25px"
+                android:text="女有痛经治疗仪"
+                android:textColor="@color/deviceDetails_tv_value_color"
+                android:textSize="@dimen/deviceDetails_value_tv" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="10px"
+            android:background="@drawable/progress" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="7"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25px"
+                android:layout_weight="1"
+                android:text="型号"
+                android:textColor="@color/deviceDetails_tv_color"
+                android:textSize="@dimen/deviceDetails_tv" />
+
+            <TextView
+                android:id="@+id/tv_model"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="25px"
+                android:text="无设备信息"
+                android:textColor="@color/deviceDetails_tv_value_color"
+                android:textSize="@dimen/deviceDetails_value_tv" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:layout_marginLeft="25px"
+            android:layout_marginRight="25px"
+            android:background="@drawable/progress" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="7"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25px"
+                android:layout_weight="1"
+                android:text="ID"
+                android:textColor="@color/deviceDetails_tv_color"
+                android:textSize="@dimen/deviceDetails_tv" />
+
+            <TextView
+                android:id="@+id/tv_deviceId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="25px"
+                android:text="无设备信息"
+                android:textColor="@color/deviceDetails_tv_value_color"
+                android:textSize="@dimen/deviceDetails_value_tv" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:layout_marginLeft="25px"
+            android:layout_marginRight="25px"
+            android:background="@drawable/progress" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="7"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25px"
+                android:layout_weight="1"
+                android:text="固件版本"
+                android:textColor="@color/deviceDetails_tv_color"
+                android:textSize="@dimen/deviceDetails_tv" />
+
+            <TextView
+                android:id="@+id/tv_firmwareVersion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="25px"
+                android:text="无设备信息"
+                android:textColor="@color/deviceDetails_tv_value_color"
+                android:textSize="@dimen/deviceDetails_value_tv" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="@drawable/progress" />
+
+        <RelativeLayout
+            android:id="@+id/rl_2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_below="@+id/bt1"
+            android:layout_weight="26"
+            android:gravity="center">
+
+
+        </RelativeLayout>
+
     </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2px"
-        android:background="@drawable/progress"
-      />
-
-    <RelativeLayout
-        android:id="@+id/rl_2"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_below="@+id/bt1"
-        android:layout_weight="33"
-        android:gravity="center">
-
-
-    </RelativeLayout>
-
 
 </LinearLayout>

@@ -17,7 +17,7 @@ public class Protocol {
     };
     /*类型*/
     public enum Type{
-        SWITCH((byte) 0xc0),MODE((byte) 0xc1),INTENSITY((byte) 0xc2),CHECK((byte) 0xc3),LINK((byte) 0xc4),ELECTRIC((byte)0xc5),DEEP((byte)0xc6),HEATING((byte)0xc7);
+        SWITCH((byte) 0xc0),MODE((byte) 0xc1),INTENSITY((byte) 0xc2),CHECK((byte) 0xc3),LINK((byte) 0xc4),ELECTRIC((byte)0xc5),DEEP((byte)0xc6),HEATING((byte)0xc7),DEFINTENSITY((byte)0xc8);
         byte value;
         Type(byte value){
             this.value=value;
@@ -93,6 +93,21 @@ public class Protocol {
     // 读取强度指令 todo 待定
     public static byte[] getIntensityReadInstruct(){
         byte[] data =new byte[]{start,0x00,0x00,Control.READ.value,Type.INTENSITY.value,0x00,end};
+        data[1] = (byte)(0x00+data.length);
+        data[6] = (byte) ((data[0]+data[1]+data[2]+data[3]+data[4]+data[5])&0xff);
+        return data;
+    }
+    // 设置默认强度指令
+    public static byte[] getDefIntensitySetInstruct(int intensity){
+        lastIntensity = intensity;
+        byte[] data =new byte[]{start,0x00,(byte) (0x00+intensity),Control.WRITE.value,Type.DEFINTENSITY.value,Type.INTENSITY.getIntensity(intensity),end};
+        data[1] = (byte)(0x00+data.length);
+        data[6] = (byte) ((data[0]+data[1]+data[2]+data[3]+data[4]+data[5])&0xff);
+        return data;
+    }
+    // 读取默认强度指令
+    public static byte[] getDefIntensityReadInstruct(){
+        byte[] data =new byte[]{start,0x00,0x00,Control.READ.value,Type.DEFINTENSITY.value,0x00,end};
         data[1] = (byte)(0x00+data.length);
         data[6] = (byte) ((data[0]+data[1]+data[2]+data[3]+data[4]+data[5])&0xff);
         return data;

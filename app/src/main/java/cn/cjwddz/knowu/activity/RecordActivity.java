@@ -11,9 +11,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,12 +24,8 @@ import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -45,31 +41,16 @@ import cn.cjwddz.knowu.DayTabFragment;
 import cn.cjwddz.knowu.adapters.DataAdapter;
 import cn.cjwddz.knowu.adapters.DateAdapter;
 import cn.cjwddz.knowu.common.application.AppManager;
-import cn.cjwddz.knowu.common.http.MyHTTPClient;
-import cn.cjwddz.knowu.common.utils.MyUtils;
-import cn.cjwddz.knowu.interfaces.DeepStatusListenerManager;
 import cn.cjwddz.knowu.interfaces.Get_D_callback;
 import cn.cjwddz.knowu.interfaces.Get_M_callback;
 import cn.cjwddz.knowu.interfaces.SetDateListenerManager;
 import cn.cjwddz.knowu.interfaces.SetDateListenerManager_m;
-import cn.cjwddz.knowu.service.Constants;
 import cn.cjwddz.knowu.view.GradientGraphView;
 import cn.cjwddz.knowu.view.MyDatePicker;
 import cn.cjwddz.knowu.view.MyDialog;
 import cn.cjwddz.knowu.view.TabView;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
-import static cn.cjwddz.knowu.R.id.datePicker_Y;
-import static cn.cjwddz.knowu.R.id.rv_data;
-import static cn.cjwddz.knowu.activity.MainActivity.JSON;
-
-public class RecordActivity extends AppCompatActivity{
+public class RecordActivity extends AppCompatActivity {
 
     private static String FEEL_NOTHING = "nothing";
     private static String FEEL_LITLE = "little";
@@ -126,6 +107,7 @@ public class RecordActivity extends AppCompatActivity{
     private int year;
     private int month;
     private int position;
+    private String date = null;
 
     private String phoneNumber;
 
@@ -133,6 +115,15 @@ public class RecordActivity extends AppCompatActivity{
     private DateAdapter adapter1;
 
     android.support.v7.app.ActionBar actionBar;
+    private View actionBarView;
+    private int limit = 700;
+    private int move = 0;
+    private int lastMove = 0;
+    private int alpha = 17;
+    private float move_D;
+    private float move_M;
+    private float move_U;
+    private String colorString;
 
     private FragmentTabHost tabHost;
 
@@ -141,6 +132,11 @@ public class RecordActivity extends AppCompatActivity{
 
     private  SetDateListenerManager dateListenerManager;
     private SetDateListenerManager_m dateListenerManager_m;
+
+    private ColorDrawable colorDrawable;
+
+    private GestureDetector gestureDetector;
+    View.OnTouchListener gestureListener;
 
     public RecordActivity() {
     }
@@ -156,6 +152,8 @@ public class RecordActivity extends AppCompatActivity{
         Calendar cd = Calendar.getInstance();
         year = cd.get(Calendar.YEAR);
         month = cd.get(Calendar.MONTH)+1;
+
+        date = getStringDateShortOfM();
         //获取内存储中的用户信息
         sp = getSharedPreferences("knowu",MODE_PRIVATE);
         //获取status_bar_height资源的ID
@@ -178,14 +176,12 @@ public class RecordActivity extends AppCompatActivity{
         dateListenerManager_m = SetDateListenerManager_m.getInstance();
 
         view = new TabView(this,R.drawable.day_background, R.drawable.day_background_selected,null);
-       // view.setBackground(this.getResources().getDrawable(R.drawable.tabbackground_selector,null));
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(params_width,params_height,Gravity.CENTER);
         view.setLayoutParams(params);
         view.setDividerPadding(5);
         TabHost.TabSpec dSpec=tabHost.newTabSpec("day");
         dSpec.setIndicator(view);
         view = new TabView(this,R.drawable.mouth_background, R.drawable.mouth_background_selected,null);
-       // view.setBackground(this.getResources().getDrawable(R.drawable.tabbackground_selector,null));
         LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(params_width,params_height,Gravity.CENTER);
         view.setLayoutParams(params1);
         view.setDividerPadding(5);
@@ -197,7 +193,6 @@ public class RecordActivity extends AppCompatActivity{
         tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tabId) {
-                String date = null;
                 switch(tabId){
                     case "day":
                         date = getStringDateShortOfM();
@@ -208,10 +203,21 @@ public class RecordActivity extends AppCompatActivity{
                     default:break;
                 }
                 tv_date_year_month.setText(date);
-
             }
         });
         initView();
+        /**
+        gestureDetector = new GestureDetector(new MyGestureDetector());
+        gestureListener = new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(gestureDetector.onTouchEvent(event)){
+                    return true;
+                }
+                return false;
+            }
+        };
+         */
     }
 
     @Override
@@ -220,24 +226,59 @@ public class RecordActivity extends AppCompatActivity{
 
     }
 
-    void initView() {
-        //标题栏返回按键
-        actionBar = getSupportActionBar();
-        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
-        //google的actionbar是分为上下两栏显示的，上面的代码只能设置顶部actionbar的背景色，为了让下面的背景色一致，还需要添加一行代码：
-        actionBar.setSplitBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
-        ActionBar.LayoutParams lp =new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT, Gravity.CENTER);
-        View actionBarView = View.inflate(this,R.layout.text,null);
-        tv_date_year_month = actionBarView.findViewById(R.id.tv_date_year_month);
-        tv_date_year_month.setText(getStringDateShortOfM());
-        iv_choose_date = actionBarView.findViewById(R.id.iv_choose_date);
-        ibtn_turnBack = actionBarView.findViewById(R.id.turnBack);
-        ibtn_turnBack.setOnClickListener(listener);
-        iv_choose_date.setOnClickListener(listener);
-        if(actionBar != null){
-            actionBar.setCustomView(actionBarView,lp);
-            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        switch (event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                move_D = event.getY();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                move_M = event.getY();
+                move = (int) (move_D - move_M);
+                if(lastMove != 0){
+                    move = move + lastMove;
+                }
+                if(move>limit){
+                    colorString = "#fffc9e8d";
+                }else{
+                    colorString = "#00fc9e8d";
+                }
+               setActionBar(colorString);
+                break;
+            case MotionEvent.ACTION_UP:
+                move_U = event.getY();
+                lastMove = lastMove + (int) (move_D - move_U);
+                if(move==0){
+                    lastMove = move;
+                }
+                break;
         }
+        return super.dispatchTouchEvent(event);
+    }
+
+    /**监听手势滑动效果
+    class MyGestureDetector extends GestureDetector.SimpleOnGestureListener{
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            System.out.println(velocityX+velocityY);
+            return super.onFling(e1, e2, velocityX, velocityY);
+        }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+       if(gestureDetector.onTouchEvent(ev)){
+           ev.setAction(MotionEvent.ACTION_CANCEL);
+       }
+        return super.dispatchTouchEvent(ev);
+    }
+    */
+
+
+    @TargetApi(Build.VERSION_CODES.M)
+    void initView() {
+        actionBar = getSupportActionBar();
+       setActionBar("#00fc9e8d");
     }
 
 
@@ -254,18 +295,16 @@ public class RecordActivity extends AppCompatActivity{
                     }else{
                         setDateOfMonth();
                     }
-                    
                     break;
                 case R.id.btn_cancel:
                     dialog.dismiss();
                     break;
                 //选择查询日期
                 case R.id.btn_chooseDate_ensure:
-                    String date_d;
                     if(dp.getMonth()<10){
-                         date_d=dp.getYear()+"年"+"0"+(dp.getMonth()+1)+"月";
+                         date=dp.getYear()+"年"+"0"+(dp.getMonth()+1)+"月";
                     }else{
-                         date_d =dp.getYear()+"年"+(dp.getMonth()+1)+"月";
+                         date =dp.getYear()+"年"+(dp.getMonth()+1)+"月";
                     }
                     position = dp.getDayOfMonth()-1;
                    // String date =dp.getYear()+"-"+(dp.getMonth()+1);
@@ -273,31 +312,31 @@ public class RecordActivity extends AppCompatActivity{
                     //param.put("userId",phoneNumber);
                     param.put("reportType","date");
                     param.put("all",false);
-                    param.put("time",date_d.toString());
+                    param.put("time",date.toString());
                     //网络请求
-                    dateListenerManager.getDateDay(date_d,param,position);
+                    dateListenerManager.getDateDay(date,param,position);
                     //getUserRecord(Constants.GET_M,param);
                     //getUserRecordOfDay(Constants.GET_D);
+                    tv_date_year_month.setText(date);
                     dialog.dismiss();
-                    tv_date_year_month.setText(date_d);
                     break;
                 //选择查询日期
                 case R.id.btn_chooseDate_ensure_m:
-                    String date_m =datePicker_Y.getValue()+"年";
+                    date =datePicker_Y.getValue()+"年";
                     month = datePicker_M.getValue();
-                    System.out.print(month);
+                    //System.out.print(month);
                     // String date =dp.getYear()+"-"+(dp.getMonth()+1);
                     Map<String,Object> param1 = new HashMap<>();
                     //param.put("userId",phoneNumber);
                     param1.put("reportType","month");
                     param1.put("all",false);
-                    param1.put("time",date_m.toString());
+                    param1.put("time",date.toString());
                     //网络请求
-                    dateListenerManager_m.getDateMouth(date_m,param1,month);
+                    dateListenerManager_m.getDateMouth(date,param1,month);
                     //getUserRecord(Constants.GET_M,param);
                     //getUserRecordOfDay(Constants.GET_D);
+                    tv_date_year_month.setText(date);
                     dialog.dismiss();
-                    tv_date_year_month.setText(date_m);
                     break;
                 case R.id.turnBack:
                     AppManager.getAppManager().finishActivity();
@@ -387,4 +426,59 @@ public class RecordActivity extends AppCompatActivity{
         return dateString;
     }
 
+    public void setActionBarAlpha(int alpha){
+        colorDrawable.setAlpha(alpha);
+        actionBar.setBackgroundDrawable(colorDrawable);
+        //google的actionbar是分为上下两栏显示的，上面的代码只能设置顶部actionbar的背景色，为了让下面的背景色一致，还需要添加一行代码：
+        actionBar.setSplitBackgroundDrawable(colorDrawable);
+        ActionBar.LayoutParams lp =new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT, Gravity.CENTER);
+        actionBarView = View.inflate(this,R.layout.text,null);
+        if(actionBar != null){
+            actionBar.setCustomView(actionBarView,lp);
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        }
+    }
+
+    private void setActionBar(String background){
+        //标题栏返回按键
+        colorDrawable = new ColorDrawable(Color.parseColor(background));
+        actionBar.setBackgroundDrawable(colorDrawable);
+        //google的actionbar是分为上下两栏显示的，上面的代码只能设置顶部actionbar的背景色，为了让下面的背景色一致，还需要添加一行代码：
+        actionBar.setSplitBackgroundDrawable(colorDrawable);
+        ActionBar.LayoutParams lp =new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT, Gravity.CENTER);
+        actionBarView = View.inflate(this,R.layout.text,null);
+        tv_date_year_month = actionBarView.findViewById(R.id.tv_date_year_month);
+        if(tabHost.getCurrentTab()==0){
+            tv_date_year_month.setText(date);
+        }else{
+            tv_date_year_month.setText(date);
+        }
+
+        iv_choose_date = actionBarView.findViewById(R.id.iv_choose_date);
+        ibtn_turnBack = actionBarView.findViewById(R.id.turnBack);
+        ibtn_turnBack.setOnClickListener(listener);
+        iv_choose_date.setOnClickListener(listener);
+        if(actionBar != null){
+            actionBar.setCustomView(actionBarView,lp);
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        }
+    }
+
+    /**
+     * 返回
+     * */
+    public void turnBackR(View view){
+        AppManager.getAppManager().finishActivity();
+    }
+
+    /**
+     * 设置日期
+     * */
+    public void setDate(View view){
+        if(tabHost.getCurrentTabTag().equals("day")){
+            setDateOfDay();
+        }else{
+            setDateOfMonth();
+        }
+    }
 }

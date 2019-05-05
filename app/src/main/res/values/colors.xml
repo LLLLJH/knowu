@@ -52,7 +52,7 @@
     <color name="tv_textColor_time">#101010</color>
     <color name="tv_numberColor">#FC9E8D</color>
 
-    <color name="actionBarBackground">#00ffffff</color>
+    <color name="actionBarBackground">#00FFFFFF</color>
 
     <color name="deviceDetails_tv_color">#525252</color>
     <color name="deviceDetails_tv_value_color">#9E9E9E</color>

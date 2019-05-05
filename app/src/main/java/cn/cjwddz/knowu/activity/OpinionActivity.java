@@ -91,7 +91,13 @@ public class OpinionActivity extends AppCompatActivity {
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                //System.out.println("提交用户信息shibai");
+                System.out.println(e.toString());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(OpinionActivity.this,"服务器异常！！！",Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
@@ -102,6 +108,7 @@ public class OpinionActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             Toast.makeText(OpinionActivity.this,"建议成功提交！！！",Toast.LENGTH_SHORT).show();
+                            et_opinion.setText("");
                         }
                     });
 
@@ -124,9 +131,11 @@ public class OpinionActivity extends AppCompatActivity {
             switch (v.getId()){
                 case R.id.btn_user_opinion:
                     opinionString = et_opinion.getText().toString();
-                    if(opinionString.isEmpty()){
+                    if(!opinionString.isEmpty()){
                         long time = MyUtils.getLongTime();
                         postUserOpinion(Constants.ADD_USER_FEEL_URL,time,opinionString);
+                    }else{
+                        Toast.makeText(OpinionActivity.this,"意见不能为空！",Toast.LENGTH_SHORT).show();
                     }
                     break;
                 case R.id.turnBack:

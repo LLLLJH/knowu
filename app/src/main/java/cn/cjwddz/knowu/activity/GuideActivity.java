@@ -26,7 +26,7 @@ import cn.cjwddz.knowu.R;
 import cn.cjwddz.knowu.adapters.ViewPagerAdapter;
 import cn.cjwddz.knowu.common.application.AppManager;
 
-public class GuideActivity extends Activity implements ViewPager.OnPageChangeListener,View.OnTouchListener{
+public class GuideActivity extends Activity implements ViewPager.OnPageChangeListener{
     private ViewPager viewPager;
     private ViewPagerAdapter viewPagerAdapter;
     private List<View> mListView;
@@ -50,6 +50,7 @@ public class GuideActivity extends Activity implements ViewPager.OnPageChangeLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AppManager.getAppManager().addActivity(this);
         //隐藏标题栏
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         //隐藏状态栏
@@ -80,7 +81,7 @@ public class GuideActivity extends Activity implements ViewPager.OnPageChangeLis
         viewPagerAdapter = new ViewPagerAdapter(mListView);
         viewPager.setAdapter(viewPagerAdapter);
         viewPager.setOnPageChangeListener(this);
-        viewPager.setOnTouchListener(this);
+        //viewPager.setOnTouchListener(this);
 
         changePoint(0);
     }
@@ -191,6 +192,7 @@ public class GuideActivity extends Activity implements ViewPager.OnPageChangeLis
 
     }
 
+    /**
     //左拉大于屏幕四分之一进入主页
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -215,6 +217,17 @@ public class GuideActivity extends Activity implements ViewPager.OnPageChangeLis
                 break;
         }
         return false;
+    }
+    */
+
+    public void exitGuide(View view){
+        if(!isLogin){
+            Intent intent = new Intent();
+            intent.setClass(this,InformationActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+        }
+        AppManager.getAppManager().finishActivity(GuideActivity.class);
     }
 
     @Override

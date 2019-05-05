@@ -35,22 +35,23 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="39">
+
         <ListView
             android:id="@+id/information_lv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@color/dividerWidth_color"
-            android:dividerHeight="1px"
-            android:headerDividersEnabled="false"
-            android:footerDividersEnabled="true"
             android:layout_marginLeft="44px"
             android:layout_marginRight="44px"
+            android:divider="@color/dividerWidth_color"
+            android:dividerHeight="1px"
+            android:footerDividersEnabled="true"
+            android:headerDividersEnabled="false"
             >
 
         </ListView>
     </LinearLayout>
 
-<View
+    <View
     android:layout_width="match_parent"
     android:layout_height="1px"
     android:background="@color/grey"

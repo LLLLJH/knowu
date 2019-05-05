@@ -1,515 +1,526 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/mScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
-<android.support.percent.PercentRelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:orientation="vertical"
     >
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_data"
-        android:background="@drawable/record_background"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_heightPercent="40.5%"
-        app:layout_widthPercent="100%"
-        ></android.support.v7.widget.RecyclerView>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_date"
-        android:layout_below="@+id/rv_data"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_heightPercent="4.5%"
-        app:layout_widthPercent="100%"
-        ></android.support.v7.widget.RecyclerView>
-
-    <View
-        android:id="@+id/view1"
-        android:layout_below="@+id/rv_date"
+    <cn.cjwddz.knowu.view.MyScrollViewNew
+        android:id="@+id/mScrollView"
         android:layout_width="match_parent"
-        android:layout_height="10px"
-        android:background="@drawable/progress">
-    </View>
-
-    <LinearLayout
-        android:id="@+id/ll1"
-        android:layout_below="@+id/view1"
-        app:layout_heightPercent="16%"
-        app:layout_widthPercent="100%"
-        android:orientation="horizontal"
-        >
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            >
-            <TextView
-                android:id="@+id/tv_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="使用总时长"
-                android:textColor="@color/tv_textColor"
-                android:textSize="@dimen/tv_textSize"
-                android:layout_marginBottom="30px"
-                />
-            <TextView
-                android:id="@+id/tv_sum_hour"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="bottom"
-                android:layout_marginRight="5px"
-                android:layout_below="@+id/tv_1"
-                android:text="0"
-                android:textColor="@color/tv_numberColor"
-                android:textSize="@dimen/tv_numberSize"
-                />
-            <TextView
-                android:id="@+id/tv_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="14px"
-                android:layout_marginBottom="5px"
-                android:layout_toRightOf="@+id/tv_sum_hour"
-                android:layout_below="@+id/tv_1"
-                android:layout_alignBottom="@+id/tv_sum_hour"
-                android:gravity="bottom"
-                android:text="h"
-                android:textColor="@color/tv_numberColor"
-                android:textSize="@dimen/tv_textSize"
-                />
-            <TextView
-                android:id="@+id/tv_sum_min"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="bottom"
-                android:layout_marginRight="5px"
-                android:layout_toRightOf="@id/tv_2"
-                android:layout_below="@+id/tv_1"
-                android:textColor="@color/tv_numberColor"
-                android:textSize="@dimen/tv_numberSize"
-                android:text="00"
-                />
-            <TextView
-                android:id="@+id/tv_3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5px"
-                android:layout_toRightOf="@id/tv_sum_min"
-                android:layout_below="@+id/tv_1"
-                android:layout_alignBottom="@+id/tv_sum_min"
-                android:gravity="bottom"
-                android:text="min"
-                android:textColor="@color/tv_numberColor"
-                android:textSize="@dimen/tv_textSize"
-                />
-        </RelativeLayout>
-        <View
-            android:layout_width="2px"
-            android:layout_height="match_parent"
-            android:background="@drawable/progress"
-            android:layout_marginTop="30px"
-            android:layout_marginBottom="30px"
-            >
-
-        </View>
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            >
-            <TextView
-                android:id="@+id/tv_4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="斗姨妈模式时长"
-                android:textColor="@color/tv_textColor"
-                android:textSize="@dimen/tv_textSize"
-                android:layout_marginBottom="30px"
-                />
-            <TextView
-                android:id="@+id/tv_fighting_hour"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="30px"
-                android:gravity="bottom"
-                android:layout_marginRight="5px"
-                android:layout_below="@+id/tv_4"
-                android:text="0"
-                android:textColor="@color/tv_numberColor"
-                android:textSize="@dimen/tv_numberSize"
-                />
-            <TextView
-                android:id="@+id/tv_5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="14px"
-                android:layout_marginBottom="5px"
-                android:layout_toRightOf="@+id/tv_fighting_hour"
-                android:layout_below="@+id/tv_4"
-                android:layout_alignBottom="@+id/tv_fighting_hour"
-                android:gravity="bottom"
-                android:text="h"
-                android:textColor="@color/tv_numberColor"
-                android:textSize="@dimen/tv_textSize"
-                />
-            <TextView
-                android:id="@+id/tv_fighting_min"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="bottom"
-                android:layout_marginRight="5px"
-                android:layout_toRightOf="@id/tv_5"
-                android:layout_below="@+id/tv_4"
-                android:textColor="@color/tv_numberColor"
-                android:textSize="@dimen/tv_numberSize"
-                android:text="00"
-                />
-            <TextView
-                android:id="@+id/tv_6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5px"
-                android:layout_toRightOf="@id/tv_fighting_min"
-                android:layout_below="@+id/tv_4"
-                android:layout_alignBottom="@+id/tv_fighting_min"
-                android:gravity="bottom"
-                android:text="min"
-                android:textColor="@color/tv_numberColor"
-                android:textSize="@dimen/tv_textSize"
-                />
-        </RelativeLayout>
-    </LinearLayout>
-    <View
-        android:id="@+id/view2"
-        android:layout_below="@+id/ll1"
-        android:layout_width="match_parent"
-        android:layout_height="2px"
-        android:layout_marginLeft="25px"
-        android:layout_marginRight="25px"
-        android:background="@drawable/progress"
-        ></View>
-    <LinearLayout
-        android:id="@+id/ll2"
-        android:layout_below="@+id/view2"
-        android:layout_width="match_parent"
-        app:layout_heightPercent="16%"
-        app:layout_widthPercent="100%"
-        >
-
-        <RelativeLayout
+        android:layout_height="match_parent"
+        android:fadingEdge="none"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        android:fillViewport="true">
+        <android.support.percent.PercentRelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center">
+            >
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_data"
+                android:background="@drawable/record_background"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_heightPercent="40.5%"
+                app:layout_widthPercent="100%"
+                ></android.support.v7.widget.RecyclerView>
 
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_date"
+                android:layout_below="@+id/rv_data"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_heightPercent="4.5%"
+                app:layout_widthPercent="100%"
+                ></android.support.v7.widget.RecyclerView>
+
+            <View
+                android:id="@+id/view1"
+                android:layout_below="@+id/rv_date"
+                android:layout_width="match_parent"
+                android:layout_height="10px"
+                android:background="@drawable/progress">
+            </View>
+
+            <LinearLayout
+                android:id="@+id/ll1"
+                android:layout_below="@+id/view1"
+                app:layout_heightPercent="16%"
+                app:layout_widthPercent="100%"
+                android:orientation="horizontal"
+                >
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    >
+                    <TextView
+                        android:id="@+id/tv_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="使用总时长"
+                        android:textColor="@color/tv_textColor"
+                        android:textSize="@dimen/tv_textSize"
+                        android:layout_marginBottom="30px"
+                        />
+                    <TextView
+                        android:id="@+id/tv_sum_hour"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="bottom"
+                        android:layout_marginRight="5px"
+                        android:layout_below="@+id/tv_1"
+                        android:text="0"
+                        android:textColor="@color/tv_numberColor"
+                        android:textSize="@dimen/tv_numberSize"
+                        />
+                    <TextView
+                        android:id="@+id/tv_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="14px"
+                        android:layout_marginBottom="5px"
+                        android:layout_toRightOf="@+id/tv_sum_hour"
+                        android:layout_below="@+id/tv_1"
+                        android:layout_alignBottom="@+id/tv_sum_hour"
+                        android:gravity="bottom"
+                        android:text="h"
+                        android:textColor="@color/tv_numberColor"
+                        android:textSize="@dimen/tv_textSize"
+                        />
+                    <TextView
+                        android:id="@+id/tv_sum_min"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="bottom"
+                        android:layout_marginRight="5px"
+                        android:layout_toRightOf="@id/tv_2"
+                        android:layout_below="@+id/tv_1"
+                        android:textColor="@color/tv_numberColor"
+                        android:textSize="@dimen/tv_numberSize"
+                        android:text="00"
+                        />
+                    <TextView
+                        android:id="@+id/tv_3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5px"
+                        android:layout_toRightOf="@id/tv_sum_min"
+                        android:layout_below="@+id/tv_1"
+                        android:layout_alignBottom="@+id/tv_sum_min"
+                        android:gravity="bottom"
+                        android:text="min"
+                        android:textColor="@color/tv_numberColor"
+                        android:textSize="@dimen/tv_textSize"
+                        />
+                </RelativeLayout>
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/progress"
+                    android:layout_marginTop="30px"
+                    android:layout_marginBottom="30px"
+                    >
+
+                </View>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    >
+                    <TextView
+                        android:id="@+id/tv_4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="斗姨妈模式时长"
+                        android:textColor="@color/tv_textColor"
+                        android:textSize="@dimen/tv_textSize"
+                        android:layout_marginBottom="30px"
+                        />
+                    <TextView
+                        android:id="@+id/tv_fighting_hour"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="30px"
+                        android:gravity="bottom"
+                        android:layout_marginRight="5px"
+                        android:layout_below="@+id/tv_4"
+                        android:text="0"
+                        android:textColor="@color/tv_numberColor"
+                        android:textSize="@dimen/tv_numberSize"
+                        />
+                    <TextView
+                        android:id="@+id/tv_5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="14px"
+                        android:layout_marginBottom="5px"
+                        android:layout_toRightOf="@+id/tv_fighting_hour"
+                        android:layout_below="@+id/tv_4"
+                        android:layout_alignBottom="@+id/tv_fighting_hour"
+                        android:gravity="bottom"
+                        android:text="h"
+                        android:textColor="@color/tv_numberColor"
+                        android:textSize="@dimen/tv_textSize"
+                        />
+                    <TextView
+                        android:id="@+id/tv_fighting_min"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="bottom"
+                        android:layout_marginRight="5px"
+                        android:layout_toRightOf="@id/tv_5"
+                        android:layout_below="@+id/tv_4"
+                        android:textColor="@color/tv_numberColor"
+                        android:textSize="@dimen/tv_numberSize"
+                        android:text="00"
+                        />
+                    <TextView
+                        android:id="@+id/tv_6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5px"
+                        android:layout_toRightOf="@id/tv_fighting_min"
+                        android:layout_below="@+id/tv_4"
+                        android:layout_alignBottom="@+id/tv_fighting_min"
+                        android:gravity="bottom"
+                        android:text="min"
+                        android:textColor="@color/tv_numberColor"
+                        android:textSize="@dimen/tv_textSize"
+                        />
+                </RelativeLayout>
+            </LinearLayout>
+            <View
+                android:id="@+id/view2"
+                android:layout_below="@+id/ll1"
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:layout_marginLeft="25px"
+                android:layout_marginRight="25px"
+                android:background="@drawable/progress"
+                ></View>
+            <LinearLayout
+                android:id="@+id/ll2"
+                android:layout_below="@+id/view2"
+                android:layout_width="match_parent"
+                app:layout_heightPercent="16%"
+                app:layout_widthPercent="100%"
+                >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tv_7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="30px"
+                        android:text="这一天你在"
+                        android:textColor="@color/tv_textColor"
+                        android:textSize="@dimen/tv_textSize" />
+
+                    <TextView
+                        android:id="@+id/tv_userTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/tv_7"
+                        android:text="00:00-00:00"
+                        android:textColor="@color/tv_textColor_time"
+                        android:textSize="@dimen/tv_textSize" />
+
+                    <TextView
+                        android:id="@+id/tv_8"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="30px"
+                        android:layout_toRightOf="@id/tv_userTime"
+                        android:text="与姨妈缠斗了最久"
+                        android:textColor="@color/tv_textColor"
+                        android:textSize="@dimen/tv_textSize" />
+
+                    <TextView
+                        android:id="@+id/tv_fighting_one_min"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignLeft="@+id/tv_userTime"
+                        android:layout_below="@+id/tv_8"
+                        android:layout_marginLeft="80px"
+                        android:layout_marginRight="5px"
+                        android:text="00"
+                        android:textColor="@color/tv_numberColor"
+                        android:textSize="@dimen/tv_numberSize" />
+
+                    <TextView
+                        android:id="@+id/tv_9"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBottom="@+id/tv_fighting_one_min"
+                        android:layout_below="@+id/tv_8"
+                        android:layout_marginBottom="5px"
+                        android:layout_toRightOf="@id/tv_fighting_one_min"
+                        android:gravity="bottom"
+                        android:text="min"
+                        android:textColor="@color/tv_numberColor"
+                        android:textSize="@dimen/tv_textSize" />
+
+                </RelativeLayout>
+            </LinearLayout>
+            <View
+                android:id="@+id/view3"
+                android:layout_below="@+id/ll2"
+                android:layout_width="match_parent"
+                android:layout_height="3px"
+                android:layout_marginLeft="25px"
+                android:layout_marginRight="25px"
+                android:background="@drawable/progress"
+                ></View>
+
+            <LinearLayout
+                android:id="@+id/ll3"
+                android:layout_below="@id/view3"
+                android:layout_width="match_parent"
+                app:layout_heightPercent="16%"
+                app:layout_widthPercent="100%"
+                android:orientation="horizontal"
+                >
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tv_10"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="30px"
+                        android:text="斗姨妈模式最大力度"
+                        android:textColor="@color/tv_textColor"
+                        android:textSize="@dimen/tv_textSize" />
+
+                    <TextView
+                        android:id="@+id/tv_11"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignStart="@+id/tv_10"
+                        android:layout_below="@+id/tv_10"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="10px"
+                        android:layout_alignBottom="@+id/tv_fighting_max_intensity"
+                        android:layout_marginLeft="50dp"
+                        android:gravity="bottom|center"
+                        android:text="Lv"
+                        android:textColor="@color/tv_numberColor"
+                        android:textSize="@dimen/tv_textSize" />
+
+                    <TextView
+                        android:id="@+id/tv_fighting_max_intensity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_below="@+id/tv_10"
+                        android:layout_marginLeft="5px"
+                        android:layout_toRightOf="@+id/tv_11"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textColor="@color/tv_numberColor"
+                        android:textSize="@dimen/tv_numberSize" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/progress"
+                    android:layout_marginTop="30px"
+                    android:layout_marginBottom="30px"
+                    >
+
+                </View>
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    >
+                    <TextView
+                        android:id="@+id/tv_12"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="30px"
+                        android:text="斗姨妈模式平均力度"
+                        android:textSize="@dimen/tv_textSize"
+                        android:textColor="@color/tv_textColor"
+                        />
+                    <TextView
+                        android:id="@+id/tv_13"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="50dp"
+                        android:layout_marginBottom="10px"
+                        android:layout_below="@+id/tv_12"
+                        android:layout_alignBottom="@+id/tv_fighting_average_intensity"
+                        android:gravity="bottom"
+                        android:text="Lv"
+                        android:textSize="@dimen/tv_textSize"
+                        android:textColor="@color/tv_numberColor"
+                        />
+                    <TextView
+                        android:id="@+id/tv_fighting_average_intensity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5px"
+                        android:layout_toRightOf="@+id/tv_13"
+                        android:layout_below="@+id/tv_12"
+                        android:gravity="bottom"
+                        android:text="0"
+                        android:textSize="@dimen/tv_numberSize"
+                        android:textColor="@color/tv_numberColor"
+                        />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <View
+                android:id="@+id/view4"
+                android:layout_below="@+id/ll3"
+                android:layout_width="match_parent"
+                android:layout_height="10px"
+                android:background="@drawable/progress">
+            </View>
             <TextView
-                android:id="@+id/tv_7"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="30px"
-                android:text="这一天你在"
-                android:textColor="@color/tv_textColor"
-                android:textSize="@dimen/tv_textSize" />
-
-            <TextView
-                android:id="@+id/tv_userTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/tv_7"
-                android:text="00:00-00:00"
-                android:textColor="@color/tv_textColor_time"
-                android:textSize="@dimen/tv_textSize" />
-
-            <TextView
-                android:id="@+id/tv_8"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="30px"
-                android:layout_toRightOf="@id/tv_userTime"
-                android:text="与姨妈缠斗了最久"
-                android:textColor="@color/tv_textColor"
-                android:textSize="@dimen/tv_textSize" />
-
-            <TextView
-                android:id="@+id/tv_fighting_one_min"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/tv_userTime"
-                android:layout_below="@+id/tv_8"
-                android:layout_marginLeft="80px"
-                android:layout_marginRight="5px"
-                android:text="00"
-                android:textColor="@color/tv_numberColor"
-                android:textSize="@dimen/tv_numberSize" />
-
-            <TextView
-                android:id="@+id/tv_9"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/tv_fighting_one_min"
-                android:layout_below="@+id/tv_8"
-                android:layout_marginBottom="5px"
-                android:layout_toRightOf="@id/tv_fighting_one_min"
-                android:gravity="bottom"
-                android:text="min"
-                android:textColor="@color/tv_numberColor"
-                android:textSize="@dimen/tv_textSize" />
-
-        </RelativeLayout>
-    </LinearLayout>
-    <View
-        android:id="@+id/view3"
-        android:layout_below="@+id/ll2"
-        android:layout_width="match_parent"
-        android:layout_height="3px"
-        android:layout_marginLeft="25px"
-        android:layout_marginRight="25px"
-        android:background="@drawable/progress"
-        ></View>
-
-    <LinearLayout
-        android:id="@+id/ll3"
-        android:layout_below="@id/view3"
-        android:layout_width="match_parent"
-        app:layout_heightPercent="16%"
-        app:layout_widthPercent="100%"
-        android:orientation="horizontal"
-        >
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center">
-
-            <TextView
-                android:id="@+id/tv_10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="30px"
-                android:text="斗姨妈模式最大力度"
-                android:textColor="@color/tv_textColor"
-                android:textSize="@dimen/tv_textSize" />
-
-            <TextView
-                android:id="@+id/tv_11"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/tv_10"
-                android:layout_below="@+id/tv_10"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="10px"
-                android:layout_alignBottom="@+id/tv_fighting_max_intensity"
-                android:layout_marginLeft="50dp"
-                android:gravity="bottom|center"
-                android:text="Lv"
-                android:textColor="@color/tv_numberColor"
-                android:textSize="@dimen/tv_textSize" />
-
-            <TextView
-                android:id="@+id/tv_fighting_max_intensity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@+id/tv_10"
-                android:layout_marginLeft="5px"
-                android:layout_toRightOf="@+id/tv_11"
+                android:id="@+id/tv_14"
+                app:layout_heightPercent="10.5%"
+                app:layout_widthPercent="100%"
+                android:text="与所有用户相比"
+                android:textSize="@dimen/tv_textSize"
                 android:gravity="center"
-                android:text="0"
-                android:textColor="@color/tv_numberColor"
-                android:textSize="@dimen/tv_numberSize" />
-
-        </RelativeLayout>
-
-        <View
-            android:layout_width="2px"
-            android:layout_height="match_parent"
-            android:background="@drawable/progress"
-            android:layout_marginTop="30px"
-            android:layout_marginBottom="30px"
-            >
-
-        </View>
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            >
-            <TextView
-                android:id="@+id/tv_12"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="30px"
-                android:text="斗姨妈模式平均力度"
-                android:textSize="@dimen/tv_textSize"
-                android:textColor="@color/tv_textColor"
+                android:layout_below="@id/view4"
                 />
-            <TextView
-                android:id="@+id/tv_13"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="50dp"
-                android:layout_marginBottom="10px"
-                android:layout_below="@+id/tv_12"
-                android:layout_alignBottom="@+id/tv_fighting_average_intensity"
-                android:gravity="bottom"
-                android:text="Lv"
-                android:textSize="@dimen/tv_textSize"
-                android:textColor="@color/tv_numberColor"
+            <RelativeLayout
+                android:id="@+id/rl_1"
+                app:layout_heightPercent="7.5%"
+                android:layout_width="match_parent"
+                android:layout_below="@+id/tv_14"
+                android:gravity="center"
+                >
+                <TextView
+                    android:id="@+id/tv_15"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="你当天疼痛时长比"
+                    android:textColor="@color/tv_textColor"
+                    android:textSize="14sp"
+                    android:gravity="center"
+                    android:layout_alignBottom="@+id/tv_percent_time"
+                    />
+
+                <TextView
+                    android:id="@+id/tv_percent_time"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_toRightOf="@id/tv_15"
+                    android:text="50"
+                    android:textColor="@color/tv_numberColor"
+                    android:textSize="24sp"
+                    android:gravity="center"
+                    />
+
+                <TextView
+                    android:id="@+id/tv_16"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_toRightOf="@id/tv_percent_time"
+                    android:text="%的人少"
+                    android:textColor="@color/tv_textColor"
+                    android:textSize="14sp"
+                    android:gravity="center"
+                    android:layout_alignBottom="@+id/tv_percent_time"
+                    />
+            </RelativeLayout>
+
+
+            <cn.cjwddz.knowu.view.GradientGraphView
+                android:id="@+id/gradientGraphView_time"
+                app:layout_heightPercent="14.5%"
+                app:layout_widthPercent="100%"
+                android:layout_below="@+id/rl_1" />
+            <RelativeLayout
+                android:id="@+id/rl_2"
+                app:layout_heightPercent="9.5%"
+                app:layout_widthPercent="100%"
+                android:gravity="center|bottom"
+                android:layout_below="@+id/gradientGraphView_time"
+                >
+                <TextView
+                    android:id="@+id/tv_17"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/tv_percent_value"
+                    android:gravity="center"
+                    android:text="你当天疼痛指数比"
+                    android:textColor="@color/tv_textColor"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tv_percent_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/tv_17"
+                    android:gravity="center"
+                    android:text="50"
+                    android:textColor="@color/tv_numberColor"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:id="@+id/tv_18"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/tv_percent_value"
+                    android:layout_toRightOf="@id/tv_percent_value"
+                    android:gravity="center"
+                    android:text="%的人少"
+                    android:textColor="@color/tv_textColor"
+                    android:textSize="14sp" />
+            </RelativeLayout>
+
+            <cn.cjwddz.knowu.view.GradientGraphView
+                android:id="@+id/gradientGraphView_intensity"
+                android:layout_below="@+id/rl_2"
+                app:layout_heightPercent="14.5%"
+                app:layout_widthPercent="100%"
+                app:startDataX="Lv1"
+                app:endDataX="Lv15"
                 />
-            <TextView
-                android:id="@+id/tv_fighting_average_intensity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5px"
-                android:layout_toRightOf="@+id/tv_13"
-                android:layout_below="@+id/tv_12"
-                android:gravity="bottom"
-                android:text="0"
-                android:textSize="@dimen/tv_numberSize"
-                android:textColor="@color/tv_numberColor"
-                />
-        </RelativeLayout>
+            <LinearLayout
+                app:layout_heightPercent="13.6%"
+                app:layout_widthPercent="100%"
+                android:layout_below="@+id/gradientGraphView_intensity"
+                android:gravity="center"
+                >
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btn_user_feel"
+                    android:background="@drawable/btn_userfeel_selector"
+                    android:text="使用完感觉怎样"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/tv_textSize"
+                    />
+
+            </LinearLayout>
+
+        </android.support.percent.PercentRelativeLayout>
+
+    </cn.cjwddz.knowu.view.MyScrollViewNew>
     </LinearLayout>
 
-    <View
-        android:id="@+id/view4"
-        android:layout_below="@+id/ll3"
-        android:layout_width="match_parent"
-        android:layout_height="10px"
-        android:background="@drawable/progress">
-    </View>
-    <TextView
-        android:id="@+id/tv_14"
-        app:layout_heightPercent="10.5%"
-        app:layout_widthPercent="100%"
-        android:text="与所有用户相比"
-        android:textSize="@dimen/tv_textSize"
-        android:gravity="center"
-        android:layout_below="@id/view4"
-        />
-    <RelativeLayout
-        android:id="@+id/rl_1"
-        app:layout_heightPercent="7.5%"
-        android:layout_width="match_parent"
-        android:layout_below="@+id/tv_14"
-        android:gravity="center"
-        >
-        <TextView
-            android:id="@+id/tv_15"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="你当天疼痛时长比"
-            android:textColor="@color/tv_textColor"
-            android:textSize="14sp"
-            android:gravity="center"
-            android:layout_alignBottom="@+id/tv_percent_time"
-            />
-
-        <TextView
-            android:id="@+id/tv_percent_time"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_toRightOf="@id/tv_15"
-            android:text="50"
-            android:textColor="@color/tv_numberColor"
-            android:textSize="24sp"
-            android:gravity="center"
-            />
-
-        <TextView
-            android:id="@+id/tv_16"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_toRightOf="@id/tv_percent_time"
-            android:text="%的人少"
-            android:textColor="@color/tv_textColor"
-            android:textSize="14sp"
-            android:gravity="center"
-            android:layout_alignBottom="@+id/tv_percent_time"
-            />
-    </RelativeLayout>
-
-
-    <cn.cjwddz.knowu.view.GradientGraphView
-        android:id="@+id/gradientGraphView_time"
-        app:layout_heightPercent="14.5%"
-        app:layout_widthPercent="100%"
-        android:layout_below="@+id/rl_1" />
-    <RelativeLayout
-        android:id="@+id/rl_2"
-        app:layout_heightPercent="9.5%"
-        app:layout_widthPercent="100%"
-        android:gravity="center|bottom"
-        android:layout_below="@+id/gradientGraphView_time"
-        >
-        <TextView
-            android:id="@+id/tv_17"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/tv_percent_value"
-            android:gravity="center"
-            android:text="你当天疼痛指数比"
-            android:textColor="@color/tv_textColor"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/tv_percent_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/tv_17"
-            android:gravity="center"
-            android:text="50"
-            android:textColor="@color/tv_numberColor"
-            android:textSize="24sp" />
-
-        <TextView
-            android:id="@+id/tv_18"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/tv_percent_value"
-            android:layout_toRightOf="@id/tv_percent_value"
-            android:gravity="center"
-            android:text="%的人少"
-            android:textColor="@color/tv_textColor"
-            android:textSize="14sp" />
-    </RelativeLayout>
-
-    <cn.cjwddz.knowu.view.GradientGraphView
-        android:id="@+id/gradientGraphView_intensity"
-        android:layout_below="@+id/rl_2"
-        app:layout_heightPercent="14.5%"
-        app:layout_widthPercent="100%"
-        app:startDataX="Lv1"
-        app:endDataX="Lv15"
-        />
-    <LinearLayout
-        app:layout_heightPercent="13.6%"
-        app:layout_widthPercent="100%"
-        android:layout_below="@+id/gradientGraphView_intensity"
-        android:gravity="center"
-        >
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/btn_user_feel"
-            android:background="@drawable/btn_userfeel_selector"
-            android:text="使用完感觉怎样"
-            android:textColor="@color/white"
-            android:textSize="@dimen/tv_textSize"
-            />
-
-    </LinearLayout>
-
-</android.support.percent.PercentRelativeLayout>
-
-</ScrollView>
 
 

@@ -8,10 +8,10 @@
     tools:context="cn.cjwddz.knowu.activity.AboutActivity">
 
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="30"
-        android:background="@drawable/background_about"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/background_about"
+        android:scaleType="fitXY"
         />
 
     <LinearLayout
@@ -37,7 +37,6 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="25px"
             android:layout_gravity="center"
-            android:text="1.01"
             android:textColor="@color/tv_about_color"
             android:textSize="@dimen/tv_about_size" />
     </LinearLayout>
@@ -106,3 +105,5 @@
         android:layout_weight="49"></View>
 
 </LinearLayout>
+
+

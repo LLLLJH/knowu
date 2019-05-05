@@ -29,9 +29,11 @@ import cn.cjwddz.knowu.R;
 public class CountDownTimerView extends View{
 
     private  int ntextsize =100;
+    private int btextSize = 44;
     private int stextsixe = 24;
     private int textcolor = R.color.text_color;
     private String countText ="30:00";
+    private String batteryString = "";
 
     private int linewidth = 7;
     private  int lineheight =30 ;
@@ -377,6 +379,8 @@ public class CountDownTimerView extends View{
         textPaint.setTextSize(stextsixe);
         canvas.drawText("分",x_center-30,y_center-circleradius/4,textPaint);
         canvas.drawText("秒",x_center+30,y_center-circleradius/4,textPaint);
+        textPaint.setTextSize(btextSize);
+        canvas.drawText(batteryString,x_center,y_center+circleradius/5*3,textPaint);
 
         canvas.restore();
     }
@@ -410,5 +414,10 @@ public class CountDownTimerView extends View{
        //timer.cancel();
         start = false;
         ontimer.countdownStop();
+    }
+
+    public void updateBattery(int battery){
+        batteryString = "电量"+" "+":"+" " +battery+"%";
+        postInvalidate();
     }
 }

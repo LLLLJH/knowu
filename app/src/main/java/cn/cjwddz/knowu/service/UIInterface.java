@@ -18,4 +18,5 @@ public interface UIInterface {
     void back();
     void setLastProgress(int progress);
     void setDeepStatus(boolean deepStatus);
+    void getDefIntensity(int intensity);
 }

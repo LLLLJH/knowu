@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cn.cjwddz.knowu.R;
+import cn.cjwddz.knowu.common.application.AppManager;
 import cn.cjwddz.knowu.common.http.MyHTTPClient;
 import cn.cjwddz.knowu.common.utils.MyUtils;
 import cn.cjwddz.knowu.interfaces.Get_Code_callback;
@@ -86,6 +87,7 @@ public class LoginActivity extends AppCompatActivity implements MyInterface,Get_
 
     void initView() {
         setContentView(R.layout.activity_login);
+        AppManager.getAppManager().addActivity(this);
         setMyInterface(this);
         setGet_code_callback(this);
         //标题栏返回按键
@@ -407,7 +409,7 @@ public class LoginActivity extends AppCompatActivity implements MyInterface,Get_
 
 
     /**
-     * 请求登录
+     * 请求验证
      * */
     public  void getRegister(String url, final String phoneNumber, String vCode){
         OkHttpClient okHttpClient = MyHTTPClient.getInstance().getOkHttpClient();
@@ -533,9 +535,6 @@ public class LoginActivity extends AppCompatActivity implements MyInterface,Get_
      * */
     public  void getCode(String url,String phoneNumber){
         OkHttpClient okHttpClient = MyHTTPClient.getInstance().getOkHttpClient();
-        //Map<String,String> param = new HashMap<>();
-        //param.put("phone",phoneNumber);
-        //RequestBody requestBody = FormBody.create(MediaType.parse("application/x-www-form-urlencoded;charset=utf-8"),param.toString());
         FormBody.Builder formBody = new FormBody.Builder();
         formBody.add("phone",phoneNumber);
         final Request request = new Request.Builder()
@@ -543,7 +542,6 @@ public class LoginActivity extends AppCompatActivity implements MyInterface,Get_
                 .header(Constants.HEADER_CONTENT_TYPE_KEY,Constants.HEADER_CONTENT_TYPE_VAULE)
                 .post(formBody.build())
                 .build();
-        //System.out.println("获取验证码:"+phoneNumber);
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -556,8 +554,6 @@ public class LoginActivity extends AppCompatActivity implements MyInterface,Get_
                 str = response.body().string();
                 boolean status = false;
                 String msg = null;
-                //System.out.println(response.code());
-                //System.out.println(str);
                 if(!str.isEmpty()){
                     try {
                         JSONObject jsonObject = new JSONObject(str);
