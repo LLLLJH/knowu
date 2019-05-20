@@ -17,19 +17,18 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="35.7"></View>
+            android:layout_weight="46"></View>
         <ImageView
             android:id="@+id/guide_iv2_purplelight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/purple_light"
             android:layout_gravity="center"
-            android:layout_marginTop="80dp"
             />
         <View
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="60.3"></View>
+            android:layout_weight="54"></View>
     </LinearLayout>
 
     <LinearLayout

@@ -92,8 +92,7 @@ import okhttp3.Response;
 
 import static cn.cjwddz.knowu.activity.MainActivity.JSON;
 import static cn.cjwddz.knowu.service.Constants.ADD_USER_INFO_URL;
-import static cn.cjwddz.knowu.service.Constants.ADD_USER_LOG_URL;
-import static cn.cjwddz.knowu.service.Constants.ADD_USER_URL;
+
 
 public class InformationActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener,Get_signature_callback {
     private MyImageView myImageView;
@@ -136,6 +135,7 @@ public class InformationActivity extends AppCompatActivity implements AdapterVie
 
     private ImageButton ibtn_turnBack;
     private Button submitInfo;
+    private View divider;
 
     private void initImageView(){
        // String path = sp.getString("imagePath",null);
@@ -243,6 +243,7 @@ public class InformationActivity extends AppCompatActivity implements AdapterVie
         setGet_s_callback(this);
 
         submitInfo = (Button) findViewById(R.id.submitInfo);
+        divider = findViewById(R.id.dividerV);
        // submitInfo = (Button) findViewById(R.id.submitInfo);
 
         //动态申请权限
@@ -273,6 +274,7 @@ public class InformationActivity extends AppCompatActivity implements AdapterVie
         }else{
             submitInfo.setClickable(false);
             submitInfo.setVisibility(View.INVISIBLE);
+            divider.setVisibility(View.INVISIBLE);
             //标题栏返回按键
             actionBar = getSupportActionBar();
             actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));

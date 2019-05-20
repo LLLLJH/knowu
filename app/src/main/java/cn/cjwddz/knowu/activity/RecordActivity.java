@@ -301,7 +301,7 @@ public class RecordActivity extends AppCompatActivity {
                     break;
                 //选择查询日期
                 case R.id.btn_chooseDate_ensure:
-                    if(dp.getMonth()<10){
+                    if(dp.getMonth()<9){
                          date=dp.getYear()+"年"+"0"+(dp.getMonth()+1)+"月";
                     }else{
                          date =dp.getYear()+"年"+(dp.getMonth()+1)+"月";

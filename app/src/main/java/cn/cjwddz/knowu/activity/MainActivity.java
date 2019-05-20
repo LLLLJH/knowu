@@ -4,12 +4,16 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AppOpsManager;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -17,15 +21,24 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
+import android.os.Process;
+import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.AppOpsManagerCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -34,7 +47,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -77,6 +92,7 @@ import cn.cjwddz.knowu.service.ServiceInterface;
 import cn.cjwddz.knowu.service.UIInterface;
 import cn.cjwddz.knowu.view.CountDownTimerView;
 import cn.cjwddz.knowu.common.application.AppManager;
+import cn.cjwddz.knowu.view.MyDialog;
 import cn.cjwddz.knowu.view.MyImageView;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -98,6 +114,13 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
 
     private BluetoothManager bluetoothManager;
     private BluetoothAdapter bluetoothAdapter;
+    private LocationManager locationManager;
+    private boolean gps;
+    private boolean netword;
+    private  MyDialog dialog;
+    private int isOpen;
+    private AppOpsManager appOpsManager;
+    private ContentResolver resolver;
 
     private MyImageView header;
     private File file;
@@ -137,7 +160,9 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
     private long endTime = 0;
     private long startStopTime = 0;
     private int model = 0;
-    private int intensity = 0;
+    private int intensity = 1;
+    private static int INTENSITY_MAX = 15;
+    private static int INTENSITY_MIN = 1;
     private boolean isStop = false;//判断是否由暂停开始还是在启动时开始
     private boolean isStart = false;//判断是否由暂停开始还是在启动时开始
 
@@ -185,7 +210,14 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Android M Permission check
             if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, Constants.PERMISSION_REQUEST_COARSE_LOCATION);
+                requestPermissions(new String[]{
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                }, Constants.PERMISSION_REQUEST_COARSE_LOCATION);
+            }
+            if (this.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                }, Constants.PERMISSION_REQUEST_COARSE_LOCATION);
             }
         }
         AFactory.mainActivity = this;
@@ -242,6 +274,12 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
     void initData() {
         //打开蓝牙请求
         openBluetooth();
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        netword = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        //appOpsManager= (AppOpsManager) getSystemService(APP_OPS_SERVICE);
+        //isOpen = appOpsManager.checkOp(AppOpsManager.OPSTR_FINE_LOCATION, Process.myUid(),getPackageName());
+        openGps();
         Intent intent = new Intent(this,KnowUBleService.class);
         bindService(intent,serviceConnection,BIND_AUTO_CREATE);
         undateFragment(0);
@@ -363,13 +401,17 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
     }
 
     public void connect(){
-        openBluetooth();
+        //isOpen = appOpsManager.checkOp(AppOpsManager.OPSTR_FINE_LOCATION, Process.myUid(),getPackageName());
+        gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        netword = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        openGps();
         if(bluetoothAdapter.isEnabled()&& kUBService != null){
-            undateFragment(1);
-            kUBService.scan();
-           //serviceInterface.scan();
+                undateFragment(1);
+                kUBService.scan();
+                //serviceInterface.scan();
         }else{
-            Toast.makeText(this,"请打开蓝牙",Toast.LENGTH_SHORT).show();
+                openBluetooth();
+                Toast.makeText(this,"请打开蓝牙",Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -392,6 +434,9 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
         fragmentTransaction.commit();
     }
 
+    /**
+     * 打开检查蓝牙
+     * */
     @SuppressLint("NewApi")
     private void openBluetooth(){
         bluetoothManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
@@ -400,8 +445,73 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
             Intent intent = new Intent(bluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivity(intent);
         }
-
     }
+
+    /**
+     * 弹窗请求打开定位服务
+     * //拒绝则退出程序
+     * */
+    private void openGps(){
+        if(gps){
+            return;
+        }else{
+            MyDialog.Builder builder = new MyDialog.Builder(this);
+            dialog = builder.setStyle(R.style.MyDialog)
+                    .setCancelTouchout(false)
+                    .setView(R.layout.gpsdialog)
+                    .setWidthdp(300)
+                    .setHeihgtdp(100)
+                    .addViewOnclickListener(R.id.btn_cancel,listener)
+                    .addViewOnclickListener(R.id.btn_ensure,listener)
+                    .build();
+            dialog.show();
+        }
+    }
+
+    /**
+     * 检查GPS状态
+     * */
+    public  boolean getGpsStatus(){
+        resolver = getContentResolver();
+        return Settings.Secure.isLocationProviderEnabled(resolver,LocationManager.GPS_PROVIDER);
+    }
+
+    View.OnClickListener listener = new View.OnClickListener() {
+        @SuppressLint("NewApi")
+        @Override
+        public void onClick(View view) {
+            switch (view.getId()){
+                case R.id.btn_cancel:
+                    dialog.dismiss();
+                    break;
+                case R.id.btn_ensure:
+                    //openGpsByphone();
+                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivityForResult(intent,0);
+                    dialog.dismiss();
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    /**
+     * 强制打开定位服务
+     * */
+    private void openGpsByphone(){
+       Intent intent = new Intent();
+        intent.setClassName("com.android.settings","com.android.settings.widget.SettingsAppWidgetProvider");
+        intent.addCategory("android.intent.category.ALTERNATIVE");
+        intent.setData(Uri.parse("custom:3"));
+        try{
+            PendingIntent.getBroadcast(this,0,intent,0).send();
+        }catch (PendingIntent.CanceledException e){
+            e.printStackTrace();
+        }
+    }
+
+
 
     @Override
     public void connectSuccess() {
@@ -555,7 +665,7 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
         switch (view.getId()){
             case R.id.fighting:
                 if(!kUBService.isLink()){
-                    showToast("设备未连接！！！");
+                    showToast("设备未连接");
                     return;
                 }
                 if(last != fighting){
@@ -577,7 +687,7 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
                 break;
             case R.id.keepfit:
                 if(!kUBService.isLink()){
-                    showToast("设备未连接！！！");
+                    showToast("设备未连接");
                     return;
                 }
                 if(last != keepfit){
@@ -599,12 +709,11 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
                 break;
             case R.id.chira:
                 if(!kUBService.isLink()){
-                    showToast("设备未连接！！！");
+                    showToast("设备未连接");
                     return;
                 }
                 if(last != chira){
-                    kUBService.sendMessage(Protocol.getModeSetInstruct(3
-                    ));
+                    kUBService.sendMessage(Protocol.getModeSetInstruct(2));
                     chira.setSelected(true);
                     chira_tv.setTextColor(getResources().getColor(R.color.text_color));
                     last.setSelected(false);
@@ -622,11 +731,11 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
                 break;
             case R.id.relax:
                 if(!kUBService.isLink()){
-                    showToast("设备未连接！！！");
+                    showToast("设备未连接");
                     return;
                 }
                 if(last != relax){
-                    kUBService.sendMessage(Protocol.getModeSetInstruct(4));
+                    kUBService.sendMessage(Protocol.getModeSetInstruct(3));
                     relax.setSelected(true);
                     relax_tv.setTextColor(getResources().getColor(R.color.text_color));
                     last.setSelected(false);
@@ -653,10 +762,10 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
 
     public void addProgress(View view){
         if(!kUBService.isLink()){
-            showToast("设备未连接！！！");
+            showToast("设备未连接");
             return;
         }
-        if(progress < 8){
+        if(progress < INTENSITY_MAX){
             endTime = getLongTime();
             if(isStart&&endTime - startTime>CHANGESPACE){
                 long len = (endTime - startTime)/1000;
@@ -673,10 +782,10 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
 
     public void minusProgress(View view){
         if(!kUBService.isLink()){
-            showToast("设备未连接！！！");
+            showToast("设备未连接");
             return;
         }
-        if (progress > 1){
+        if (progress > INTENSITY_MIN){
             endTime = getLongTime();
             if(isStart&&endTime - startTime>CHANGESPACE){
                 long len = (endTime - startTime)/1000;
@@ -1066,7 +1175,7 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
     @Override
     public void openDeep() {
         if(!kUBService.isLink()) {
-            Toast.makeText(getApplication(),"设备未连接！！！",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplication(),"设备未连接",Toast.LENGTH_SHORT).show();
             return;
         }
         kUBService.sendMessage(Protocol.getOpenDeep());
@@ -1076,7 +1185,7 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
     @Override
     public void closeDeep() {
         if(!kUBService.isLink()) {
-            Toast.makeText(getApplication(),"设备未连接！！！",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplication(),"设备未连接",Toast.LENGTH_SHORT).show();
             return;
         }
         kUBService.sendMessage(Protocol.getCloseDeep());
@@ -1087,7 +1196,7 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
     @Override
     public void setDefIntensity(int intensity) {
         if(!kUBService.isLink()){
-            Toast.makeText(getApplication(),"设备未连接！！！",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplication(),"设备未连接",Toast.LENGTH_SHORT).show();
             return;
         }
         kUBService.sendMessage(Protocol.getDefIntensitySetInstruct(intensity));

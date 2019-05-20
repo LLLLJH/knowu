@@ -24,33 +24,30 @@ public class Constants {
      * 网络访问内容
      * */
     public static final String ADD_SYSTEM_LOG_URL = "http://www.cjwddz.cn:8080/knowu/addSystemLog";
-    public static final String ADD_USER_URL = "http://www.cjwddz.cn:8080/knowu/addUser";
-    public static final String ADD_USER_LOG_URL = "http://www.cjwddz.cn:8080/knowu/addUserLog";
+    //public static final String ADD_USER_URL = "http://www.cjwddz.cn:8080/knowu/addUser";
+    //public static final String ADD_USER_LOG_URL = "http://www.cjwddz.cn:8080/knowu/addUserLog";
 
 
 
 
 
     //获取验证码
-    public static final String GET_CODE = "https://cjwddz.cn/frealu/user/validPhone";
+    public static final String GET_CODE = "http://47.107.78.54:8001/frealu/user/validPhone";
     //登录
-    public static final String LOGIN = "https://cjwddz.cn/frealu/user/login";
+    public static final String LOGIN = "http://47.107.78.54:8001/frealu/user/login";
     //注册
-    public static final String REGIETER = "https://cjwddz.cn/frealu/user/register";
+    public static final String REGIETER = "http://47.107.78.54:8001/frealu/user/register";
     //注销
     public static final String EXIT = "https://cjwddz.cn/frealu/user/logout";
-    //获取用户某月每一天使用时长
-    public static final String GET_M = " https://cjwddz.cn/frealu/user/record/getMonthReport";
-    //获取用户每天使用报告
-    public static final String GET_D = " https://cjwddz.cn/frealu/user/record/getReport";
+
     //上传设备使用记录
-    public static final String ADD_USER_RECORD_URL  = "  https://cjwddz.cn/frealu/user/record/addRecord";
+    public static final String ADD_USER_RECORD_URL  = "http://47.107.78.54:8001/frealu/user/record/addRecord";
     //上传用户评价
-    public static final String ADD_USER_FEEL_URL  = " https://cjwddz.cn/frealu/user/record/add";
+    public static final String ADD_USER_FEEL_URL  = "http://47.107.78.54:8001/frealu/user/record/add";
     //上传用户信息
-    public static final String ADD_USER_INFO_URL  = " https://cjwddz.cn/frealu/user/miniSetPersonInfo";
+    public static final String ADD_USER_INFO_URL  = "http://47.107.78.54:8001/frealu/user/miniSetPersonInfo";
     //获取用户信息
-    public static final String GET_USER_INFO_URL  = " https://cjwddz.cn/frealu/user/getUserInfo";
+    public static final String GET_USER_INFO_URL  = "http://47.107.78.54:8001/frealu/user/getUserInfo";
     //检查更新
     public static final String UPDATE  = "http://cjwddz.cn:6325/mock/43/frealu/user/record/update";
 
@@ -64,13 +61,13 @@ public class Constants {
     public static final String GETAPK= " http://source.cjwddz.cn/APK/FrealU.apk";
 
     //获取当年十二个月份数据
-    public static final String GET_YEAR_OF_MONTH = "https://cjwddz.cn/frealu/user/record/getStatisticsReport";
+    public static final String GET_YEAR_OF_MONTH = "http://47.107.78.54:8001/frealu/user/record/getStatisticsReport";
     //获取当年其中一个月数据
-    public static final String GET_MONTH = "https://cjwddz.cn/frealu/user/record/getAnalysisReport";
+    public static final String GET_MONTH = "http://47.107.78.54:8001/frealu/user/record/getAnalysisReport";
     //获取某个月每一天数据
-    public static final String GET_MONTH_OF_DAY = "https://cjwddz.cn/frealu/user/record/getStatisticsReport";
+    public static final String GET_MONTH_OF_DAY = "http://47.107.78.54:8001/frealu/user/record/getStatisticsReport";
     //获取某一天数据
-    public static final String GET_DAY = "https://cjwddz.cn/frealu/user/record/getAnalysisReport";
+    public static final String GET_DAY = "http://47.107.78.54:8001/frealu/user/record/getAnalysisReport";
 
     public static final String HEADER_CONTENT_TYPE_KEY = "Content-Type";
     public static final String HEADER_CONTENT_TYPE_VAULE = "application/x-www-form-urlencoded";
