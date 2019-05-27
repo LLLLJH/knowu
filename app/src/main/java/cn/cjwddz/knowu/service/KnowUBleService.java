@@ -338,7 +338,7 @@ public class KnowUBleService extends Service implements ServiceInterface{
          //设置连接错误处理
          BleConnectOptions optionns = new BleConnectOptions.Builder()
                  .setConnectRetry(2)
-                 .setConnectTimeout(5000)
+                 .setConnectTimeout(6000)
                  .setServiceDiscoverRetry(2)
                  .setServiceDiscoverTimeout(5000)
                  .build();
@@ -359,7 +359,6 @@ public class KnowUBleService extends Service implements ServiceInterface{
              ble.stopSearch();
          }else if(status == STATUS_DISCONNECTED||status == STATUS_DEVICE_DISCONNECTED){
              if(linkingDevice == null && connectCount < 1){
-                 uiInterface.connectting();
                  connectCount++;
                  return;
              }else{
