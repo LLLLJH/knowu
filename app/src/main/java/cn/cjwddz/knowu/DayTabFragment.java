@@ -475,7 +475,7 @@ public class DayTabFragment extends Fragment implements Get_M_callback, Get_D_ca
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getActivity(),"服务器异常,获取信息失败！！！",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),"服务异常,获取信息失败！！！",Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -530,7 +530,7 @@ public class DayTabFragment extends Fragment implements Get_M_callback, Get_D_ca
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getActivity(),"服务器异常,获取信息失败！！！",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),"服务异常,获取信息失败！！！",Toast.LENGTH_SHORT).show();
             }
         });
     }

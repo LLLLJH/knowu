@@ -57,6 +57,7 @@ public class KnowUBleService extends Service implements ServiceInterface{
     private List<MyDevice> deviceArray = new ArrayList<>();
     private int rssi = -1000;
     public boolean err = false;
+    public int connectCount = 0;
 
     private FragmentUIInterface fragmentUIInterface;
     public void setFragmentUIInterface(FragmentUIInterface fragmentUIInterface){
@@ -131,7 +132,7 @@ public class KnowUBleService extends Service implements ServiceInterface{
     public void scan() {
         //uiInterface.startService();
      SearchRequest request = new SearchRequest.Builder()
-             .searchBluetoothLeDevice(3000,2)  //扫描ble设备2次每次五秒
+             .searchBluetoothLeDevice(5000,2)  //扫描ble设备2次每次五秒
              .build();
      SearchResponse response = new SearchResponse() {
       @Override
@@ -169,7 +170,6 @@ public class KnowUBleService extends Service implements ServiceInterface{
          // System.out.print("onSearchCanceled");
       }
      };
-
      ble.search(request,response);
     }
 
@@ -193,6 +193,7 @@ public class KnowUBleService extends Service implements ServiceInterface{
             ble.disconnect(mac);
         linkingDevice =null;
         mac = null;
+        deviceArray.clear();
         uiInterface.back();
     }
 
@@ -221,20 +222,20 @@ public class KnowUBleService extends Service implements ServiceInterface{
     }
 
  private void connecctDevice() {
-
-     mac = null;
-
+     /** 2019/05/20
      if(linkingDevice!=null){
          mac=linkingDevice.getDevice().getAddress();
          status = ble.getConnectStatus(mac);
      }
      if(status== BluetoothProfile.STATE_CONNECTED && linkingDevice !=null)
          ble.disconnect(mac);
+      */
      linkingDevice =null;
      lastDevice = null;
      mac = null;
+     rssi = -1000;
      for( MyDevice a:deviceArray){
-         lastDevice = deviceArray.get(0);
+         //lastDevice = deviceArray.get(0);
          // uiInterface.scanSuccess("取得rssi:"+a.getDevice().rssi);
          lastDevice = a.getDevice().rssi>rssi?a:lastDevice;
          rssi = lastDevice.getDevice().rssi;
@@ -243,117 +244,94 @@ public class KnowUBleService extends Service implements ServiceInterface{
          mac=lastDevice.getDevice().getAddress();
      }
      if(mac !=null){
-
          final String finalMac = mac;
          //设置连接应答
-         BleConnectResponse reponse = new BleConnectResponse() {
+         BleConnectResponse response = new BleConnectResponse() {
              @Override
              public void onResponse(int code, BleGattProfile data) {
-                 if(code== com.inuker.bluetooth.library.Constants.REQUEST_SUCCESS)
+                 if(code== REQUEST_SUCCESS)
                  {
-                     linkingDevice=lastDevice;
-                 }else{
-                     uiInterface.back();
-                     return;
-                 }
-                 // 连接成功通知notify监听器
-                 // if(code!= com.inuker.bluetooth.library.Constants.REQUEST_SUCCESS)
+                     //stopScan();
+                     // 连接成功通知notify监听器
+                     // if(code!= com.inuker.bluetooth.library.Constants.REQUEST_SUCCESS)
 
-                 ble.notify(finalMac, UUID.fromString(Constants.SERVICE_UUID), UUID.fromString(Constants.CHARACTER_UUID), new BleNotifyResponse() {
-                     @Override
-                     public void onNotify(UUID service, UUID character, byte[] value) {
-                        // System.out.println(value.toString());
-                         switch (value[3]){
-                             case 0x03:
-                                 switch (value[4]){
-                                     //  读取力度值
-                                     case (byte) 0xc2:
-                                         uiInterface.setLastProgress(value[5]);
-                                         break;
-                                     //  读取电量值
-                                     case (byte) 0xc5:
-                                         if(value[5]<=10){
-                                             uiInterface.updateView(value[5]);
-                                         }
-                                         batteryInterface.setBattery(value[5]);
-                                         break;
-                                     case (byte)0xc6:
-                                         switch (value[5]){
-                                             case (byte) 0x00:
-                                                 uiInterface.setDeepStatus(false);
-                                                 //System.out.println("deep状态："+false);
-                                                 break;
-                                             case (byte) 0x01:
-                                                 uiInterface.setDeepStatus(true);
-                                                 //System.out.println("deep状态："+true);
-                                                 break;
-                                         }
-                                         break;
-                                     case (byte)0xc8:
-                                         uiInterface.getDefIntensity(value[5]);
-                                         break;
-                                     default:break;
-                                 }
-                                 break;
-                             //  写应答响应
-                             case 0x04:
-                                 //写应答是否成功
-                                 switch (value[4]){
-                                     //写加热状态
-                                     case (byte) 0xc7:
-                                         switch (value[5]){
-                                             case (byte) 0x00:
-                                                 fragmentUIInterface.openSuccess();
-                                                 break;
-                                             case (byte) 0x01:
-                                                 fragmentUIInterface.openFail();
-                                                 break;
-                                             case (byte) 0x02:
-                                                 fragmentUIInterface.closeSuccess();
-                                                 break;
-                                             case (byte) 0x03:
-                                                 fragmentUIInterface.closeSuccess();
-                                                 break;
-                                             default:break;
-                                         }
-                                         // uiInterface.sendMessage("信息发送成功！！！");
-                                         break;
-                                     //写提示音状态
-                                     case (byte) 0x06:
-                                         // uiInterface.sendMessage("信息发送失败！！！");
-                                         break;
-                                     default:break;
-                                 }
-                                 break;
-                             default:break;
+                     ble.notify(finalMac, UUID.fromString(Constants.SERVICE_UUID), UUID.fromString(Constants.CHARACTER_UUID), new BleNotifyResponse() {
+                         @Override
+                         public void onNotify(UUID service, UUID character, byte[] value) {
+                             // System.out.println(value.toString());
+                             switch (value[3]){
+                                 case 0x03:
+                                     switch (value[4]){
+                                         //  读取力度值
+                                         case (byte) 0xc2:
+                                             uiInterface.setLastProgress(value[5]);
+                                             break;
+                                         //  读取电量值
+                                         case (byte) 0xc5:
+                                             if(value[5]<=10){
+                                                 uiInterface.updateView(value[5]);
+                                             }
+                                             batteryInterface.setBattery(value[5]);
+                                             break;
+                                         case (byte)0xc6:
+                                             switch (value[5]){
+                                                 case (byte) 0x00:
+                                                     uiInterface.setDeepStatus(false);
+                                                     break;
+                                                 case (byte) 0x01:
+                                                     uiInterface.setDeepStatus(true);
+                                                     break;
+                                             }
+                                             break;
+                                         case (byte)0xc8:
+                                             uiInterface.getDefIntensity(value[5]);
+                                             break;
+                                         default:break;
+                                     }
+                                     break;
+                                 //  写应答响应
+                                 case 0x04:
+                                     //写应答是否成功
+                                     switch (value[4]){
+                                         //写加热状态
+                                         case (byte) 0xc7:
+                                             switch (value[5]){
+                                                 case (byte) 0x00:
+                                                     fragmentUIInterface.openSuccess();
+                                                     break;
+                                                 case (byte) 0x01:
+                                                     fragmentUIInterface.openFail();
+                                                     break;
+                                                 case (byte) 0x02:
+                                                     fragmentUIInterface.closeSuccess();
+                                                     break;
+                                                 case (byte) 0x03:
+                                                     fragmentUIInterface.closeSuccess();
+                                                     break;
+                                                 default:break;
+                                             }
+                                             break;
+                                         //写提示音状态
+                                         case (byte) 0x06:
+                                             break;
+                                         default:break;
+                                     }
+                                     break;
+                                 default:break;
 
+                             }
                          }
-                     }
-                     @Override
-                     public void onResponse(int code) {
-                         if (code == com.inuker.bluetooth.library.Constants.REQUEST_SUCCESS) {
-                             //uiInterface.setNotify("添加notify成功！");
-                         }else{
-                             //  添加notify失败！！
-                            // uiInterface.setNotify("添加notify失败！");
-                             //ble.disconnect(linkingDevice.getDevice().getAddress());
+                         @Override
+                         public void onResponse(int code) {
+                             if (code == com.inuker.bluetooth.library.Constants.REQUEST_SUCCESS) {
+                                 //uiInterface.setNotify("添加notify成功！");
+                             }else{
+                                 //  添加notify失败！！
+                                 // uiInterface.setNotify("添加notify失败！");
+                                 //ble.disconnect(linkingDevice.getDevice().getAddress());
+                             }
                          }
-                     }
-                 });
-                 if(code == REQUEST_SUCCESS){
-                     //蓝牙连接成功
-                     // thread.start();
-                     // linkingDevice = lastDevice;
-                     uiInterface.connectSuccess();
-                     ble.stopSearch();
-                     stopScan();
-                     /**if(linkingDevice != null){
-                         System.out.println("linking"+"ID:"+linkingDevice.getDeviceID()+"version:"
-                                 +linkingDevice.getDeviceVersion()+"model:"+linkingDevice.getDeviceModel()
-                                 +"len:"+linkingDevice.getLen());
-                     }else if(lastDevice !=  null){
-                         System.out.println("last"+lastDevice.getDeviceInfo()+"len:"+lastDevice.getLen());
-                     }*/
+                     });
                  }
              }
          };
@@ -361,15 +339,12 @@ public class KnowUBleService extends Service implements ServiceInterface{
          BleConnectOptions optionns = new BleConnectOptions.Builder()
                  .setConnectRetry(2)
                  .setConnectTimeout(5000)
-                 .setServiceDiscoverRetry(3)
+                 .setServiceDiscoverRetry(2)
                  .setServiceDiscoverTimeout(5000)
                  .build();
-         //uiInterface.connectting();
          ble.registerConnectStatusListener(mac,bleConnectStatusListener);
-         ble.connect(mac,optionns,reponse);
+         ble.connect(mac,optionns,response);
      }
-
-
  }
 
 //蓝牙连接监听
@@ -378,14 +353,26 @@ public class KnowUBleService extends Service implements ServiceInterface{
      public void onConnectStatusChanged(String mac, int status) {
          if(status == STATUS_CONNECTED){
              setErr(false);
+             linkingDevice=lastDevice;
+             //蓝牙连接成功
+             uiInterface.connectSuccess();
+             ble.stopSearch();
          }else if(status == STATUS_DISCONNECTED||status == STATUS_DEVICE_DISCONNECTED){
-             linkingDevice = null;
-             mac = null;
-             //ble.disconnect(mac);
-             ble.unregisterConnectStatusListener(mac,bleConnectStatusListener);
-             if(!err){
-                 uiInterface.back();
+             if(linkingDevice == null && connectCount < 1){
+                 uiInterface.connectting();
+                 connectCount++;
+                 return;
+             }else{
+                 connectCount = 0;
+                 linkingDevice = null;
+                 mac = null;
+                 deviceArray.clear();
+                 //ble.disconnect(mac);
+                 ble.unregisterConnectStatusListener(mac,bleConnectStatusListener);
+                 if(!err){
+                     uiInterface.back();
                  }
+             }
          }
      }
 

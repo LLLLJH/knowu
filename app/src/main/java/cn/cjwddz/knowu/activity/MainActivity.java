@@ -281,9 +281,9 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
         //isOpen = appOpsManager.checkOp(AppOpsManager.OPSTR_FINE_LOCATION, Process.myUid(),getPackageName());
         openGps();
         Intent intent = new Intent(this,KnowUBleService.class);
-        bindService(intent,serviceConnection,BIND_AUTO_CREATE);
         undateFragment(0);
         initSeekbarProgress();
+        bindService(intent,serviceConnection,BIND_AUTO_CREATE);
     }
    private void initSeekbarProgress(){
        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(

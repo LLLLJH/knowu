@@ -221,6 +221,11 @@ public class StartActivity extends Activity implements MyInterface,DownloadView{
             @Override
             public void run() {
                 Toast.makeText(StartActivity.this,"服务器异常",Toast.LENGTH_LONG).show();
+                Intent intent = new Intent();
+                intent = intent.setClass(StartActivity.this,MainActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                finish();
             }
         });
         //Intent intent = new Intent();
@@ -232,16 +237,20 @@ public class StartActivity extends Activity implements MyInterface,DownloadView{
 
     @Override
     public void failed(Call call, Response response) throws IOException {
-        if(response.code() ==504){
+       //if(response.code() ==504){
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     Toast.makeText(StartActivity.this,"Res服务器异常",Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent();
+                    intent = intent.setClass(StartActivity.this,MainActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                    finish();
                 }
             });
-
             //System.out.println("服务器异常");
-        }
+       // }
     }
 
     @Override
