@@ -536,7 +536,9 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
                 kUBService.sendMessage(Protocol.getElectricGetInstruct());
                 kUBService.sendMessage(Protocol.getDeepStatus());
                 kUBService.sendMessage(Protocol.getDefIntensityReadInstruct());
-                thread.start();
+                if(thread.getState() == Thread.State.NEW){
+                    thread.start();
+                }
             }
         };
         timer.schedule(timerTask,1000);

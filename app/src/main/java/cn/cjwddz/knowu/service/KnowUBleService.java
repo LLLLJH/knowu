@@ -337,9 +337,9 @@ public class KnowUBleService extends Service implements ServiceInterface{
          };
          //设置连接错误处理
          BleConnectOptions optionns = new BleConnectOptions.Builder()
-                 .setConnectRetry(2)
+                 .setConnectRetry(1)
                  .setConnectTimeout(6000)
-                 .setServiceDiscoverRetry(2)
+                 .setServiceDiscoverRetry(1)
                  .setServiceDiscoverTimeout(5000)
                  .build();
          ble.registerConnectStatusListener(mac,bleConnectStatusListener);
@@ -361,16 +361,19 @@ public class KnowUBleService extends Service implements ServiceInterface{
              if(linkingDevice == null && connectCount < 1){
                  connectCount++;
                  return;
-             }else{
-                 connectCount = 0;
-                 linkingDevice = null;
-                 mac = null;
-                 deviceArray.clear();
-                 //ble.disconnect(mac);
-                 ble.unregisterConnectStatusListener(mac,bleConnectStatusListener);
-                 if(!err){
-                     uiInterface.back();
-                 }
+             }
+             if(connectCount == 1){
+                 ble.disconnect(mac);
+                 connectCount++;
+                 return;
+             }
+             connectCount = 0;
+             linkingDevice = null;
+             mac = null;
+             deviceArray.clear();
+             ble.unregisterConnectStatusListener(mac,bleConnectStatusListener);
+             if(!err){
+                 uiInterface.back();
              }
          }
      }
