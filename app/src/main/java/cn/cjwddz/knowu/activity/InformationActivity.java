@@ -117,9 +117,9 @@ public class InformationActivity extends AppCompatActivity implements AdapterVie
     SharedPreferences sp;
     SharedPreferences.Editor editor;
 
-    private static String OPERATER = "cjwddz";
-    private static String PASSWORD = "admin123";
-    private static String BUCKET = "mall-picture";
+    private static String OPERATER = "llljh";
+    private static String PASSWORD = "18826057934lu";
+    private static String BUCKET = "image-header-com";
     private static String METHOD = "POST";
     private static String PATH = File.separator+"userHeader"+File.separator;
     private String signature;

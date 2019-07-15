@@ -113,14 +113,14 @@ public class MyUtils {
                 //intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             }
             //设置裁剪之后的图片路径文件
-            File cutfile = new File(Environment.getExternalStorageDirectory().getPath(),filename+".png"); //随便命名一个
+            File cutfile = new File(Environment.getExternalStorageDirectory(),filename+".png"); //随便命名一个
            // File cutfile = new File(getResourcesUri(activity,R.drawable.important),"important.png"); //随便命名一个
             if (cutfile.exists()){ //如果已经存在，则先删除,这里应该是上传到服务器，然后再删除本地的，没服务器，只能这样了
                 cutfile.delete();
             }
             cutfile.createNewFile();
             //初始化 uri
-            Uri imageUri = uri; //返回来的 uri
+            Uri imageUri = uri;//返回来的 uri
             Uri outputUri = null; //真实的 uri
             outputUri = Uri.fromFile(cutfile);
            // Uri cutUri = outputUri;
@@ -182,6 +182,7 @@ public class MyUtils {
                 imageUri = FileProvider.getUriForFile(activity,
                         "com.ljh.knowU.fileProvider",
                         camerafile);
+                //System.out.println(imageUri);
             } else {
                 imageUri = Uri.fromFile(camerafile);
             }

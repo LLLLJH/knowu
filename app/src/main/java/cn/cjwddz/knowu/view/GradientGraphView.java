@@ -198,14 +198,14 @@ public class GradientGraphView extends View {
                 Color.argb(0, 255, 86, 86)};
 
         datas.clear();
-       // datas.add(0);
-       // datas.add(60);
-       // datas.add(70);
-        //datas.add(60);
-        //datas.add(90);
-        //datas.add(70);
-        //datas.add(80);
-        //datas.add(0);
+       /** datas.add(0);
+        datas.add((int)(Math.random()*10));
+        datas.add((int)(Math.random()*20));
+        datas.add((int)(Math.random()*70));
+        datas.add((int)(Math.random()*60));
+        datas.add((int)(Math.random()*30));
+        datas.add((int)(Math.random()*10));
+        datas.add(0);*/
     }
 
 

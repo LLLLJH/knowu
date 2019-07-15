@@ -41,7 +41,7 @@ public class MyHTTPClient {
     //定义写入超时
     private static final long DEFAULT_WRITE_TIMEOUT = 20 * 1000;
     //定义连接超时
-    private static final long DEFAULT_CONNECT_TIMEOUT = 20 * 1000;
+    private static final long DEFAULT_CONNECT_TIMEOUT = 10 * 1000;
     //定义缓存磁盘大小
     private static final long HTTP_RESPONSE_DISK_CACHE_MAX_SIZE = 60 * 1024 * 1024;
     private static MyHTTPClient mInstance;

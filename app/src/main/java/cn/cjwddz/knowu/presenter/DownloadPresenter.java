@@ -2,9 +2,13 @@ package cn.cjwddz.knowu.presenter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
+import android.support.v4.content.FileProvider;
 
 import org.json.JSONObject;
 
@@ -23,6 +27,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+
+import static cn.cjwddz.knowu.service.Constants.GETAPK;
 
 
 /**
@@ -51,15 +57,15 @@ public class DownloadPresenter {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 //System.out.println("版本更新检查");
-                String url = "";
+                //String url = "";
                 String new_version = "";
                boolean forceUpdate = false;
                 try {
                     JSONObject jsonObject = new JSONObject(response.body().string());
                     System.out.println(jsonObject.toString());
                     //forceUpdate = jsonObject.getBoolean("forceUpdate");
-                    url = jsonObject.getString("url");
-                    new_version = jsonObject.getString("new_version");
+                    //url = jsonObject.getString("url");
+                    new_version = jsonObject.getString("version");
                 } catch(Exception e){
                     e.printStackTrace();
                 }
@@ -67,7 +73,7 @@ public class DownloadPresenter {
                 if(new_version.equals(now_version)){
                     downloadView.showMsg();
                 }else{
-                    downloadView.showUpdateDialog(url);
+                    downloadView.showUpdateDialog(GETAPK);
                 }
             }
             });
@@ -77,7 +83,7 @@ public class DownloadPresenter {
      * 下载APK文件
      * */
     public void downloadFile(String url, final Activity activity){
-        OkHttpClient okHttpClient = MyHTTPClient.getInstance().getOkHttpClient();
+        final OkHttpClient okHttpClient = MyHTTPClient.getInstance().getOkHttpClient();
         final Request request = new Request.Builder()
                 .url(url)
                 .build();
@@ -94,7 +100,7 @@ public class DownloadPresenter {
                     try{
                         is = response.body().byteStream();
                         long total = response.body().contentLength();
-                        int max= 1000;
+                        int percent= 0;
                         downloadView.setProgressMax((int) total);
                         if(is != null){
                             File file = new File(Environment.getExternalStorageDirectory(),activity.getResources().getString(R.string.app_name)+".apk");
@@ -109,7 +115,8 @@ public class DownloadPresenter {
                             while((count = is.read(buf)) != -1 ){
                                 fos.write(buf,0,count);
                                 process += count;
-                                downloadView.updateProgress(process,process, (int) total);
+                                percent = (int) (process*100/total);
+                                downloadView.updateProgress(process,percent);
                             }
                             fos.flush();
                             if(fos != null){

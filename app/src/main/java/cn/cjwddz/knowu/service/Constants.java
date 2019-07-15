@@ -48,17 +48,18 @@ public class Constants {
     public static final String ADD_USER_INFO_URL  = "http://47.107.78.54:8001/frealu/user/miniSetPersonInfo";
     //获取用户信息
     public static final String GET_USER_INFO_URL  = "http://47.107.78.54:8001/frealu/user/getUserInfo";
-    //检查更新
-    public static final String UPDATE  = "http://cjwddz.cn:6325/mock/43/frealu/user/record/update";
 
     //获取服务器签名
    public static final String GETSIGN = "http://cjwddz.cn:8360/admin/auth/getSign";
 
     //获取头像
-    public static final String GETHEADER= " http://source.cjwddz.cn/userHeader/";
+    public static final String GETHEADER= " http://head.mothtech.com/userHeader/";
+
+    //检查更新
+    public static final String UPDATE  = "http://head.mothtech.com/version/version.json";
 
     //获取APP
-    public static final String GETAPK= " http://source.cjwddz.cn/APK/FrealU.apk";
+    public static final String GETAPK= " http://head.mothtech.com/apk/FrealU.apk";
 
     //获取当年十二个月份数据
     public static final String GET_YEAR_OF_MONTH = "http://47.107.78.54:8001/frealu/user/record/getStatisticsReport";

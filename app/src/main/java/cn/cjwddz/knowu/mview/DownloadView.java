@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public interface DownloadView {
     void downLoadSuccess();
-    void updateProgress(int process,int count,int total);
+    void updateProgress(int process,int percent);
     void setProgressMax(int max);
     void downFail(Exception e);//下载失败
     void showMsg(); //显示已是最新版本dialog

@@ -58,7 +58,7 @@ public class LoginActivity extends AppCompatActivity implements MyInterface,Get_
     private int et2_index = 1;
     private int et3_index = 1;
     private int et4_index = 1;
-    private boolean del_status;
+    private boolean firstLogin = true;
     private Button login;
     private boolean isLoginable = false;
     private String phoneNumber;
@@ -454,6 +454,7 @@ public class LoginActivity extends AppCompatActivity implements MyInterface,Get_
                     if(msg.equals("验证码错误，请重新输入")){
                         myInterface.register();
                     }else if(msg.equals("该用户已经存在")){
+                        firstLogin = false;
                         getLogin(Constants.LOGIN,phoneNumber);
                     }else{
                         //System.out.println(status + msg);
@@ -475,7 +476,7 @@ public class LoginActivity extends AppCompatActivity implements MyInterface,Get_
 
     @Override
     public void successed(Call call, Response response) throws IOException {
-        if(sp.getBoolean("firstStart",true)){
+        if(firstLogin){
             Intent intent = new Intent();
             intent = intent.setClass(LoginActivity.this, GuideActivity.class);
             startActivity(intent);

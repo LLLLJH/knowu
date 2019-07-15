@@ -161,12 +161,13 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
     private long startStopTime = 0;
     private int model = 0;
     private int intensity = 1;
-    private static int INTENSITY_MAX = 15;
+    private static int INTENSITY_MAX = 8;
     private static int INTENSITY_MIN = 1;
     private boolean isStop = false;//判断是否由暂停开始还是在启动时开始
     private boolean isStart = false;//判断是否由暂停开始还是在启动时开始
 
     private KnowUBleService kUBService;
+    private Boolean bleConnectStatus;
     private MyInterface myInterface;
     private Get_userInfo get_userInfo;
     private Get_userHeader get_userHeader;
@@ -221,6 +222,7 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
             }
         }
         AFactory.mainActivity = this;
+        getLogin(Constants.LOGIN,phoneNumber);
     }
 
 
@@ -258,6 +260,7 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
         phoneNumber = sp.getString("phoneNumber",null);
         filename = MyUtils.hmacSha256("header",phoneNumber);
         file = new File(Environment.getExternalStorageDirectory().getPath(),filename+".png");
+        //System.out.println(file.getPath());
         if(!sp.getBoolean("isLogin",false)){
             getUserInfo(Constants.GET_USER_INFO_URL);
             getUserHeader(Constants.GETHEADER,filename+".png");
@@ -293,7 +296,7 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
    }
 
     private void initImageView(){
-        String nickName = sp.getString("nickName","女有");
+        String nickName = sp.getString("nickName","4S23B3264108");
         userName.setText(nickName);
         if(file.length()!=0){
             Uri uri0 = Uri.fromFile(file);
@@ -516,6 +519,7 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
     @Override
     public void connectSuccess() {
         undateFragment(2);
+        bleConnectStatus = true;
         //seekbar.setThumb(getResources().getDrawable(R.drawable.seekbar_clicked));
         fighting.setSelected(true);
         fighting_tv.setTextColor(getResources().getColor(R.color.text_color));
@@ -604,6 +608,7 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
 
     private void backMain(){
         undateFragment(0);
+        bleConnectStatus = false;
         progress = 1;
         bt_progress.setText(String.valueOf(progress));
         initSeekbarProgress();
@@ -667,6 +672,9 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
         switch (view.getId()){
             case R.id.fighting:
                 if(!kUBService.isLink()){
+                    if(bleConnectStatus){
+                        backMain();
+                    }
                     showToast("设备未连接");
                     return;
                 }
@@ -689,6 +697,9 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
                 break;
             case R.id.keepfit:
                 if(!kUBService.isLink()){
+                    if(bleConnectStatus){
+                        backMain();
+                    }
                     showToast("设备未连接");
                     return;
                 }
@@ -711,6 +722,9 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
                 break;
             case R.id.chira:
                 if(!kUBService.isLink()){
+                    if(bleConnectStatus){
+                        backMain();
+                    }
                     showToast("设备未连接");
                     return;
                 }
@@ -733,6 +747,9 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
                 break;
             case R.id.relax:
                 if(!kUBService.isLink()){
+                    if(bleConnectStatus){
+                        backMain();
+                    }
                     showToast("设备未连接");
                     return;
                 }
@@ -764,6 +781,9 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
 
     public void addProgress(View view){
         if(!kUBService.isLink()){
+            if(bleConnectStatus){
+                backMain();
+            }
             showToast("设备未连接");
             return;
         }
@@ -784,6 +804,9 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
 
     public void minusProgress(View view){
         if(!kUBService.isLink()){
+            if(bleConnectStatus){
+                backMain();
+            }
             showToast("设备未连接");
             return;
         }
@@ -1221,6 +1244,59 @@ public class MainActivity extends BaseActivity implements RecyclerView.RecyclerL
             timer.schedule(task,0,30*1000);
         }
     };
+
+
+    /**
+     * 请求登录
+     * */
+    public  void getLogin(String url,String phoneNumber){
+        OkHttpClient okHttpClient = MyHTTPClient.getInstance().getOkHttpClient();
+        FormBody.Builder formBody = new FormBody.Builder();
+        formBody.add("phone",phoneNumber);
+        formBody.add("password", phoneNumber);
+        //formBody.add("password", MyUtils.md5(phoneNumber));
+        //System.out.println( MyUtils.md5(phoneNumber));
+        //formBody.add("vcode",vCode);
+        final Request request = new Request.Builder()
+                .url(url)
+                .header(Constants.HEADER_CONTENT_TYPE_KEY,Constants.HEADER_CONTENT_TYPE_VAULE)
+                .post(formBody.build())
+                .build();
+        //System.out.println("请求登录！！！");
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                myInterface.failure(e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String status = null;
+                String msg = null;
+                try {
+                    JSONObject jsonObject = new JSONObject(response.body().string());
+                    status = jsonObject.getString("status");
+                    msg = jsonObject.getString("msg");
+                    System.out.println(status+msg);
+                } catch(Exception e){
+                    e.printStackTrace();
+                }
+                if (status.equals("true")) {
+                    //System.out.println(status + msg);
+                    myInterface.successed(call, response);
+                } else {
+                    if(msg.equals("用户不存在")){
+                        myInterface.register();
+                    }else if(msg.equals("用户名参数错误")){
+                        myInterface.register();
+                    }else{
+                        //System.out.println(status + msg);
+                        myInterface.failed(call, response);
+                    }
+                }
+            }
+        });
+    }
 
 
 }

@@ -458,20 +458,54 @@ public class MouthTabFragment extends Fragment implements Get_M_callback, Get_D_
 
     @Override
     public void failureGetD(IOException e) {
+        /**tv_fighting_min_value =  MyUtils.second2min((int) (Math.random()*Integer.parseInt(mdata.get(lastposition))));
+        tv_fighting_hour_value = MyUtils.second2hour((int) (Math.random()*Integer.parseInt(mdata.get(lastposition))));
+        tv_sum_min_value = MyUtils.second2min(Integer.parseInt(mdata.get(lastposition)));
+        tv_sum_hour_value = MyUtils.second2hour(Integer.parseInt(mdata.get(lastposition)));
+        tv_fighting_max_intensity_value = String.valueOf(7);
+        tv_fighting_average_intensity_value = String.valueOf(5);
+        tv_userTime_value = "11:04-11:57";
+        tv_fighting_one_min_value = "53";
+        tv_percent_time_value = String.valueOf((int) (Math.random()*100));
+        tv_percent_value_value = String.valueOf((int) (Math.random()*100));
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getActivity(), "服务器异常,获取信息失败！！！", Toast.LENGTH_SHORT).show();
+                initDay();
+            }
+        });
+         */
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //Toast.makeText(getActivity(), "服务器异常,获取信息失败！！！", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     @Override
     public void failedGetD(Call call, Response response) throws IOException {
+        /**tv_fighting_min_value =  MyUtils.second2min((int) (Math.random()*Integer.parseInt(mdata.get(lastposition))));
+        tv_fighting_hour_value = MyUtils.second2hour((int) (Math.random()*Integer.parseInt(mdata.get(lastposition))));
+        tv_sum_min_value = MyUtils.second2min(Integer.parseInt(mdata.get(lastposition)));
+        tv_sum_hour_value = MyUtils.second2hour(Integer.parseInt(mdata.get(lastposition)));
+        tv_fighting_max_intensity_value = String.valueOf(7);
+        tv_fighting_average_intensity_value = String.valueOf(5);
+        tv_userTime_value = "11:04-11:57";
+        tv_fighting_one_min_value = "53";
+        tv_percent_time_value = String.valueOf((int) (Math.random()*100));
+        tv_percent_value_value = String.valueOf((int) (Math.random()*100));
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getActivity(), "服务器异常,获取信息失败！！！", Toast.LENGTH_SHORT).show();
+                initDay();
+            }
+        });
+         */
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //Toast.makeText(getActivity(), "服务器异常,获取信息失败！！！", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -513,20 +547,46 @@ public class MouthTabFragment extends Fragment implements Get_M_callback, Get_D_
 
     @Override
     public void failureGetM(IOException e) {
+       /** for (int i = 0; i <12; i++) {
+            String msg = String.valueOf((int)(Math.random()*5*60*60));
+            mdata.add(msg);
+            mdate.add(String.valueOf(i+1));
+        }
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getActivity(), "服务器异常,获取信息失败！！！", Toast.LENGTH_SHORT).show();
+                madapter.setMData(mdata,month);
+                adapter1.setMDatae(mdate);
+            }
+        });
+        */
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //Toast.makeText(getActivity(), "服务器异常,获取信息失败！！！", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     @Override
     public void failedGetM(Call call, Response response) throws IOException {
+      /**  for (int i = 0; i <12; i++) {
+            String msg = String.valueOf((int)(Math.random()*5*60*60));
+            mdata.add(msg);
+            mdate.add(String.valueOf(i+1));
+        }
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getActivity(), "服务器异常,获取信息失败！！！", Toast.LENGTH_SHORT).show();
+                madapter.setMData(mdata,month);
+                adapter1.setMDatae(mdate);
+            }
+        });
+       */
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //Toast.makeText(getActivity(), "服务器异常,获取信息失败！！！", Toast.LENGTH_SHORT).show();
             }
         });
     }

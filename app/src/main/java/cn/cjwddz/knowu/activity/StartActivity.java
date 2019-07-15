@@ -63,8 +63,8 @@ public class StartActivity extends Activity implements MyInterface,DownloadView{
     private  MyDialog dialog;
     private View dialogView;
     private ProgressBar progressBar;
-    private TextView count_tv;
-    private  TextView total_tv;
+    private TextView percent_tv;
+   // private  TextView total_tv;
 
     private MyInterface myInterface;
     public void setMyInterface(MyInterface myInterface){
@@ -109,15 +109,21 @@ public class StartActivity extends Activity implements MyInterface,DownloadView{
                 if(phoneNumber.equals("default")){
                     startApp();
                 }else{
-                    if( !isstart){
-                        isstart = true;
-                        getLogin(Constants.LOGIN,phoneNumber);
+                    Intent intent = new Intent();
+                    intent = intent.setClass(StartActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                    finish();
+                    //if( !isstart){
+                     //  isstart = true;
+                     //   getLogin(Constants.LOGIN,phoneNumber);
                         //downloadPresenter.updateAPK(Constants.UPDATE,now_version);
-                    }
+                   // }
                 }
 
             }
         },2000);
+        /**
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -132,7 +138,7 @@ public class StartActivity extends Activity implements MyInterface,DownloadView{
                 //downloadPresenter.updateAPK(Constants.UPDATE,now_version);
                 //timer.cancel();
             }
-        });
+        });*/
     }
 
     @Override
@@ -310,13 +316,13 @@ public class StartActivity extends Activity implements MyInterface,DownloadView{
      * 更新进度条
      * */
     @Override
-    public void updateProgress(int process, final int count, final int total) {
+    public void updateProgress(int process, final int percent) {
         progressBar.setProgress(process);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                count_tv.setText(String.valueOf(count));
-                total_tv.setText(String.valueOf(total));
+                percent_tv.setText(String.valueOf(percent));
+               // total_tv.setText(String.valueOf(total));
             }
         });
     }
@@ -408,7 +414,6 @@ public class StartActivity extends Activity implements MyInterface,DownloadView{
         downloadPresenter.downloadFile(url,this);
         dialogView = dialog.getView();
         progressBar = dialogView.findViewById(R.id.downProgressBar);
-        count_tv = dialogView.findViewById(R.id.count);
-        total_tv = dialogView.findViewById(R.id.total);
+        percent_tv = dialogView.findViewById(R.id.tv_percent);
     }
 }

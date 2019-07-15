@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.IOException;
 
 import cn.cjwddz.knowu.R;
 import cn.cjwddz.knowu.adapters.MyAdapter;
@@ -33,6 +34,10 @@ import cn.cjwddz.knowu.mview.DownloadView;
 import cn.cjwddz.knowu.presenter.DownloadPresenter;
 import cn.cjwddz.knowu.service.Constants;
 import cn.cjwddz.knowu.view.MyDialog;
+
+import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
+import static android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
+import static android.support.v4.content.FileProvider.getUriForFile;
 
 public class AboutActivity extends AppCompatActivity implements DownloadView{
 
@@ -43,7 +48,7 @@ public class AboutActivity extends AppCompatActivity implements DownloadView{
     private  MyDialog dialog;
     private View dialogView;
     private ProgressBar progressBar;
-    private  TextView count_tv;
+    private  TextView percent_tv;
     private  TextView total_tv;
 
     android.support.v7.app.ActionBar actionBar;
@@ -99,6 +104,7 @@ public class AboutActivity extends AppCompatActivity implements DownloadView{
             }, Constants.PERMISSION_REQUEST_COARSE_LOCATION);
         }
         downloadPresenter.updateAPK(Constants.UPDATE,now_version);
+        //downLoadSuccess();
         //downloadApp(Constants.GETAPK);
     }
 
@@ -137,13 +143,25 @@ public class AboutActivity extends AppCompatActivity implements DownloadView{
                         .setPositiveButton("是", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                //动态申请权限
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(
+                                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                    requestPermissions(new String[]{
+                                            Manifest.permission.REQUEST_INSTALL_PACKAGES
+                                    }, Constants.PERMISSION_REQUEST_COARSE_LOCATION);
+                                }
                                 Intent intent = new Intent(Intent.ACTION_VIEW);
-
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { //aandroid N的权限问题
-                                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                                    Uri contentUri = FileProvider.getUriForFile(AboutActivity.this, "com.ljh.knowU.fileProvider", new File(Environment.getExternalStorageDirectory(), String.valueOf(R.string.app_name)+".apk"));
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { //android N的权限问题
+                                    Uri contentUri = getUriForFile(AboutActivity.this, "com.ljh.knowU.fileProvider", new File(Environment.getExternalStorageDirectory(), getResources().getString(R.string.app_name)+".apk"));
+                                    System.out.println(contentUri);
+                                    intent.setFlags(FLAG_GRANT_WRITE_URI_PERMISSION|FLAG_GRANT_READ_URI_PERMISSION);
                                     intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
                                 } else {
+                                    try {
+                                        Runtime.getRuntime().exec("chmod 777 " + new File(Environment.getExternalStorageDirectory(), getResources().getString(R.string.app_name)+".apk").getCanonicalPath());
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
                                     intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory(),getResources().getString(R.string.app_name)+".apk")), "application/vnd.android.package-archive");
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 }
@@ -166,13 +184,13 @@ public class AboutActivity extends AppCompatActivity implements DownloadView{
      * 更新进度条
      * */
     @Override
-    public void updateProgress(int process, final int count, final int total) {
+    public void updateProgress(int process, final int percent) {
         progressBar.setProgress(process);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                count_tv.setText(String.valueOf(count));
-               total_tv.setText(String.valueOf(total));
+                percent_tv.setText(String.valueOf(percent));
+               //total_tv.setText(String.valueOf(total));
             }
         });
 
@@ -270,7 +288,7 @@ public class AboutActivity extends AppCompatActivity implements DownloadView{
         downloadPresenter.downloadFile(url,this);
         dialogView = dialog.getView();
         progressBar = dialogView.findViewById(R.id.downProgressBar);
-        count_tv = dialogView.findViewById(R.id.count);
-        total_tv = dialogView.findViewById(R.id.total);
+        percent_tv = dialogView.findViewById(R.id.tv_percent);
+        //total_tv = dialogView.findViewById(R.id.total);
     }
 }
